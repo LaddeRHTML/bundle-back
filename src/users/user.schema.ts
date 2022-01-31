@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, ObjectId } from 'mongoose';
+import { Document, ObjectId, PromiseProvider } from 'mongoose';
 
 export type UserDocument = User & Document;
 export type UserSettingsDocument = UserSettings & Document;
@@ -20,10 +20,13 @@ export class User {
 @Schema()
 export class UserSettings {
 
+    @Prop({ ref: 'user' })
+    userId: string;
+
     @Prop({ default: new Date() })
     registrationDate: Date;
 
-    @Prop({ default: 10 })
+    @Prop({ default: 0 })
     age: number;
 
     @Prop()
@@ -32,7 +35,7 @@ export class UserSettings {
     @Prop({ default: 0 })
     gender: number;
 
-    @Prop({ default: false })
+    @Prop({ default: true })
     allowToLogin: boolean;
 
 }
