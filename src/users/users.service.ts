@@ -3,16 +3,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDto, UserSettingsDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserSettingsDto } from './dto/update-user.dto';
-import { User, UserDocument, UserSettings } from './user.schema';
+import { User, UserDocument, UserSettings, UserSettingsDocument } from './user.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel('user') private userModel: Model<UserDocument>,
-    @InjectModel('userSettings') private userSettingsModel: Model<UserDocument>
+    @InjectModel('userSettings') private userSettingsModel: Model<UserSettingsDocument>
   ) { }
 
-  create(UserDto: UserDto, UserSettingsDto: UserSettingsDto): Promise<UserDto> {
+  create(UserDto: UserDto, UserSettingsDto: UserSettingsDto): Promise<any> {
     try {
       const newUser = new this.userModel(UserDto);
       const { _id } = newUser;
@@ -31,7 +31,13 @@ export class UsersService {
     return await this.userModel.find({});
   }
 
-  async findOneUser(_id: string): Promise<User> {
+  async findOneUserByEmail(email: string): Promise<User> {
+    console.log('email_>', email);
+    return await this.userModel.findOne({email});
+  }
+
+  async findOneUserById(_id: string): Promise<User> {
+    console.log(_id);
     return await this.userModel.findOne({_id});
   }
 
@@ -39,12 +45,11 @@ export class UsersService {
     return await this.userModel.findOneAndUpdate({_id, updateUserDto});
   }
 
-  async findOneUserSettings(userId: string)/* : Promise<UserSettings> */ {
-    console.log(userId);
+  async findOneUserSettings(userId: string): Promise<UserSettings> {
     return await this.userSettingsModel.findOne({userId});
   }
 
-  async updateUserSettings(userId: string, UpdateUserSettingsDto: UpdateUserSettingsDto)/* : Promise<UserSettings> */ {
+  async updateUserSettings(userId: string, UpdateUserSettingsDto: UpdateUserSettingsDto): Promise<UserSettings> {
     const userSettingsToUpdate = await this.userSettingsModel.findOne({userId})
     const {_id} = userSettingsToUpdate;
    return await this.userSettingsModel.findOneAndUpdate({_id}, {...UpdateUserSettingsDto});

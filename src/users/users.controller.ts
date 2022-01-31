@@ -23,8 +23,14 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOneUser(id);
+  findOne(@Param('id') _id: string) {
+
+    return this.usersService.findOneUserById(_id);
+  }
+
+  @Get('/email/:email')
+  findOneByEmail(@Param('email') email: string,) {
+    return this.usersService.findOneUserByEmail(email);
   }
 
   @Post(':id')
