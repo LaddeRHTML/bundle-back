@@ -29,8 +29,10 @@ export class UsersController {
   }
 
   @Get('/email/:email')
-  findOneByEmail(@Param('email') email: string,) {
-    return this.usersService.findOneUserByEmail(email);
+  async findOneByEmail(@Param('email') email: string,) {
+    const user = await this.usersService.findOneUserByEmail(email);
+    user.password = undefined;
+    return user;
   }
 
   @Post(':id')
