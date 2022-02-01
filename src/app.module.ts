@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -13,7 +14,7 @@ import { MongooseModule } from '@nestjs/mongoose';
   MongooseModule.forRoot(process.env.DB_CONN, {
     useNewUrlParser: true,
   }),
-  UsersModule, AuthModule, ],
+  UsersModule, AuthModule, MailModule, ],
   controllers: [AppController],
   providers: [AppService],
 })

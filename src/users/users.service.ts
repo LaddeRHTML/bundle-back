@@ -17,9 +17,17 @@ export class UsersService {
       const newUser = new this.userModel(UserDto);
       const { _id } = newUser;
       const newUserSettings = new this.userSettingsModel({...UserSettingsDto, userId: _id});
+
+      console.log(
+        'ID ->', _id,
+        'user ->', newUser,
+        'usersettings ->', newUserSettings,
+      );
       return newUser.save().then(settings => {
+        console.log(settings);
         return newUserSettings.save()
        }, err => {
+         console.log(err);
         throw new HttpException('BadRequestException', HttpStatus.BAD_REQUEST);
        });
     } catch {

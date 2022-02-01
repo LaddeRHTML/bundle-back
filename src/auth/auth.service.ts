@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { UserDto } from "src/users/dto/create-user.dto";
+import { UserDto, UserSettingsDto } from "src/users/dto/create-user.dto";
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcryptjs'
+
 
 @Injectable()
 export class AuthService {
@@ -15,11 +17,17 @@ export class AuthService {
     async validateUser(email: string, password: string): Promise<any> {
         const user = await this.userService.findOneUserByEmail(email);
 
-        if (user && user.password === password) {
+        if (user) {
 
-            user.password = undefined;
+            const compareResult = await bcrypt.compare(password, user.password);
 
-            return user;
+            if (compareResult) {
+                user.password = undefined;
+    
+                return user;
+            } else {
+                throw new HttpException('Unauthorized!', HttpStatus.UNAUTHORIZED);
+            }
         }
         return null;
     }
@@ -33,7 +41,27 @@ export class AuthService {
         return { access_token: this.jwtService.sign({ payload }) };
     }
 
-    public getCookieWithJwtRefreshToken(user: any) {
+    async register(registrationData: UserDto, userSettings: UserSettingsDto): Promise<UserDto> {
+        const hashedPassword = await bcrypt.hash(registrationData.password, 9);
+        const userExists = await this.userService.findOneUserByEmail(registrationData.email);
+        if (userExists) {
+            throw new HttpException('User already exists', HttpStatus.CONFLICT);
+        } else  {
+            try {
+                const createdUser = await this.userService.create({
+                    ...registrationData,
+                    password: hashedPassword
+                }, userSettings);
+                createdUser.password = undefined;
+                return createdUser;
+            } catch (error) {
+                console.log(error);
+                throw new HttpException('Server error!', HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    /* public getCookieWithJwtRefreshToken(user: any) {
         const payload = { id: user._id };
         const token = this.jwtService.sign(payload, {
             secret: this.configService.get('^hs027SJKIQWNJQWE29SJK2JFqweNN238sujiW'),
@@ -44,5 +72,5 @@ export class AuthService {
             cookie,
             token
         }
-    }
+    } */
 }
