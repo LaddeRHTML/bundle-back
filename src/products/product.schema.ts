@@ -17,7 +17,7 @@ export class Product {
     @Prop({ default: 'pic' })
     pictures: [string];
 
-    @Prop({ default: 0 })
+    @Prop({ default: 0, min: 0, max: 5})
     rating: number;
 
     /* @Prop({default: ''})

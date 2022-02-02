@@ -19,7 +19,8 @@ export class ProductsService {
 	}
 
 	createAccessories(accessories: Accessories) {
-		return 'This action adds a new product';
+		const accessoriesModel = new this.accessoriesModel(accessories);
+		return accessoriesModel.save();
 	}
 
 	findAll() {
