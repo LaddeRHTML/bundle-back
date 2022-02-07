@@ -5,12 +5,14 @@ import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { UserSettingsDto } from './users/dto/create-user.dto';
+import { UsersService } from './users/users.service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private authService: AuthService
+    private authService: AuthService,
+    private usersService: UsersService
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -19,12 +21,18 @@ export class AppController {
     return this.authService.login(req.user);
   }
 
-  /* @UseGuards(JwtAuthGuard)
-  @Post('auth/check')
+  @UseGuards(JwtAuthGuard)
+  @Get('auth/check')
   async check(@Request() req) {
-    console.log(req.user);
-    return req.user
-  } */
+    console.log(req);
+    const userId = req.user.userId;
+    const user = await this.usersService.findOneUserById(userId);
+    const userSettings = await this.usersService.findOneUserSettings(userId);
+    return {
+      user,
+      userSettings
+    }
+  }
 
   /* @UseGuards(LocalAuthGuard) */
   @Post('auth/register')

@@ -50,6 +50,11 @@ export class UsersController {
     return await this.usersService.updateUserSettings(userId, UpdateUserSettingsDto);
   }
 
+  @Post('/update/:userId')
+  async updateUserData(@Param('userId') userId: string, @Body() UpdateUserSettingsDto: UpdateUserSettingsDto, @Body() updateUserDto: UpdateUserDto) {
+    return await this.usersService.updateUserData(userId, UpdateUserSettingsDto, updateUserDto);
+  }
+
   /* @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.removeUser(+id);

@@ -44,13 +44,14 @@ export class UsersService {
     return await this.userModel.findOne({email});
   }
 
-  async findOneUserById(_id: string): Promise<User> {
-    console.log(_id);
-    return await this.userModel.findOne({_id});
+  async findOneUserById(id: string): Promise<User> {
+    console.log(id);
+    return await this.userModel.findOne({id});
   }
 
-  async updateUser(_id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    return await this.userModel.findOneAndUpdate({_id, updateUserDto});
+  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    console.log('updateUser -->', id, updateUserDto);
+    return await this.userModel.findOneAndUpdate({_id: id}, {...updateUserDto}, {returnNewDocument: true, returnOriginal: false});
   }
 
   async findOneUserSettings(userId: string): Promise<UserSettings> {
@@ -59,8 +60,17 @@ export class UsersService {
 
   async updateUserSettings(userId: string, UpdateUserSettingsDto: UpdateUserSettingsDto): Promise<UserSettings> {
     const userSettingsToUpdate = await this.userSettingsModel.findOne({userId})
-    const {_id} = userSettingsToUpdate;
-   return await this.userSettingsModel.findOneAndUpdate({_id}, {...UpdateUserSettingsDto});
+    const {id} = userSettingsToUpdate;
+   return await this.userSettingsModel.findOneAndUpdate({_id: id}, {...UpdateUserSettingsDto}, {returnNewDocument: true, returnOriginal: false});
+  }
+  
+  async updateUserData(userId: string, UpdateUserSettingsDto: UpdateUserSettingsDto, UpdateUserDto: UpdateUserDto): Promise<any> {
+    const user = await this.updateUser(userId, UpdateUserDto);
+    const userSettings = await this.updateUserSettings(userId, UpdateUserSettingsDto);
+    return {
+      user,
+      userSettings
+    }
   }
 
   /* removeUser(id: number) {
