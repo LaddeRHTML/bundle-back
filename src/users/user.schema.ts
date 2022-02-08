@@ -4,7 +4,7 @@ import { Document, ObjectId, PromiseProvider } from 'mongoose';
 export type UserDocument = User & Document;
 export type UserSettingsDocument = UserSettings & Document;
 
-@Schema()
+@Schema({versionKey: false})
 export class User {
 
     @Prop({ required: true })
@@ -17,7 +17,7 @@ export class User {
     password: string;
 }
 
-@Schema()
+@Schema({versionKey: false})
 export class UserSettings {
 
     @Prop({ ref: 'user' })
@@ -37,6 +37,9 @@ export class UserSettings {
 
     @Prop({ default: true })
     allowToLogin: boolean;
+
+    @Prop({ ref: 'user' })
+    user: string;
 
 }
 

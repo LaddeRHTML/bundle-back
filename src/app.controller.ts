@@ -24,7 +24,6 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Get('auth/check')
   async check(@Request() req) {
-    console.log(req);
     const userId = req.user.userId;
     const user = await this.usersService.findOneUserById(userId);
     const userSettings = await this.usersService.findOneUserSettings(userId);

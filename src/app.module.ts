@@ -15,7 +15,7 @@ import { ProductsModule } from './products/products.module';
   MongooseModule.forRoot(process.env.DB_CONN, {
     useNewUrlParser: true,
   }),
-  UsersModule, AuthModule, MailModule, ProductsModule, ],
+  UsersModule, AuthModule, /* MailModule, */ ProductsModule, ],
   controllers: [AppController],
   providers: [AppService],
 })

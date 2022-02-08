@@ -8,7 +8,6 @@ export class ProductsController {
 
   @Post('/assembly/create')
   create(@Body() assembly: Assembly) {
-    console.log(assembly);
     return this.productsService.createAssembly(assembly);
   }
 

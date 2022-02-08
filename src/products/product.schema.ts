@@ -28,7 +28,7 @@ export class Product {
 
 }
 
-@Schema()
+@Schema({versionKey: false})
 export class Accessories extends Product {
 
     type = this.type;
@@ -47,7 +47,7 @@ export class Accessories extends Product {
     accessories: [string]; */
 }
 
-@Schema()
+@Schema({versionKey: false})
 export class Assembly extends Product {
 
     type = this.type;

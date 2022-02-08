@@ -18,16 +18,9 @@ export class UsersService {
       const { _id } = newUser;
       const newUserSettings = new this.userSettingsModel({...UserSettingsDto, userId: _id});
 
-      console.log(
-        'ID ->', _id,
-        'user ->', newUser,
-        'usersettings ->', newUserSettings,
-      );
       return newUser.save().then(settings => {
-        console.log(settings);
         return newUserSettings.save()
        }, err => {
-         console.log(err);
         throw new HttpException('BadRequestException', HttpStatus.BAD_REQUEST);
        });
     } catch {
@@ -39,18 +32,23 @@ export class UsersService {
     return await this.userModel.find({});
   }
 
+  async findAllUsersWithSettings(): Promise<UserSettings[]> {
+    const usersData = await this.userSettingsModel.find({}).populate('user', 'name email');
+    usersData.forEach(user => {
+      user.userId = undefined
+    });
+    return usersData;
+  }
+
   async findOneUserByEmail(email: string): Promise<User> {
-    console.log('email_>', email);
     return await this.userModel.findOne({email});
   }
 
   async findOneUserById(id: string): Promise<User> {
-    console.log(id);
     return await this.userModel.findOne({id});
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    console.log('updateUser -->', id, updateUserDto);
     return await this.userModel.findOneAndUpdate({_id: id}, {...updateUserDto}, {returnNewDocument: true, returnOriginal: false});
   }
 

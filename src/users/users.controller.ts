@@ -22,6 +22,11 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
+  @Get('settings/all')
+  findAllWithSettings() {
+    return this.usersService.findAllUsersWithSettings();
+  }
+
   @Get(':id')
   findOne(@Param('id') _id: string) {
 

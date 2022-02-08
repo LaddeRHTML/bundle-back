@@ -9,7 +9,6 @@ export class AccessoriesController {
 
   @Post('/accessories/')
   create(@Body() accessories: Accessories) {
-    console.log(accessories);
     return this.accessoriesService.create(accessories);
   }
 

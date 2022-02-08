@@ -36,7 +36,6 @@ export class AuthService {
     async login(user: any) {
         const payload = { id: user._id };
 
-        console.log(payload);
 
         return { access_token: this.jwtService.sign({ payload }) };
     }
@@ -55,7 +54,6 @@ export class AuthService {
                 createdUser.password = undefined;
                 return createdUser;
             } catch (error) {
-                console.log(error);
                 throw new HttpException('Server error!', HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }

@@ -9,7 +9,6 @@ export class AssemblyController {
 
   @Post('/assembly/')
   create(@Body() assembly: Assembly): Promise<Assembly> {
-    console.log(assembly);
     return this.assemblyService.create(assembly);
   }
 
