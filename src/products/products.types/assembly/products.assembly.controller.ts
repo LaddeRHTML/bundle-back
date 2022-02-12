@@ -3,11 +3,11 @@ import { ProductsService } from '../../products.service';
 import { Assembly } from '../../dto/product.dto';
 import { AssemblyService } from './products.assembly.service';
 
-@Controller('products')
+@Controller('products/assembly/')
 export class AssemblyController {
   constructor(private readonly assemblyService: AssemblyService) {}
 
-  @Post('/assembly/')
+  @Post('')
   create(@Body() assembly: Assembly): Promise<Assembly> {
     return this.assemblyService.create(assembly);
   }

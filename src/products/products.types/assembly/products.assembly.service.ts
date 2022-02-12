@@ -21,15 +21,15 @@ export class AssemblyService {
 		return await this.assemblyModel.find({});
 	}
 
-	async findOne(id: string): Promise<Assembly> {
-		return await this.assemblyModel.findOne({id});
+	async findOne(_id: string): Promise<Assembly> {
+		return await this.assemblyModel.findOne({_id});
 	}
 
-	async update(id: string, assembly: Assembly): Promise<Assembly> {
-		return await this.assemblyModel.findOneAndUpdate({id, assembly});
+	async update(_id: string, assembly: Assembly): Promise<Assembly> {
+		return await this.assemblyModel.findOneAndUpdate({_id, assembly});
 	}
 
-	async remove(id: string): Promise<Assembly> {
-		return await this.assemblyModel.findOneAndRemove({id});
+	async remove(_id: string): Promise<Assembly> {
+		return await this.assemblyModel.findOneAndRemove({_id});
 	}
 }

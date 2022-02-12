@@ -20,15 +20,15 @@ export class AccessoriesService {
 		return await this.accessoriesModel.find({});
 	}
 
-	async findOne(id: string): Promise<Accessories> {
-		return await this.accessoriesModel.findOne({id});
+	async findOne(_id: string): Promise<Accessories> {
+		return await this.accessoriesModel.findOne({_id});
 	}
 
-	async update(id: string, accessories: Accessories): Promise<Accessories> {
-		return await this.accessoriesModel.findOneAndUpdate({id, accessories});
+	async update(_id: string, accessories: Accessories): Promise<Accessories> {
+		return await this.accessoriesModel.findOneAndUpdate({_id, accessories});
 	}
 
-	async remove(id: string): Promise<Accessories> {
-		return await this.accessoriesModel.findOneAndRemove({id});
+	async remove(_id: string): Promise<Accessories> {
+		return await this.accessoriesModel.findOneAndRemove({_id});
 	}
 }

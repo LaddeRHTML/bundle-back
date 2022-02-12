@@ -3,11 +3,11 @@ import { ProductsService } from '../../products.service';
 import { Accessories, Assembly } from '../../dto/product.dto';
 import { AccessoriesService } from './products.accessories.service';
 
-@Controller('products')
+@Controller('products/accessories/')
 export class AccessoriesController {
   constructor(private readonly accessoriesService: AccessoriesService) {}
 
-  @Post('/accessories/')
+  @Post('')
   create(@Body() accessories: Accessories) {
     return this.accessoriesService.create(accessories);
   }
@@ -18,8 +18,8 @@ export class AccessoriesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.accessoriesService.findOne(id);
+  findOne(@Param('id') _id: string) {
+    return this.accessoriesService.findOne(_id);
   }
 
   @Patch(':id')

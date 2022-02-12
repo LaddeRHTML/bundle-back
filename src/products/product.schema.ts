@@ -5,10 +5,13 @@ export type AssemblyDocument = Assembly & Document;
 
 export class Product {
 
-    @Prop({ default: 'assembly' }) //assembly, periphery, accessories, services
+    @Prop({ default: 'assembly', required: true }) //assembly, periphery, accessories, services
     type: string;
 
-    @Prop({ default: 0 })
+    @Prop({required: true})
+    name: string;
+
+    @Prop({ default: 0, required: true })
     price: number;
 
     @Prop({ default: '' })
@@ -43,6 +46,8 @@ export class Accessories extends Product {
 
     uploadDate = this.uploadDate;
 
+    name = this.name;
+
     /* @Prop({ ref: '' })
     accessories: [string]; */
 }
@@ -61,6 +66,8 @@ export class Assembly extends Product {
     rating = this.rating;
 
     uploadDate = this.uploadDate;
+
+    name = this.name;
 
     @Prop({ ref: 'accessories' })
     accessories: [string];
