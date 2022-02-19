@@ -48,6 +48,28 @@ export class Accessories extends Product {
 
     name = this.name;
 
+    @Prop({ default: 0 })
+    buyPrice: number;
+    
+    // разновидность, например видеокарта
+    @Prop()
+    class: string;
+
+    @Prop()
+    vendorСode: string;
+
+    @Prop()
+    maker: string;
+
+    @Prop()
+    weight: string;
+
+    @Prop()
+    additionalData: string;
+
+    @Prop()
+    model: string;
+
     /* @Prop({ ref: '' })
     accessories: [string]; */
 }

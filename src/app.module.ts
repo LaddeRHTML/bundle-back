@@ -5,8 +5,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MailModule } from './mail/mail.module';
-import { ProductsModule } from './products/products.module';
+import { MailModule } from './api/mail/mail.module';
+import { ProductsModule } from './api/products/products.module';
+import { ApplicationsModule } from './api/applications/applications.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -15,7 +16,7 @@ import { ProductsModule } from './products/products.module';
   MongooseModule.forRoot(process.env.DB_CONN, {
     useNewUrlParser: true,
   }),
-  UsersModule, AuthModule, /* MailModule, */ ProductsModule, ],
+  UsersModule, AuthModule, /* MailModule, */ ProductsModule, ApplicationsModule],
   controllers: [AppController],
   providers: [AppService],
 })
