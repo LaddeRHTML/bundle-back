@@ -7,29 +7,31 @@ import { UpdateApplicationDto } from './dto/update-application.dto';
 
 @Injectable()
 export class ApplicationsService {
+    constructor(
+        @InjectModel('applications') private applicationsModel: Model<ApplicationsDocument>
+    ) {}
 
-  constructor(
-    @InjectModel('applications') private applicationsModel: Model<ApplicationsDocument>
-  ) {}
+    async create(createApplicationDto: CreateApplicationDto): Promise<Application> {
+        return await this.applicationsModel.create(createApplicationDto);
+    }
 
-  create(createApplicationDto: CreateApplicationDto) {
-    return this.applicationsModel.create(createApplicationDto);
-  }
+    async findAll(): Promise<Application[]> {
+        return await this.applicationsModel.find({});
+    }
 
-  findAll() {
-    return this.applicationsModel.find({});
-  }
+    async findOne(_id: string): Promise<Application> {
+        return await this.applicationsModel.findOne({ _id });
+    }
 
-  findOne(_id: string) {
-    return this.applicationsModel.findOne({_id});
-  }
+    async update(_id: string, updateApplicationDto: UpdateApplicationDto): Promise<Application> {
+        return await this.applicationsModel.findOneAndUpdate(
+            { _id },
+            { ...updateApplicationDto },
+            { returnNewDocument: true, returnOriginal: false }
+        );
+    }
 
-  async update(_id: string, updateApplicationDto: UpdateApplicationDto): Promise<Application> {
-    console.log(_id, updateApplicationDto);
-    return await this.applicationsModel.findOneAndUpdate({_id}, {...updateApplicationDto}, {returnNewDocument: true, returnOriginal: false});
-  }
-
-  /* remove(id: number) {
+    /* remove(id: number) {
     return `This action removes a #${id} application`;
   } */
 }
