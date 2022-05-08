@@ -1,18 +1,21 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ProductCharacteristic } from 'src/interfaces/product.interface';
 
 export type AccessoriesDocument = Accessories & Document;
 export type AssemblyDocument = Assembly & Document;
 
 export class Product {
-
     @Prop({ default: 'assembly', required: true }) //assembly, periphery, accessories, services
     type: string;
 
-    @Prop({required: true})
+    @Prop({ required: true })
     name: string;
 
     @Prop({ default: 0, required: true })
     price: number;
+
+    @Prop({})
+    discountPrice: number;
 
     @Prop({ default: '' })
     description: string;
@@ -20,37 +23,52 @@ export class Product {
     @Prop({ default: 'pic' })
     pictures: [string];
 
-    @Prop({ default: 0, min: 0, max: 5})
+    @Prop()
+    previewPicture: string;
+
+    @Prop({ default: 0, min: 0, max: 5 })
     rating: number;
 
     /* @Prop({default: ''})
     review: string; */
 
-    @Prop({ default: new Date })
+    @Prop({ default: new Date() })
     uploadDate: Date;
 
+    @Prop({ default: new Date() })
+    updateDate: Date;
+
+    @Prop({ default: [] })
+    characteristic: [ProductCharacteristic];
 }
 
-@Schema({versionKey: false})
+@Schema({ versionKey: false })
 export class Accessories extends Product {
-
     type = this.type;
 
     price = this.price;
+
+    discountPrice = this.discountPrice;
 
     description = this.description;
 
     pictures = this.pictures;
 
+    previewPicture = this.previewPicture;
+
     rating = this.rating;
 
     uploadDate = this.uploadDate;
 
+    updateDate = this.updateDate;
+
     name = this.name;
+
+    characteristic = this.characteristic;
 
     @Prop({ default: 0 })
     buyPrice: number;
-    
+
     // разновидность, например видеокарта
     @Prop()
     class: string;
@@ -74,22 +92,29 @@ export class Accessories extends Product {
     accessories: [string]; */
 }
 
-@Schema({versionKey: false})
+@Schema({ versionKey: false })
 export class Assembly extends Product {
-
     type = this.type;
 
     price = this.price;
+
+    discountPrice = this.discountPrice;
 
     description = this.description;
 
     pictures = this.pictures;
 
+    previewPicture = this.previewPicture;
+
     rating = this.rating;
 
     uploadDate = this.uploadDate;
 
+    updateDate = this.updateDate;
+
     name = this.name;
+
+    characteristic = this.characteristic;
 
     @Prop({ ref: 'accessories' })
     accessories: [string];
