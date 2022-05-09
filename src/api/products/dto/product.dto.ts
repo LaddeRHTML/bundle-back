@@ -1,6 +1,7 @@
 import { ProductCharacteristic } from 'src/interfaces/product.interface';
 
 export class ProductDto {
+    public name: string;
     public type: string;
     public price: number;
     public discountPrice: number;
@@ -15,6 +16,7 @@ export class ProductDto {
 }
 
 export class Accessories extends ProductDto {
+    public name = this.name;
     public type = this.type;
     public price = this.price;
     public discountPrice = this.discountPrice;
@@ -28,6 +30,7 @@ export class Accessories extends ProductDto {
 }
 
 export class Assembly extends ProductDto {
+    public name = this.name;
     public type = this.type;
     public price = this.price;
     public discountPrice = this.discountPrice;
