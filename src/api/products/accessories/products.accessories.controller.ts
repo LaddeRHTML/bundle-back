@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Accessories } from '../dto/product.dto';
 import { AccessoriesService } from './products.accessories.service';
 
@@ -6,6 +7,7 @@ import { AccessoriesService } from './products.accessories.service';
 export class AccessoriesController {
     constructor(private readonly accessoriesService: AccessoriesService) {}
 
+    @UseGuards(JwtAuthGuard)
     @Post('')
     create(@Body() accessories: Accessories) {
         return this.accessoriesService.create(accessories);
@@ -21,11 +23,13 @@ export class AccessoriesController {
         return this.accessoriesService.findOne(_id);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Patch(':id')
     update(@Param('id') id: string, @Body() accessories: Accessories) {
         return this.accessoriesService.update(id, accessories);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.accessoriesService.remove(id);

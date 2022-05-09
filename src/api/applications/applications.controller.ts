@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Application } from './applications.schema';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
@@ -13,16 +14,19 @@ export class ApplicationsController {
         return this.applicationsService.create(createApplicationDto);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get()
     findAll(): Promise<Application[]> {
         return this.applicationsService.findAll();
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Application> {
         return this.applicationsService.findOne(id);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Patch(':id')
     update(
         @Param('id') id: string,
