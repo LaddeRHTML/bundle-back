@@ -36,6 +36,16 @@ export class FilesService {
     }
 
     async deleteFile(id: string): Promise<boolean> {
-        return await this.fileModel.delete(id);
+        try {
+            const file = await this.fileModel.findById(id);
+            await this.connection.db.collection('fs.chunks').deleteOne({ files_id: file._id });
+            await this.connection.db.collection('fs.files').deleteOne({ _id: file._id });
+
+            if (file) return true;
+
+            return false;
+        } catch (error) {
+            throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+        }
     }
 }
