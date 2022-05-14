@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ObjectId } from 'mongoose';
 import { ProductCharacteristic } from 'src/interfaces/product.interface';
 
 export type AccessoriesDocument = Accessories & Document;
@@ -20,7 +21,7 @@ export class Product {
     @Prop({ default: '' })
     description: string;
 
-    @Prop({ default: 'pic' })
+    @Prop({ default: '' })
     pictures: [string];
 
     @Prop()
@@ -38,11 +39,14 @@ export class Product {
     @Prop({ default: new Date() })
     updateDate: Date;
 
+    @Prop({ default: 0 })
+    count: number;
+
     @Prop({ default: [] })
     characteristic: [ProductCharacteristic];
 }
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, _id: true, id: true })
 export class Accessories extends Product {
     type = this.type;
 
@@ -65,6 +69,8 @@ export class Accessories extends Product {
     name = this.name;
 
     characteristic = this.characteristic;
+
+    count = this.count;
 
     @Prop({ default: 0 })
     buyPrice: number;
@@ -92,7 +98,7 @@ export class Accessories extends Product {
     accessories: [string]; */
 }
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, _id: true, id: true })
 export class Assembly extends Product {
     type = this.type;
 
@@ -115,6 +121,8 @@ export class Assembly extends Product {
     name = this.name;
 
     characteristic = this.characteristic;
+
+    count = this.count;
 
     @Prop({ ref: 'accessories' })
     accessories: [string];

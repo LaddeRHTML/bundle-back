@@ -22,8 +22,12 @@ export class AssemblyService {
         return await this.assemblyModel.findOne({ _id });
     }
 
-    async update(_id: string, assembly: Assembly): Promise<Assembly> {
-        return await this.assemblyModel.findOneAndUpdate({ _id, assembly });
+    async update(id: string, assembly: Assembly): Promise<Assembly> {
+        return await this.assemblyModel.findOneAndUpdate(
+            { id: id },
+            { ...assembly },
+            { returnNewDocument: true, returnOriginal: false }
+        );
     }
 
     async remove(_id: string): Promise<Assembly> {

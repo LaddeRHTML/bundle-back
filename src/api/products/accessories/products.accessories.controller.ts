@@ -19,8 +19,8 @@ export class AccessoriesController {
     }
 
     @Get(':id')
-    findOne(@Param('id') _id: string) {
-        return this.accessoriesService.findOne(_id);
+    findOne(@Param('id') id: string) {
+        return this.accessoriesService.findOne(id);
     }
 
     @UseGuards(JwtAuthGuard)

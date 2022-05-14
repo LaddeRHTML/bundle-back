@@ -22,8 +22,12 @@ export class AccessoriesService {
         return await this.accessoriesModel.findOne({ _id });
     }
 
-    async update(_id: string, accessories: Accessories): Promise<Accessories> {
-        return await this.accessoriesModel.findOneAndUpdate({ _id, accessories });
+    async update(id: string, accessories: Accessories): Promise<Accessories> {
+        return await this.accessoriesModel.findOneAndUpdate(
+            { _id: id },
+            { ...accessories },
+            { returnNewDocument: true, returnOriginal: false }
+        );
     }
 
     async remove(_id: string): Promise<Accessories> {
