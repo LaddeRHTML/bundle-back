@@ -3,13 +3,12 @@ import { Document, ObjectId, PromiseProvider } from 'mongoose';
 
 export type ApplicationsDocument = Application & Document;
 
-@Schema({versionKey: false})
+@Schema({ versionKey: false })
 export class Application {
-
-    @Prop({required: true})
+    @Prop({ required: true })
     creatorName: string;
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     email: string;
 
     @Prop({ required: true })
@@ -18,7 +17,7 @@ export class Application {
     @Prop({ required: true })
     message: string;
 
-    @Prop({ default: new Date()})
+    @Prop({ default: new Date() })
     createDate: Date;
 }
 export const ApplicationsSchema = SchemaFactory.createForClass(Application);
