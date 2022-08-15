@@ -1,8 +1,8 @@
 {
     "name": "bundle-backend",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "",
-    "author": "",
+    "author": "Roman Pshenichnyy",
     "private": true,
     "license": "UNLICENSED",
     "scripts": {
