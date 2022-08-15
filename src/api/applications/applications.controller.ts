@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { PaginationTypes } from './../../interfaces/utils.interface';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    UseGuards,
+    Query
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Application } from './applications.schema';
 import { ApplicationsService } from './applications.service';
@@ -12,6 +23,15 @@ export class ApplicationsController {
     @Post()
     create(@Body() createApplicationDto: CreateApplicationDto): Promise<Application> {
         return this.applicationsService.create(createApplicationDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/filter?')
+    async findSortedItems(
+        @Query('page') page: number,
+        @Query('limit') limit: number
+    ): Promise<PaginationTypes> {
+        return await this.applicationsService.findSortedItems(page, limit);
     }
 
     @UseGuards(JwtAuthGuard)

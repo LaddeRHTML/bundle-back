@@ -5,7 +5,12 @@ declare const module: any;
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         cors: {
-            origin: true,
+            origin: [
+                'http://localhost:3000/',
+                'https://local-prod-bundle.vercel.app/',
+                'https://bundle-landing.vercel.app/'
+            ],
+            /* origin: true, */
             preflightContinue: false
         }
     });

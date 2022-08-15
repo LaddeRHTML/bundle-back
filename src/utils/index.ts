@@ -31,3 +31,20 @@ export const calcRelToAnyDate = (
 
     return currentDate;
 };
+
+export const paginate = async (page: number = 1, query: any, limit: number = 6, total: number) => {
+    const lastPage = Math.ceil(total / limit);
+    const data = await query
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec();
+
+    const sortedData = {
+        data,
+        total,
+        page,
+        lastPage
+    };
+
+    return sortedData;
+};
