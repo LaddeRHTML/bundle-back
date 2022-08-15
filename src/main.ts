@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 declare const module: any;
 
 async function bootstrap() {
-    const corsOption = {
+    /* const corsOption = {
         origin: [
             'http://localhost:3000/',
             'https://local-prod-bundle.vercel.app/',
@@ -12,10 +12,10 @@ async function bootstrap() {
         allowedHeaders: ['origin', 'x-requested-with', 'content-type', 'accept', 'authorization'],
         credentials: true,
         preflightContinue: false
-    };
-    const app = await NestFactory.create(AppModule);
+    }; */
+    const app = await NestFactory.create(AppModule, { cors: true });
 
-    app.enableCors(corsOption);
+    /* app.enableCors(corsOption); */
 
     if (module.hot) {
         module.hot.accept();
