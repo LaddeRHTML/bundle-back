@@ -1,9 +1,10 @@
 import { Client } from './entities/client.entity';
 import { JwtAuthGuard } from './../../auth/jwt-auth.guard';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { PaginationTypes } from 'src/interfaces/utils.interface';
 
 @Controller('clients')
 export class ClientsController {
@@ -13,6 +14,15 @@ export class ClientsController {
     @Post()
     create(@Body() createClientDto: CreateClientDto): Promise<Client> {
         return this.clientsService.create(createClientDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/filter?')
+    async findSortedItems(
+        @Query('page') page: number,
+        @Query('limit') limit: number
+    ): Promise<PaginationTypes> {
+        return await this.clientsService.findSortedItems(page, limit);
     }
 
     @UseGuards(JwtAuthGuard)

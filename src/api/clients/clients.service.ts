@@ -1,4 +1,4 @@
-import { calcRelToAnyDate } from './../../utils/index';
+import { calcRelToAnyDate, paginate } from './../../utils/index';
 import { Client, ClientDocument } from './clients.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,6 +6,7 @@ import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Model } from 'mongoose';
 import { calcRelToCurrentDate } from 'src/utils';
+import { PaginationTypes } from 'src/interfaces/utils.interface';
 
 @Injectable()
 export class ClientsService {
@@ -36,6 +37,12 @@ export class ClientsService {
         );
 
         return await this.clientModel.create(createClientDto);
+    }
+
+    async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
+        const total = await this.clientModel.count({}).exec();
+        const query = this.clientModel.find({});
+        return paginate(page, query, limit, total);
     }
 
     async findAll(): Promise<Client[]> {
