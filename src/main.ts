@@ -3,13 +3,7 @@ import { AppModule } from './app.module';
 declare const module: any;
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, {
-        cors: {
-            origin: '*',
-            /* origin: true, */
-            preflightContinue: false
-        }
-    });
+    const app = await NestFactory.create(AppModule);
 
     if (module.hot) {
         module.hot.accept();
