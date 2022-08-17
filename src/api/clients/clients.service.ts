@@ -1,4 +1,4 @@
-import { calcRelToAnyDate, paginate } from './../../utils/index';
+import { paginate } from './../../utils/index';
 import { Client, ClientDocument } from './clients.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,93 +15,29 @@ export class ClientsService {
     async create(createClientDto: CreateClientDto): Promise<Client> {
         createClientDto.age = calcRelToCurrentDate(createClientDto.birthDay, true);
 
-        createClientDto.paymentRemainder =
-            createClientDto.purchasedProductsPrice - createClientDto.payment;
-
-        createClientDto.potentialProfit =
-            createClientDto.marketPrice - createClientDto.supplierPrice;
-
-        createClientDto.realProfit =
-            createClientDto.purchasedProductsPrice - createClientDto.supplierPrice;
-
-        createClientDto.daysInWarranty = calcRelToAnyDate(
-            createClientDto.warrantyStartDate,
-            createClientDto.warrantyEndDate,
-            false
-        );
-
-        createClientDto.closeRequestInterval = calcRelToAnyDate(
-            createClientDto.firstContactDate,
-            createClientDto.deliveryDate,
-            false
-        );
-
         return await this.clientModel.create(createClientDto);
     }
 
     async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
         const total = await this.clientModel.count({}).exec();
-        const query = this.clientModel.find({});
+        const query = this.clientModel.find({}).populate('orders');
         return paginate(page, query, limit, total);
     }
 
     async findAll(): Promise<Client[]> {
-        return await this.clientModel.find({});
+        return await this.clientModel.find({}).populate('orders');
     }
 
     async findOne(_id: string): Promise<Client> {
-        return await this.clientModel.findOne({ _id });
+        return await this.clientModel.findOne({ _id }).populate('orders');
     }
 
-    async update(id: string, updateClientDto: UpdateClientDto): Promise<Client> {
-        const client = await this.findOne(id);
-
-        const purchasedProductsPrice = updateClientDto?.purchasedProductsPrice
-            ? updateClientDto?.purchasedProductsPrice
-            : client?.purchasedProductsPrice;
-        const payment = updateClientDto?.payment ? updateClientDto?.payment : client?.payment;
-        const marketPrice = updateClientDto?.marketPrice
-            ? updateClientDto?.marketPrice
-            : client?.marketPrice;
-        const supplierPrice = updateClientDto?.supplierPrice
-            ? updateClientDto?.supplierPrice
-            : client?.supplierPrice;
-        const warrantyStartDate = updateClientDto?.warrantyStartDate
-            ? updateClientDto?.warrantyStartDate
-            : client?.warrantyStartDate;
-        const warrantyEndDate = updateClientDto?.warrantyEndDate
-            ? updateClientDto?.warrantyEndDate
-            : client?.warrantyEndDate;
-        const firstContactDate = updateClientDto?.firstContactDate
-            ? updateClientDto?.firstContactDate
-            : client?.firstContactDate;
-        const deliveryDate = updateClientDto?.deliveryDate
-            ? updateClientDto?.deliveryDate
-            : client?.deliveryDate;
-
+    async update(id: string, updateClientDto: UpdateClientDto, settings?: any): Promise<Client> {
         if (updateClientDto?.birthDay) {
             updateClientDto.age = calcRelToCurrentDate(updateClientDto?.birthDay, true);
         }
 
-        updateClientDto.paymentRemainder = purchasedProductsPrice - payment;
-
-        updateClientDto.potentialProfit = marketPrice - supplierPrice;
-
-        updateClientDto.realProfit = purchasedProductsPrice - supplierPrice;
-
-        updateClientDto.daysInWarranty = calcRelToAnyDate(
-            warrantyStartDate,
-            warrantyEndDate,
-            false
-        );
-
-        updateClientDto.closeRequestInterval = calcRelToAnyDate(
-            firstContactDate,
-            deliveryDate,
-            false
-        );
-
-        return await this.clientModel.findByIdAndUpdate(id, updateClientDto);
+        return await this.clientModel.findByIdAndUpdate(id, updateClientDto, { settings });
     }
 
     /* remove(id: number) {

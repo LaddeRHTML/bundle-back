@@ -1,10 +1,10 @@
-import { Client } from './entities/client.entity';
 import { JwtAuthGuard } from './../../auth/jwt-auth.guard';
 import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { PaginationTypes } from 'src/interfaces/utils.interface';
+import { Client } from './clients.schema';
 
 @Controller('clients')
 export class ClientsController {
