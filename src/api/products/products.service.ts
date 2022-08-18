@@ -1,41 +1,43 @@
-import { Injectable, UseGuards } from '@nestjs/common';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto } from './dto/create-product.dto';
+import { paginate } from '../../utils/index';
+import { PaginationTypes } from '../../../dist/interfaces/utils.interface';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Accessories, Assembly } from './dto/product.dto';
-import { AccessoriesDocument, AssemblyDocument } from './product.schema';
+import { Product, ProductsDocument } from './products.schema';
 
 @Injectable()
 export class ProductsService {
-	constructor(
-		@InjectModel('assembly') private assemblyModel: Model<AssemblyDocument>,
-		@InjectModel('accessories') private accessoriesModel: Model<AccessoriesDocument>,
-  	) {}
+    constructor(@InjectModel('products') private productModel: Model<ProductsDocument>) {}
 
-	//@UseGuards(JwtAuthGuard)
-	createAssembly(assembly: Assembly): Promise<Assembly> {
-		const assemblyModel = new this.assemblyModel(assembly);
-		return assemblyModel.save();
-	}
+    async create(createProductDto: CreateProductDto): Promise<Product> {
+        return await this.productModel.create(createProductDto);
+    }
 
-	createAccessories(accessories: Accessories) {
-		const accessoriesModel = new this.accessoriesModel(accessories);
-		return accessoriesModel.save();
-	}
+    async findAll(): Promise<Product[]> {
+        return await this.productModel.find({});
+    }
 
-	findAll() {
-		return `This action returns all products`;
-	}
+    async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
+        const total = await this.productModel.count({}).exec();
+        const query = this.productModel.find({});
+        return paginate(page, query, limit, total);
+    }
 
-	findOne(id: number) {
-		return `This action returns a #${id} product`;
-	}
+    async findOne(_id: string): Promise<Product> {
+        return await this.productModel.findOne({ _id });
+    }
 
-	/* update(id: number, updateProductDto: UpdateProductDto) {
-		return `This action updates a #${id} product`;
-	} */
+    async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+        return await this.productModel.findOneAndUpdate(
+            { _id: id },
+            { ...updateProductDto },
+            { returnNewDocument: true, returnOriginal: false }
+        );
+    }
 
-	remove(id: number) {
-		return `This action removes a #${id} product`;
-	}
+    async remove(_id: string): Promise<Product> {
+        return await this.productModel.findOneAndRemove({ _id });
+    }
 }
