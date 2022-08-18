@@ -1,10 +1,11 @@
 import { JwtAuthGuard } from 'auth/jwt-auth.guard';
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query, Req } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { PaginationTypes } from 'interfaces/utils.interface';
 import { Client } from './clients.schema';
+import { Request } from 'express';
 
 @Controller('clients')
 export class ClientsController {
@@ -29,6 +30,12 @@ export class ClientsController {
     @Get()
     findAll(): Promise<Client[]> {
         return this.clientsService.findAll();
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/search?')
+    findByQuery(@Query('parameter') parameter: string): Promise<Client[]> {
+        return this.clientsService.findByQuery(parameter);
     }
 
     @UseGuards(JwtAuthGuard)

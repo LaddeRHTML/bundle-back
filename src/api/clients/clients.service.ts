@@ -1,6 +1,6 @@
 import { paginate } from 'utils/index';
 import { Client, ClientDocument } from './clients.schema';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -22,6 +22,41 @@ export class ClientsService {
         const total = await this.clientModel.count({}).exec();
         const query = this.clientModel.find({}).populate('orders');
         return paginate(page, query, limit, total);
+    }
+
+    async findByQuery(parameter: string): Promise<Client[]> {
+        let options = {};
+
+        if (parameter) {
+            options = {
+                $or : [
+                    {
+                        address: new RegExp(parameter, 'i')
+                    },
+                    {
+                        clientName: new RegExp(parameter, 'i')
+                    },
+                    {
+                        famalyName: new RegExp(parameter, 'i')
+                    },
+                    {
+                        phone: new RegExp(parameter, 'i')
+                    },
+                    {
+                        email: new RegExp(parameter, 'i')
+                    },
+                    {
+                        callManaged: new RegExp(parameter, 'i')
+                    }
+                ]
+            }
+            return await this.clientModel.find(options).populate('orders');
+        }
+
+        throw new HttpException(
+            'There is no data with this parameters!',
+            HttpStatus.NOT_FOUND
+        );
     }
 
     async findAll(): Promise<Client[]> {
