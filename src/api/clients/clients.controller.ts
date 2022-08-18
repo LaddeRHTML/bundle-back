@@ -17,14 +17,14 @@ export class ClientsController {
         return this.clientsService.create(createClientDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    /* @UseGuards(JwtAuthGuard)
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
         @Query('limit') limit: number
     ): Promise<PaginationTypes> {
         return await this.clientsService.findSortedItems(page, limit);
-    }
+    } */
 
     @UseGuards(JwtAuthGuard)
     @Get()
@@ -34,8 +34,9 @@ export class ClientsController {
 
     @UseGuards(JwtAuthGuard)
     @Get('/search?')
-    findByQuery(@Query('parameter') parameter: string): Promise<Client[]> {
-        return this.clientsService.findByQuery(parameter);
+    async findByQuery(@Query('parameter') parameter: string, @Query('page') page: number,
+    @Query('limit') limit: number): Promise<PaginationTypes> {
+        return await this.clientsService.findByQuery(parameter, page, limit);
     }
 
     @UseGuards(JwtAuthGuard)

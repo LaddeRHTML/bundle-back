@@ -18,13 +18,13 @@ export class ClientsService {
         return await this.clientModel.create(createClientDto);
     }
 
-    async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
+    /* async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
         const total = await this.clientModel.count({}).exec();
         const query = this.clientModel.find({}).populate('orders');
         return paginate(page, query, limit, total);
-    }
+    } */
 
-    async findByQuery(parameter: string): Promise<Client[]> {
+    async findByQuery(parameter: string, page: number, limit: number): Promise<PaginationTypes> {
         let options = {};
 
         if (parameter) {
@@ -50,13 +50,11 @@ export class ClientsService {
                     }
                 ]
             }
-            return await this.clientModel.find(options).populate('orders');
         }
 
-        throw new HttpException(
-            'There is no data with this parameters!',
-            HttpStatus.NOT_FOUND
-        );
+        const total = await this.clientModel.count(options).exec();
+        const query = this.clientModel.find(options).populate('orders');
+        return paginate(page, query, limit, total);
     }
 
     async findAll(): Promise<Client[]> {
