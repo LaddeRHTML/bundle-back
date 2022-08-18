@@ -1,9 +1,9 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserData } from 'src/interfaces/user.interface';
-import { passwords } from 'src/types/passwords.types';
-import { UserDto, UserSettingsDto } from './dto/create-user.dto';
+import { UserData } from 'interfaces/user.interface';
+import { passwords } from 'types/passwords.types';
+import { CreateUserDto, CreateUserSettingsDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserSettingsDto } from './dto/update-user.dto';
 import { User, UserDocument, UserSettings, UserSettingsDocument } from './user.schema';
 import * as bcrypt from 'bcryptjs';
@@ -14,11 +14,17 @@ export class UsersService {
         @InjectModel('userSettings') private userSettingsModel: Model<UserSettingsDocument>
     ) {}
 
-    create(UserDto: UserDto, UserSettingsDto: UserSettingsDto): Promise<any> {
+    create(
+        createUserDto: CreateUserDto,
+        createUserSettingsDto: CreateUserSettingsDto
+    ): Promise<any> {
         try {
-            const newUser = new this.userModel(UserDto);
+            const newUser = new this.userModel(createUserDto);
             const { _id } = newUser;
-            const newUserSettings = new this.userSettingsModel({ ...UserSettingsDto, user: _id });
+            const newUserSettings = new this.userSettingsModel({
+                ...createUserSettingsDto,
+                user: _id
+            });
 
             return newUser.save().then(
                 (settings) => {
@@ -68,24 +74,24 @@ export class UsersService {
 
     async updateUserSettings(
         userId: string,
-        UpdateUserSettingsDto: UpdateUserSettingsDto
+        updateUserSettingsDto: UpdateUserSettingsDto
     ): Promise<UserSettings> {
         const userSettingsToUpdate = await this.userSettingsModel.findOne({ user: userId });
         const { id } = userSettingsToUpdate;
         return await this.userSettingsModel.findOneAndUpdate(
             { _id: id },
-            { ...UpdateUserSettingsDto },
+            { ...updateUserSettingsDto },
             { returnNewDocument: true, returnOriginal: false }
         );
     }
 
     async updateUserData(
         userId: string,
-        UpdateUserSettingsDto: UpdateUserSettingsDto,
-        UpdateUserDto: UpdateUserDto
+        updateUserSettingsDto: UpdateUserSettingsDto,
+        updateUserDto: UpdateUserDto
     ): Promise<UserData> {
-        const user = await this.updateUser(userId, UpdateUserDto);
-        const userSettings = await this.updateUserSettings(userId, UpdateUserSettingsDto);
+        const user = await this.updateUser(userId, updateUserDto);
+        const userSettings = await this.updateUserSettings(userId, updateUserSettingsDto);
         return {
             user,
             userSettings

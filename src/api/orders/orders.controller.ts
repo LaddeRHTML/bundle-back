@@ -1,9 +1,9 @@
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { PaginationTypes } from 'src/interfaces/utils.interface';
+import { PaginationTypes } from 'interfaces/utils.interface';
 import { Order } from './orders.schema';
 import { Client } from '../clients/clients.schema';
 

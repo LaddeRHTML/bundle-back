@@ -17,8 +17,8 @@ import {
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileResponse } from './entities/file.response';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
-import { MulterFile } from 'src/interfaces/multer.interface';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
+import { MulterFile } from 'interfaces/multer.interface';
 
 @Controller('files')
 export class FilesController {

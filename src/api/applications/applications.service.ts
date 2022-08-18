@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PaginationTypes } from 'src/interfaces/utils.interface';
-import { paginate } from 'src/utils';
+import { PaginationTypes } from 'interfaces/utils.interface';
+import { paginate } from 'utils/index';
 import { Application, ApplicationsDocument } from './applications.schema';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';

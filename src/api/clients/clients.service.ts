@@ -1,12 +1,12 @@
-import { paginate } from './../../utils/index';
+import { paginate } from 'utils/index';
 import { Client, ClientDocument } from './clients.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Model } from 'mongoose';
-import { calcRelToCurrentDate } from 'src/utils';
-import { PaginationTypes } from 'src/interfaces/utils.interface';
+import { calcRelToCurrentDate } from 'utils/index';
+import { PaginationTypes } from 'interfaces/utils.interface';
 
 @Injectable()
 export class ClientsService {

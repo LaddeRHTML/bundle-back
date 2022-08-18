@@ -1,4 +1,4 @@
-import { PaginationTypes } from './../../interfaces/utils.interface';
+import { PaginationTypes } from 'interfaces/utils.interface';
 import {
     Controller,
     Get,
@@ -10,7 +10,7 @@ import {
     UseGuards,
     Query
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 import { Application } from './applications.schema';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';

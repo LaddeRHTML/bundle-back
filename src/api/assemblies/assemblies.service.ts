@@ -1,5 +1,5 @@
-import { paginate } from '../../utils/index';
-import { PaginationTypes } from '../../../dist/interfaces/utils.interface';
+import { paginate } from 'utils/index';
+import { PaginationTypes } from 'interfaces/utils.interface';
 import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
