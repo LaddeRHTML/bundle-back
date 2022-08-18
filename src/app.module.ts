@@ -1,3 +1,5 @@
+import { AssemblyModule } from './api/assemblies/assemblies.module';
+import { AccessoriesModule } from './api/accessories/accessories.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
@@ -24,7 +26,9 @@ import { OrdersModule } from './api/orders/orders.module';
         ApplicationsModule,
         FilesModule,
         ClientsModule,
-        OrdersModule
+        OrdersModule,
+        AccessoriesModule,
+        AssemblyModule
     ],
     controllers: [AppController],
     providers: []
