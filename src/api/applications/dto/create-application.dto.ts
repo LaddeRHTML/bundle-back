@@ -1,7 +1,3 @@
-export class CreateApplicationDto {
-    public creatorName: string;
-    public email: string;
-    public phone: string;
-    public message: string;
-    public createDate: Date;
-}
+import { Application } from '../applications.schema';
+
+export class CreateApplicationDto extends Application {}

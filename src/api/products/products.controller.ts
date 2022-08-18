@@ -2,7 +2,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './products.schema';
 import { ProductsService } from './products.service';
-import { PaginationTypes } from '../../interfaces/utils.interface';
+import { PaginationTypes } from 'interfaces/utils.interface';
 import {
     Controller,
     Get,
@@ -14,7 +14,7 @@ import {
     UseGuards,
     Query
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 
 @Controller('products/finished/')
 export class ProductsController {

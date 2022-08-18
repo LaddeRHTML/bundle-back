@@ -1,4 +1,4 @@
-import { PaginationTypes } from './../../../dist/interfaces/utils.interface.d';
+import { PaginationTypes } from 'interfaces/utils.interface';
 import { UpdateAccessoryDto } from './dto/update-accessories.dto';
 import {
     Controller,
@@ -11,7 +11,7 @@ import {
     UseGuards,
     Query
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 import { CreateAccessoryDto } from './dto/create-accessories.dto';
 import { AccessoriesService } from './accessories.service';
 import { Accessory } from './accessories.schema';

@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth/auth.service';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { LocalAuthGuard } from './auth/local-auth.guard';
-import { UserData } from './interfaces/user.interface';
-import { AccessToken } from './types/auth.types';
-import { UserDto, UserSettingsDto } from './users/dto/create-user.dto';
-import { UsersService } from './users/users.service';
+import { AuthService } from 'auth/auth.service';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
+import { LocalAuthGuard } from 'auth/local-auth.guard';
+import { UserData } from 'interfaces/user.interface';
+import { AccessToken } from 'types/auth.types';
+import { CreateUserDto, CreateUserSettingsDto } from 'api/users/dto/create-user.dto';
+import { UsersService } from 'api/users/users.service';
 
 @Controller()
 export class AppController {
@@ -31,7 +31,10 @@ export class AppController {
 
     /* @UseGuards(LocalAuthGuard) */
     @Post('auth/register')
-    async register(@Request() req: any, userSettings: UserSettingsDto): Promise<UserDto> {
+    async register(
+        @Request() req: any,
+        userSettings: CreateUserSettingsDto
+    ): Promise<CreateUserDto> {
         return this.authService.register(req.body, userSettings);
     }
 }

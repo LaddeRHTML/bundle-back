@@ -1,4 +1,4 @@
-import { PaginationTypes } from '../../../dist/interfaces/utils.interface';
+import { PaginationTypes } from 'interfaces/utils.interface';
 import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
 import {
     Controller,
@@ -11,7 +11,7 @@ import {
     UseGuards,
     Query
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 import { CreateAssemblyDto } from './dto/create-assemblies.dto';
 import { AssembliesService } from './assemblies.service';
 import { Assembly } from './assemblies.schema';

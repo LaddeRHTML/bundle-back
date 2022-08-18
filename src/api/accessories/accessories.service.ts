@@ -1,10 +1,9 @@
-import { paginate } from './../../utils/index';
-import { PaginationTypes } from './../../../dist/interfaces/utils.interface.d';
+import { paginate } from 'utils/index';
+import { PaginationTypes } from 'interfaces/utils.interface';
 import { UpdateAccessoryDto } from './dto/update-accessories.dto';
-import { Injectable, UseGuards } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateAccessoryDto } from './dto/create-accessories.dto';
 import { AccessoriesDocument } from './accessories.schema';
 import { Accessory } from './accessories.schema';

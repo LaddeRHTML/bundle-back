@@ -1,6 +1,6 @@
-import { UserDto, UserSettingsDto } from 'src/users/dto/create-user.dto';
+import { CreateUserDto, CreateUserSettingsDto } from 'api/users/dto/create-user.dto';
 
 export interface UserData {
-    user: UserDto;
-    userSettings: UserSettingsDto;
+    user: CreateUserDto;
+    userSettings: CreateUserSettingsDto;
 }

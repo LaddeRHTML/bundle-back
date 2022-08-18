@@ -1,4 +1,3 @@
-import { UpdateClientDto } from './../clients/dto/update-client.dto';
 import { ClientsService } from './../clients/clients.service';
 import { calcRelToAnyDate, paginate } from '../../utils/index';
 import { Order, OrderDocument } from './orders.schema';
