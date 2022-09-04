@@ -11,7 +11,7 @@ export class Client {
     @Prop({ required: true, default: '' })
     clientName: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     famalyName: string;
 
     @Prop({ required: false, default: '' })
@@ -38,7 +38,7 @@ export class Client {
     @Prop({ required: true, default: '' })
     city: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     address: string;
 
     @Prop({ required: true, default: '' })
