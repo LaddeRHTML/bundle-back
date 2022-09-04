@@ -13,9 +13,19 @@ export class ClientsService {
     constructor(@InjectModel('clients') private clientModel: Model<ClientDocument>) {}
 
     async create(createClientDto: CreateClientDto): Promise<Client> {
-        createClientDto.age = calcRelToCurrentDate(createClientDto.birthDay, true);
 
-        return await this.clientModel.create(createClientDto);
+        try {
+
+            createClientDto.age = calcRelToCurrentDate(createClientDto.birthDay, true);
+    
+            return await this.clientModel.create(createClientDto);
+            
+        } catch (error) {
+            throw new HttpException(
+                error,
+                HttpStatus.NOT_ACCEPTABLE
+            );
+        }
     }
 
     /* async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
@@ -66,11 +76,22 @@ export class ClientsService {
     }
 
     async update(id: string, updateClientDto: UpdateClientDto, settings?: any): Promise<Client> {
-        if (updateClientDto?.birthDay) {
-            updateClientDto.age = calcRelToCurrentDate(updateClientDto?.birthDay, true);
-        }
 
-        return await this.clientModel.findByIdAndUpdate(id, updateClientDto, { settings });
+        try {
+
+            if (updateClientDto?.birthDay) {
+                updateClientDto.age = calcRelToCurrentDate(updateClientDto?.birthDay, true);
+            }
+    
+            return await this.clientModel.findByIdAndUpdate(id, updateClientDto, { settings });
+            
+        } catch (error) {
+            throw new HttpException(
+                error,
+                HttpStatus.NOT_ACCEPTABLE
+            );
+            
+        }
     }
 
     /* remove(id: number) {
