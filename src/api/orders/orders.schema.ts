@@ -97,5 +97,11 @@ export class Order {
 
     @Prop({ required: false, default: 0 })
     closeRequestInterval: number;
+
+    @Prop({ required: false })
+    previewPIcture: string;
+
+    @Prop({ required: false })
+    pictureList:[string];
 }
 export const OrdersSchema = SchemaFactory.createForClass(Order);
