@@ -48,7 +48,10 @@ export class Order {
         | 'delivered'
         | 'call-from-client'
         | 'message-from-client'
-        | 'on-pause';
+        | 'on-pause'
+        | 'unknown'
+        |'in process'
+        |'undelivered';
 
     @Prop({ required: false, default: 0 })
     potentialProfit: number;
