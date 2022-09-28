@@ -1,5 +1,8 @@
 import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './filters/exeption.filters';
+
 declare const module: any;
 
 async function bootstrap() {
@@ -20,6 +23,8 @@ async function bootstrap() {
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document); */
+
+    app.useGlobalFilters(new AllExceptionsFilter());
 
     await app.listen(parseInt(process.env.PORT) || 5000);
 }
