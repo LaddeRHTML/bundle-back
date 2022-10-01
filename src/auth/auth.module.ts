@@ -13,7 +13,8 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
         UsersModule,
         PassportModule,
         JwtModule.register({
-            secret: `${process.env.SECRET_KEY}`
+            secret: `${process.env.SECRET_KEY}`,
+            signOptions: { expiresIn: '18000s' }
         })
     ],
     providers: [AuthService, LocalStrategy, JwtStrategy, RefreshStrategy],
