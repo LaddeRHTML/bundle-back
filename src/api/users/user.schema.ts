@@ -4,9 +4,8 @@ import { Document } from 'mongoose';
 export type UserDocument = User & Document;
 export type UserSettingsDocument = UserSettings & Document;
 
-@Schema({versionKey: false})
+@Schema({ versionKey: false })
 export class User {
-
     @Prop({ required: true })
     name: string;
 
@@ -17,9 +16,8 @@ export class User {
     password: string;
 }
 
-@Schema({versionKey: false})
+@Schema({ versionKey: false })
 export class UserSettings {
-
     @Prop({ ref: 'user' })
     userId: string;
 
@@ -40,7 +38,6 @@ export class UserSettings {
 
     @Prop({ ref: 'user' })
     user: string;
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

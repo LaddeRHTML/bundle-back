@@ -1,13 +1,15 @@
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
-import { OrdersService } from './orders.service';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { PaginationTypes } from 'interfaces/utils.interface';
+import { apiv1 } from 'src/constants/api-const';
+
+import { Client } from '../clients/clients.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { PaginationTypes } from 'interfaces/utils.interface';
 import { Order } from './orders.schema';
-import { Client } from '../clients/clients.schema';
+import { OrdersService } from './orders.service';
 
-@Controller('orders')
+@Controller(`${apiv1}/orders`)
 export class OrdersController {
     constructor(private readonly orderService: OrdersService) {}
 

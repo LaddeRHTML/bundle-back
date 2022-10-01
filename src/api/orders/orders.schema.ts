@@ -50,8 +50,8 @@ export class Order {
         | 'message-from-client'
         | 'on-pause'
         | 'unknown'
-        |'in process'
-        |'undelivered';
+        | 'in process'
+        | 'undelivered';
 
     @Prop({ required: false, default: 0 })
     potentialProfit: number;
@@ -102,9 +102,9 @@ export class Order {
     closeRequestInterval: number;
 
     @Prop({ required: false })
-    previewPIcture: string;
+    previewPicture: string;
 
     @Prop({ required: false })
-    pictureList:[string];
+    pictureList: [string];
 }
 export const OrdersSchema = SchemaFactory.createForClass(Order);

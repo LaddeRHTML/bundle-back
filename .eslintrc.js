@@ -1,5 +1,5 @@
 module.exports = {
-    parser: '@typescript-eslint/parser',
+    parser: ['@typescript-eslint/parser', '@babel/eslint-parser'],
     parserOptions: {
         project: 'tsconfig.json',
         sourceType: 'module'
@@ -11,7 +11,9 @@ module.exports = {
             {
                 legacy: true
             }
-        ]
+        ],
+        'decorators - legacy',
+        'decorators'
     ],
     extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
     root: true,

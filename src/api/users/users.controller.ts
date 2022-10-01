@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Param, Request, UseGuards } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { UserData } from 'interfaces/user.interface';
+import { apiv1 } from 'src/constants/api-const';
+import { passwords } from 'types/passwords.types';
+
 import { CreateUserDto, CreateUserSettingsDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserSettingsDto } from './dto/update-user.dto';
 import { User, UserSettings } from './user.schema';
-import { UserData } from 'interfaces/user.interface';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
-import { passwords } from 'types/passwords.types';
+import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller(`${apiv1}/users`)
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 

@@ -1,26 +1,28 @@
 import {
-    Controller,
-    Get,
-    Post,
     Body,
-    Patch,
-    Param,
+    Controller,
     Delete,
-    UseInterceptors,
-    UploadedFiles,
-    UploadedFile,
+    Get,
     HttpException,
     HttpStatus,
+    Param,
+    Patch,
+    Post,
     Res,
-    UseGuards
+    UploadedFile,
+    UploadedFiles,
+    UseGuards,
+    UseInterceptors
 } from '@nestjs/common';
-import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileResponse } from './entities/file.response';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
 import { MulterFile } from 'interfaces/multer.interface';
+import { apiv1 } from 'src/constants/api-const';
 
-@Controller('files')
+import { FileResponse } from './entities/file.response';
+import { FilesService } from './files.service';
+
+@Controller(`${apiv1}/files`)
 export class FilesController {
     constructor(private readonly filesService: FilesService) {}
 

@@ -1,22 +1,24 @@
-import { PaginationTypes } from 'interfaces/utils.interface';
 import {
-    Controller,
-    Get,
-    Post,
     Body,
-    Patch,
-    Param,
+    Controller,
     Delete,
-    UseGuards,
-    Query
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseGuards
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { PaginationTypes } from 'interfaces/utils.interface';
+import { apiv1 } from 'src/constants/api-const';
+
 import { Application } from './applications.schema';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 
-@Controller('applications')
+@Controller(`${apiv1}/applications`)
 export class ApplicationsController {
     constructor(private readonly applicationsService: ApplicationsService) {}
 
