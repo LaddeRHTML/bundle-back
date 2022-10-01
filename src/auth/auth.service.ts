@@ -29,14 +29,14 @@ export class AuthService {
         return null;
     }
 
-    async signJwt(userId: string) {
+    async signJwt(userId: any) {
         return await this.jwtService.signAsync(userId);
     }
 
     async login(@Req() req: Request): Promise<AccessToken> {
         try {
             const payload = await req.user['_id'].toString();
-            const access_token = await this.signJwt(payload);
+            const access_token = await this.signJwt({ payload });
 
             return { access_token };
         } catch (error) {

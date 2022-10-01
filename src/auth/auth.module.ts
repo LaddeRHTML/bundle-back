@@ -6,7 +6,6 @@ import { UsersModule } from 'api/users/users.module';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt-auth.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { RefreshStrategy } from './strategies/refresh.strategy';
 
 @Module({
     imports: [
@@ -17,7 +16,7 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
             signOptions: { expiresIn: `${process.env.TOKEN_EXPIRATION_TIME}` }
         })
     ],
-    providers: [AuthService, LocalStrategy, JwtStrategy, RefreshStrategy],
+    providers: [AuthService, LocalStrategy, JwtStrategy],
     exports: [AuthService]
 })
 export class AuthModule {}
