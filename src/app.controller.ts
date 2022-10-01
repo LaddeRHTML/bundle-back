@@ -8,6 +8,8 @@ import { Request, Response } from 'express';
 import { UserData } from 'interfaces/user.interface';
 import { AccessToken } from 'types/auth.types';
 
+import { User } from './api/users/user.schema';
+
 @Controller('/api/v1/auth/')
 export class AppController {
     constructor(private authService: AuthService, private usersService: UsersService) {}
@@ -15,7 +17,7 @@ export class AppController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
     async login(@Req() req: Request): Promise<AccessToken> {
-        return await this.authService.login(req);
+        return await this.authService.login(req.user as User);
     }
 
     /* @UseGuards(RefreshAuthGuard)
@@ -36,7 +38,7 @@ export class AppController {
     @UseGuards(JwtAuthGuard)
     @Get('check')
     async check(@Req() req: Request): Promise<UserData> {
-        const userId = req.user as string;
+        const userId = req.user['userId'] as string;
         const user = await this.usersService.findOneUserById(userId);
         const userSettings = await this.usersService.findOneUserSettings(userId);
         return {

@@ -3,10 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto, CreateUserSettingsDto } from 'api/users/dto/create-user.dto';
 import { UsersService } from 'api/users/users.service';
 import * as bcrypt from 'bcryptjs';
-import { Request, Response } from 'express';
-import * as moment from 'moment';
-import * as randomToken from 'rand-token';
 import { AccessToken } from 'src/types/auth.types';
+
+import { User } from './../api/users/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -29,18 +28,14 @@ export class AuthService {
         return null;
     }
 
-    async signJwt(userId: any) {
-        return await this.jwtService.signAsync(userId, {
-            expiresIn: `${process.env.TOKEN_EXPIRATION_TIME}`
-        });
+    signJwt(payload: any) {
+        return this.jwtService.sign(payload);
     }
 
-    async login(@Req() req: Request): Promise<AccessToken> {
+    async login(req: User): Promise<AccessToken> {
         try {
-            const payload = await req.user['_id'].toString();
-            const access_token = await this.signJwt({ payload });
-
-            return { access_token };
+            const userId = await req['_id'].toString();
+            return { access_token: this.signJwt({ userId }) };
         } catch (error) {
             throw error;
         }
