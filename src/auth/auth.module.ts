@@ -14,7 +14,7 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
         PassportModule,
         JwtModule.register({
             secret: `${process.env.SECRET_KEY}`,
-            signOptions: { expiresIn: '18000s' }
+            signOptions: { expiresIn: `${process.env.TOKEN_EXPIRATION_TIME}` }
         })
     ],
     providers: [AuthService, LocalStrategy, JwtStrategy, RefreshStrategy],
