@@ -1,22 +1,24 @@
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { UpdateAccessoryDto } from './dto/update-accessories.dto';
 import {
-    Controller,
-    Get,
-    Post,
     Body,
-    Patch,
-    Param,
+    Controller,
     Delete,
-    UseGuards,
-    Query
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseGuards
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
-import { CreateAccessoryDto } from './dto/create-accessories.dto';
-import { AccessoriesService } from './accessories.service';
-import { Accessory } from './accessories.schema';
+import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { PaginationTypes } from 'interfaces/utils.interface';
+import { apiv1 } from 'src/constants/api-const';
 
-@Controller('products/accessories/')
+import { Accessory } from './accessories.schema';
+import { AccessoriesService } from './accessories.service';
+import { CreateAccessoryDto } from './dto/create-accessories.dto';
+import { UpdateAccessoryDto } from './dto/update-accessories.dto';
+
+@Controller(`${apiv1}/products/accessories/`)
 export class AccessoriesController {
     constructor(private readonly accessoriesService: AccessoriesService) {}
 

@@ -1,22 +1,24 @@
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
 import {
-    Controller,
-    Get,
-    Post,
     Body,
-    Patch,
-    Param,
+    Controller,
     Delete,
-    UseGuards,
-    Query
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseGuards
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
-import { CreateAssemblyDto } from './dto/create-assemblies.dto';
-import { AssembliesService } from './assemblies.service';
-import { Assembly } from './assemblies.schema';
+import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { PaginationTypes } from 'interfaces/utils.interface';
+import { apiv1 } from 'src/constants/api-const';
 
-@Controller('products/assemblies/')
+import { Assembly } from './assemblies.schema';
+import { AssembliesService } from './assemblies.service';
+import { CreateAssemblyDto } from './dto/create-assemblies.dto';
+import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
+
+@Controller(`${apiv1}/products/assemblies/`)
 export class AssembliesController {
     constructor(private readonly assembliesService: AssembliesService) {}
 

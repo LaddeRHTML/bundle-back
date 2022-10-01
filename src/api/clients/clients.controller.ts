@@ -1,13 +1,15 @@
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { Request } from 'express';
+import { PaginationTypes } from 'interfaces/utils.interface';
+import { apiv1 } from 'src/constants/api-const';
+
+import { Client } from './clients.schema';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { Client } from './clients.schema';
-import { Request } from 'express';
 
-@Controller('clients')
+@Controller(`${apiv1}/clients`)
 export class ClientsController {
     constructor(private readonly clientsService: ClientsService) {}
 
@@ -34,8 +36,11 @@ export class ClientsController {
 
     @UseGuards(JwtAuthGuard)
     @Get('/search?')
-    async findByQuery(@Query('parameter') parameter: string, @Query('page') page: number,
-    @Query('limit') limit: number): Promise<PaginationTypes> {
+    async findByQuery(
+        @Query('parameter') parameter: string,
+        @Query('page') page: number,
+        @Query('limit') limit: number
+    ): Promise<PaginationTypes> {
         return await this.clientsService.findByQuery(parameter, page, limit);
     }
 

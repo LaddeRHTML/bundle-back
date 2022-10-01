@@ -1,22 +1,24 @@
-import { UpdateProductDto } from './dto/update-product.dto';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseGuards
+} from '@nestjs/common';
+import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { PaginationTypes } from 'interfaces/utils.interface';
+import { apiv1 } from 'src/constants/api-const';
+
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './products.schema';
 import { ProductsService } from './products.service';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import {
-    Controller,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    Delete,
-    UseGuards,
-    Query
-} from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 
-@Controller('products/finished/')
+@Controller(`${apiv1}/products/finished/`)
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 
