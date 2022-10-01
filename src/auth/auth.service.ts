@@ -30,7 +30,9 @@ export class AuthService {
     }
 
     async signJwt(userId: any) {
-        return await this.jwtService.signAsync(userId);
+        return await this.jwtService.signAsync(userId, {
+            expiresIn: `${process.env.TOKEN_EXPIRATION_TIME}`
+        });
     }
 
     async login(@Req() req: Request): Promise<AccessToken> {
