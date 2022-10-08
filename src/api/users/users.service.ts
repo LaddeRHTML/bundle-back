@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { UserData } from 'interfaces/user.interface';
 import { Model } from 'mongoose';
+import { hashRounds } from 'src/constants/bcrypt';
 import { passwords } from 'types/passwords.types';
 
 import { CreateUserDto, CreateUserSettingsDto } from './dto/create-user.dto';
@@ -126,7 +127,7 @@ export class UsersService {
                 throw new HttpException(samePass, HttpStatus.CONFLICT);
             }
 
-            const newPasswordHash = await bcrypt.hash(newPassword, 9);
+            const newPasswordHash = await bcrypt.hash(newPassword, hashRounds);
 
             const updatedUser = await this.updateUser(userId, {
                 password: newPasswordHash

@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto, CreateUserSettingsDto } from 'api/users/dto/create-user.dto';
 import { UsersService } from 'api/users/users.service';
 import * as bcrypt from 'bcryptjs';
+import { hashRounds } from 'src/constants/bcrypt';
 import { AccessToken } from 'src/types/auth.types';
 
 import { User } from './../api/users/user.schema';
@@ -45,8 +46,7 @@ export class AuthService {
         registrationData: CreateUserDto,
         userSettings: CreateUserSettingsDto
     ): Promise<CreateUserDto> {
-        const rounds = 1;
-        const hashedPassword = await bcrypt.hash(registrationData.password, rounds);
+        const hashedPassword = await bcrypt.hash(registrationData.password, hashRounds);
         const userExists = await this.userService.findOneUserByEmail(registrationData.email);
         if (userExists) {
             throw new HttpException('User already exists', HttpStatus.CONFLICT);
