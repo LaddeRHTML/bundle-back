@@ -47,7 +47,6 @@ export class AppController {
         };
     }
 
-    @UseGuards(LocalAuthGuard)
     @Post('register')
     async register(
         @Req() req: Request,
