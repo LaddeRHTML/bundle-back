@@ -1,0 +1,9 @@
+to run kafka we need to start zookepeer
+
+to run zookeper we need to move in C:\Kafka, open bash, then press
+
+bin/windows/zookeeper-server-start.bat config/zookeeper.properties
+
+then 
+
+bin/windows/kafka-server-start.bat config/server.properties
