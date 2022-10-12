@@ -1,10 +1,11 @@
-import { UpdateProductDto } from './dto/update-product.dto';
-import { CreateProductDto } from './dto/create-product.dto';
-import { paginate } from 'utils/index';
-import { PaginationTypes } from 'interfaces/utils.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { PaginationTypes } from 'src/common/interfaces/utils.interface';
+import { paginate } from 'src/utils/index';
+
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, ProductsDocument } from './products.schema';
 
 @Injectable()

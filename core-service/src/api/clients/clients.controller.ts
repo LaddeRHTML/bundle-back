@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
 import { Request } from 'express';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { apiv1 } from 'src/common/constants/api-const';
+import { PaginationTypes } from 'src/common/interfaces/utils.interface';
 
 import { Client } from './clients.schema';
 import { ClientsService } from './clients.service';

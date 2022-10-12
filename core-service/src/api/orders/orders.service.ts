@@ -1,13 +1,14 @@
-import { ClientsService } from './../clients/clients.service';
-import { calcRelToAnyDate, paginate } from '../../utils/index';
-import { Order, OrderDocument } from './orders.schema';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PaginationTypes } from 'src/interfaces/utils.interface';
+import { PaginationTypes } from 'src/common/interfaces/utils.interface';
+
+import { calcRelToAnyDate, paginate } from '../../utils/index';
+import { Client } from '../clients/clients.schema';
+import { ClientsService } from './../clients/clients.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Client } from '../clients/clients.schema';
+import { Order, OrderDocument } from './orders.schema';
 
 @Injectable()
 export class OrdersService {

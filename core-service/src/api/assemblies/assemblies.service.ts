@@ -1,12 +1,13 @@
-import { paginate } from 'utils/index';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateAssemblyDto } from './dto/create-assemblies.dto';
+import { PaginationTypes } from 'src/common/interfaces/utils.interface';
+import { paginate } from 'src/utils/index';
+
 import { AssembliesDocument } from './assemblies.schema';
 import { Assembly } from './assemblies.schema';
+import { CreateAssemblyDto } from './dto/create-assemblies.dto';
+import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
 
 @Injectable()
 export class AssembliesService {

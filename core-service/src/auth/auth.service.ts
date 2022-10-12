@@ -2,11 +2,11 @@ import { HttpException, HttpStatus, Injectable, Req, Res } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto, CreateUserSettingsDto } from 'api/users/dto/create-user.dto';
 import { UsersService } from 'api/users/users.service';
+import { AccessToken } from 'auth/interface/auth.types';
 import * as bcrypt from 'bcryptjs';
-import { hashRounds } from 'src/constants/bcrypt';
-import { AccessToken } from 'src/types/auth.types';
+import { hashRounds } from 'src/common/constants/bcrypt';
 
-import { User } from './../api/users/user.schema';
+import { User } from '../api/users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {

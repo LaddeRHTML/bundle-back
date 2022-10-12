@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './filters/exception.filters';
+import { AllExceptionsFilter } from './common/filters/exception.filters';
 
 declare const module: any;
 
@@ -22,6 +22,6 @@ async function bootstrap() {
 
     app.useGlobalFilters(new AllExceptionsFilter());
 
-    await app.listen().then(() => console.log('running on 127.0.0.1:8888'));
+    await app.listen().then(() => console.log('running on localhost:5001'));
 }
 bootstrap();

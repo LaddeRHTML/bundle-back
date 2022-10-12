@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { passwords } from 'api/users/types/passwords.types';
 import * as bcrypt from 'bcryptjs';
-import { UserData } from 'interfaces/user.interface';
 import { Model } from 'mongoose';
-import { hashRounds } from 'src/constants/bcrypt';
-import { passwords } from 'types/passwords.types';
+import { hashRounds } from 'src/common/constants/bcrypt';
+import { UserData } from 'src/common/interfaces/user.interface';
 
 import { CreateUserDto, CreateUserSettingsDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserSettingsDto } from './dto/update-user.dto';
-import { User, UserDocument, UserSettings, UserSettingsDocument } from './user.schema';
+import { User, UserDocument, UserSettings, UserSettingsDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {

@@ -5,11 +5,11 @@ import { UsersService } from 'api/users/users.service';
 import { AuthService } from 'auth/auth.service';
 import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'auth/guards/local-auth.guard';
+import { AccessToken } from 'auth/interface/auth.types';
 import { Request, Response } from 'express';
-import { UserData } from 'interfaces/user.interface';
-import { AccessToken } from 'types/auth.types';
+import { UserData } from 'src/common/interfaces/user.interface';
 
-import { User } from '../api/users/user.schema';
+import { User } from '../api/users/schemas/user.schema';
 import { CHECK, LOGIN, REGISTER } from './constants/message.patterns';
 
 @Controller('/api/v1/auth/')

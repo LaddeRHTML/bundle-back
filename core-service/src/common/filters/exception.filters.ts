@@ -24,7 +24,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
          * @param message
          */
         const responseMessage = (type: string, message: string) => {
-            response.status(status).json({
+            console.log(response);
+            response?.status(status)?.json({
                 statusCode: status,
                 path: request.url,
                 errorType: type,

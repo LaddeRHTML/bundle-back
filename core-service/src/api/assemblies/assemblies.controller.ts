@@ -10,8 +10,8 @@ import {
     UseGuards
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { apiv1 } from 'src/common/constants/api-const';
+import { PaginationTypes } from 'src/common/interfaces/utils.interface';
 
 import { Assembly } from './assemblies.schema';
 import { AssembliesService } from './assemblies.service';

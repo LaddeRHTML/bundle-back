@@ -7,7 +7,7 @@
             "config/*": ["src/config/*"],
             "types/*": ["src/types/*"],
             "utils/*": ["src/utils/*"],
-            "interfaces/*": ["src/interfaces/*"]
+            "interfaces/*": ["src/common/interfaces/*"]
         },
         "module": "commonjs",
         "declaration": true,

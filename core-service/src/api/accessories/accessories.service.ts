@@ -1,12 +1,13 @@
-import { paginate } from 'utils/index';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { UpdateAccessoryDto } from './dto/update-accessories.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateAccessoryDto } from './dto/create-accessories.dto';
+import { PaginationTypes } from 'src/common/interfaces/utils.interface';
+import { paginate } from 'src/utils/index';
+
 import { AccessoriesDocument } from './accessories.schema';
 import { Accessory } from './accessories.schema';
+import { CreateAccessoryDto } from './dto/create-accessories.dto';
+import { UpdateAccessoryDto } from './dto/update-accessories.dto';
 
 @Injectable()
 export class AccessoriesService {

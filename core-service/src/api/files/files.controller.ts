@@ -15,9 +15,9 @@ import {
     UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterFile } from 'api/files/entities/multer.interface';
 import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
-import { MulterFile } from 'interfaces/multer.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { apiv1 } from 'src/common/constants/api-const';
 
 import { FileResponse } from './entities/file.response';
 import { FilesService } from './files.service';

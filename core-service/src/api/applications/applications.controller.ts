@@ -9,13 +9,12 @@ import {
     Query,
     UseGuards
 } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern } from '@nestjs/microservices';
 import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { apiv1 } from 'src/common/constants/api-const';
+import { PaginationTypes } from 'src/common/interfaces/utils.interface';
 
 import { ApplicationsService } from './applications.service';
-import { CREATE, GET_ALL, GET_FILTERED, GET_ONE, UPDATE } from './constants/message.patterns';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Application } from './schemas/applications.schema';
@@ -24,14 +23,15 @@ import { Application } from './schemas/applications.schema';
 export class ApplicationsController {
     constructor(private readonly applicationsService: ApplicationsService) {}
 
-    @MessagePattern(CREATE)
+    @MessagePattern('core_api_application_create')
     @Post()
-    create(@Body() createApplicationDto: CreateApplicationDto): Promise<Application> {
-        return this.applicationsService.create(createApplicationDto);
+    async create(@Body() createApplicationDto: CreateApplicationDto): Promise<Application> {
+        console.log(createApplicationDto);
+        return await this.applicationsService.create(createApplicationDto);
     }
 
-    @MessagePattern(GET_FILTERED)
-    @UseGuards(JwtAuthGuard)
+    @MessagePattern('core_api_application_filtered')
+    /* @UseGuards(JwtAuthGuard) */
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
@@ -40,22 +40,22 @@ export class ApplicationsController {
         return await this.applicationsService.findSortedItems(page, limit);
     }
 
-    @MessagePattern(GET_ALL)
+    @MessagePattern('core_api_application_get_all')
     /* @UseGuards(JwtAuthGuard) */
     @Get()
     findAll(): Promise<Application[]> {
         return this.applicationsService.findAll();
     }
 
-    @MessagePattern(GET_ONE)
-    @UseGuards(JwtAuthGuard)
+    @MessagePattern('core_api_application_get_one')
+    /* @UseGuards(JwtAuthGuard) */
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Application> {
         return this.applicationsService.findOne(id);
     }
 
-    @MessagePattern(UPDATE)
-    @UseGuards(JwtAuthGuard)
+    @MessagePattern('core_api_application_update')
+    /* @UseGuards(JwtAuthGuard) */
     @Patch(':id')
     update(
         @Param('id') id: string,

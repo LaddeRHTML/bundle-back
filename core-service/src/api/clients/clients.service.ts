@@ -1,30 +1,25 @@
-import { paginate } from 'utils/index';
-import { Client, ClientDocument } from './clients.schema';
-import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { PaginationTypes } from 'src/common/interfaces/utils.interface';
+import { paginate } from 'src/utils/index';
+import { calcRelToCurrentDate } from 'src/utils/index';
+
+import { Client, ClientDocument } from './clients.schema';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
-import { Model } from 'mongoose';
-import { calcRelToCurrentDate } from 'utils/index';
-import { PaginationTypes } from 'interfaces/utils.interface';
 
 @Injectable()
 export class ClientsService {
     constructor(@InjectModel('clients') private clientModel: Model<ClientDocument>) {}
 
     async create(createClientDto: CreateClientDto): Promise<Client> {
-
         try {
-
             createClientDto.age = calcRelToCurrentDate(createClientDto.birthDay, true);
-    
+
             return await this.clientModel.create(createClientDto);
-            
         } catch (error) {
-            throw new HttpException(
-                error,
-                HttpStatus.NOT_ACCEPTABLE
-            );
+            throw new HttpException(error, HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
@@ -39,7 +34,7 @@ export class ClientsService {
 
         if (parameter) {
             options = {
-                $or : [
+                $or: [
                     {
                         address: new RegExp(parameter, 'i')
                     },
@@ -59,7 +54,7 @@ export class ClientsService {
                         callManaged: new RegExp(parameter, 'i')
                     }
                 ]
-            }
+            };
         }
 
         const total = await this.clientModel.count(options).exec();
@@ -76,21 +71,14 @@ export class ClientsService {
     }
 
     async update(id: string, updateClientDto: UpdateClientDto, settings?: any): Promise<Client> {
-
         try {
-
             if (updateClientDto?.birthDay) {
                 updateClientDto.age = calcRelToCurrentDate(updateClientDto?.birthDay, true);
             }
-    
+
             return await this.clientModel.findByIdAndUpdate(id, updateClientDto, { settings });
-            
         } catch (error) {
-            throw new HttpException(
-                error,
-                HttpStatus.NOT_ACCEPTABLE
-            );
-            
+            throw new HttpException(error, HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
