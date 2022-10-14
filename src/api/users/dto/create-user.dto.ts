@@ -1,4 +1,4 @@
-import { User, UserSettings } from '../user.schema';
+import { User, UserSettings } from '../schema/user.schema';
 
 export class CreateUserDto extends User {}
 

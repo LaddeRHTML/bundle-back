@@ -9,16 +9,16 @@ import {
     Query,
     UseGuards
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import { apiVersion } from 'src/common/constants/api-const';
+import { Pagination } from 'src/common/interfaces/utils.interface';
 
-import { Assembly } from './assemblies.schema';
 import { AssembliesService } from './assemblies.service';
 import { CreateAssemblyDto } from './dto/create-assemblies.dto';
 import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
+import { Assembly } from './schema/assemblies.schema';
 
-@Controller(`${apiv1}/products/assemblies/`)
+@Controller(`${apiVersion}/products/assemblies/`)
 export class AssembliesController {
     constructor(private readonly assembliesService: AssembliesService) {}
 
@@ -38,7 +38,7 @@ export class AssembliesController {
     async findSortedItems(
         @Query('page') page: number,
         @Query('limit') limit: number
-    ): Promise<PaginationTypes> {
+    ): Promise<Pagination> {
         return await this.assembliesService.findSortedItems(page, limit);
     }
 

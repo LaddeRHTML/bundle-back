@@ -1,3 +1,3 @@
-import { Order } from '../orders.schema';
+import { Order } from '../schema/orders.schema';
 
 export class CreateOrderDto extends Order {}

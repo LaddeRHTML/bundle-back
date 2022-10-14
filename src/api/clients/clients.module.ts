@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ClientsService } from './clients.service';
-import { ClientsController } from './clients.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ClientSchema } from './clients.schema';
+
+import { ClientsController } from './clients.controller';
+import { ClientsService } from './clients.service';
+import { ClientSchema } from './schema/clients.schema';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: 'clients', schema: ClientSchema }])],
+    imports: [
+        MongooseModule.forFeature([
+            { name: process.env.COLLECTION_KEY_CLIENTS, schema: ClientSchema }
+        ])
+    ],
     controllers: [ClientsController],
     providers: [ClientsService],
     exports: [ClientsService]

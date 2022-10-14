@@ -1,13 +1,14 @@
-import { ClientsService } from './../clients/clients.service';
-import { calcRelToAnyDate, paginate } from '../../utils/index';
-import { Order, OrderDocument } from './orders.schema';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PaginationTypes } from 'src/interfaces/utils.interface';
+import { Pagination } from 'src/common/interfaces/utils.interface';
+
+import { calcRelToAnyDate, paginate } from '../../common/utils/index';
+import { Client } from '../clients/schema/clients.schema';
+import { ClientsService } from './../clients/clients.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Client } from '../clients/clients.schema';
+import { Order, OrderDocument } from './schema/orders.schema';
 
 @Injectable()
 export class OrdersService {
@@ -67,7 +68,7 @@ export class OrdersService {
         }
     }
 
-    async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
+    async findSortedItems(page: number, limit: number): Promise<Pagination> {
         const total = await this.orderModel.count({}).exec();
         const query = this.orderModel.find({}).populate('client');
         return paginate(page, query, limit, total);

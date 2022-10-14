@@ -9,16 +9,16 @@ import {
     Query,
     UseGuards
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import { apiVersion } from 'src/common/constants/api-const';
+import { Pagination } from 'src/common/interfaces/utils.interface';
 
-import { Accessory } from './accessories.schema';
 import { AccessoriesService } from './accessories.service';
 import { CreateAccessoryDto } from './dto/create-accessories.dto';
 import { UpdateAccessoryDto } from './dto/update-accessories.dto';
+import { Accessory } from './schema/accessories.schema';
 
-@Controller(`${apiv1}/products/accessories/`)
+@Controller(`${apiVersion}/products/accessories/`)
 export class AccessoriesController {
     constructor(private readonly accessoriesService: AccessoriesService) {}
 
@@ -38,7 +38,7 @@ export class AccessoriesController {
     async findSortedItems(
         @Query('page') page: number,
         @Query('limit') limit: number
-    ): Promise<PaginationTypes> {
+    ): Promise<Pagination> {
         return await this.accessoriesService.findSortedItems(page, limit);
     }
 

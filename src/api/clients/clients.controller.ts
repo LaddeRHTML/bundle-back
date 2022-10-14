@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import { Request } from 'express';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { apiVersion } from 'src/common/constants/api-const';
+import { Pagination } from 'src/common/interfaces/utils.interface';
 
-import { Client } from './clients.schema';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { Client } from './schema/clients.schema';
 
-@Controller(`${apiv1}/clients`)
+@Controller(`${apiVersion}/clients`)
 export class ClientsController {
     constructor(private readonly clientsService: ClientsService) {}
 
@@ -18,15 +18,6 @@ export class ClientsController {
     create(@Body() createClientDto: CreateClientDto): Promise<Client> {
         return this.clientsService.create(createClientDto);
     }
-
-    /* @UseGuards(JwtAuthGuard)
-    @Get('/filter?')
-    async findSortedItems(
-        @Query('page') page: number,
-        @Query('limit') limit: number
-    ): Promise<PaginationTypes> {
-        return await this.clientsService.findSortedItems(page, limit);
-    } */
 
     @UseGuards(JwtAuthGuard)
     @Get()
@@ -40,7 +31,7 @@ export class ClientsController {
         @Query('parameter') parameter: string,
         @Query('page') page: number,
         @Query('limit') limit: number
-    ): Promise<PaginationTypes> {
+    ): Promise<Pagination> {
         return await this.clientsService.findByQuery(parameter, page, limit);
     }
 

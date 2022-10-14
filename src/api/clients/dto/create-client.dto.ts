@@ -1,3 +1,3 @@
-import { Client } from '../clients.schema';
+import { Client } from '../schema/clients.schema';
 
 export class CreateClientDto extends Client {}

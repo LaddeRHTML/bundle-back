@@ -3,11 +3,11 @@
         "baseUrl": "./",
         "paths": {
             "api/*": ["src/api/*"],
-            "auth/*": ["src/auth/*"],
-            "config/*": ["src/config/*"],
-            "types/*": ["src/types/*"],
-            "utils/*": ["src/utils/*"],
-            "interfaces/*": ["src/interfaces/*"]
+            "auth/*": ["src/api/auth/*"],
+            "config/*": ["src/common/config/*"],
+            "types/*": ["src/common/types/*"],
+            "utils/*": ["src/common/utils/*"],
+            "interfaces/*": ["src/common/interfaces/*"]
         },
         "module": "commonjs",
         "declaration": true,
