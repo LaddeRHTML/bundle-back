@@ -1,11 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Order } from 'api/orders/schema/orders.schema';
+import type { OrderManaged } from 'api/orders/types/order-managed.types';
 import { Document } from 'mongoose';
 
 export type ClientDocument = Client & Document;
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_CLIENTS })
 export class Client {
-    @Prop({ required: false, ref: 'orders' })
+    @Prop({ required: false, ref: Order.name })
     orders: string[];
 
     @Prop({ required: true, default: '' })
@@ -53,8 +55,8 @@ export class Client {
     @Prop({ required: true, default: new Date() })
     firstContactDate: Date;
 
-    @Prop({ required: true, default: '' })
-    callManaged: 'Kirill' | 'Stepan' | 'Roman' | 'Oleg' | 'Azamat';
+    @Prop({ required: true, default: '', type: 'string' })
+    callManaged: OrderManaged;
 
     @Prop({ required: true, default: '' })
     comment: string;

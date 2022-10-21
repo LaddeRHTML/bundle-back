@@ -11,7 +11,7 @@ import { Application, ApplicationsDocument } from './schema/applications.schema'
 @Injectable()
 export class ApplicationsService {
     constructor(
-        @InjectModel('applications') private applicationsModel: Model<ApplicationsDocument>
+        @InjectModel(Application.name) private applicationsModel: Model<ApplicationsDocument>
     ) {}
 
     async create(createApplicationDto: CreateApplicationDto): Promise<Application> {

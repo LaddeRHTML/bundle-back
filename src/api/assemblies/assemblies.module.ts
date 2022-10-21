@@ -3,14 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { AssembliesController } from './assemblies.controller';
 import { AssembliesService } from './assemblies.service';
-import { AssemblySchema } from './schema/assemblies.schema';
+import { Assembly, AssemblySchema } from './schema/assemblies.schema';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            { name: process.env.COLLECTION_KEY_ASSEMBLIES, schema: AssemblySchema }
-        ])
-    ],
+    imports: [MongooseModule.forFeature([{ name: Assembly.name, schema: AssemblySchema }])],
     controllers: [AssembliesController],
     providers: [AssembliesService],
     exports: [AssembliesService]

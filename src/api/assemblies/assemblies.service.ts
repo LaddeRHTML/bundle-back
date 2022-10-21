@@ -12,8 +12,7 @@ import { Assembly } from './schema/assemblies.schema';
 @Injectable()
 export class AssembliesService {
     constructor(
-        @InjectModel('assemblies')
-        private assemblyModel: Model<AssembliesDocument>
+        @InjectModel(Assembly.name) private readonly assemblyModel: Model<AssembliesDocument>
     ) {}
 
     async create(createAssemblyDto: CreateAssemblyDto): Promise<Assembly> {

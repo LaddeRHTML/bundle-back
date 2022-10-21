@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigurationModule } from 'config/configuration.module';
 
-import { ClientSchema } from '../clients/schema/clients.schema';
+import { Client, ClientSchema } from '../clients/schema/clients.schema';
 import { ClientsService } from './../clients/clients.service';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
-import { OrdersSchema } from './schema/orders.schema';
+import { Order, OrdersSchema } from './schema/orders.schema';
 
 @Module({
     imports: [
+        ConfigurationModule,
         MongooseModule.forFeature([
-            { name: process.env.COLLECTION_KEY_ORDERS, schema: OrdersSchema }
-        ]),
-        MongooseModule.forFeature([
-            { name: process.env.COLLECTION_KEY_CLIENTS, schema: ClientSchema }
+            { name: Order.name, schema: OrdersSchema },
+            { name: Client.name, schema: ClientSchema }
         ])
     ],
     controllers: [OrdersController],

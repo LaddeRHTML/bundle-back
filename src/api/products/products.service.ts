@@ -11,8 +11,7 @@ import { Product, ProductsDocument } from './schema/products.schema';
 @Injectable()
 export class ProductsService {
     constructor(
-        @InjectModel('products')
-        private productModel: Model<ProductsDocument>
+        @InjectModel(Product.name) private readonly productModel: Model<ProductsDocument>
     ) {}
 
     async create(createProductDto: CreateProductDto): Promise<Product> {

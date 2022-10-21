@@ -18,7 +18,8 @@ import { CreateAccessoryDto } from './dto/create-accessories.dto';
 import { UpdateAccessoryDto } from './dto/update-accessories.dto';
 import { Accessory } from './schema/accessories.schema';
 
-@Controller(`${apiVersion}/products/accessories/`)
+const controllerName = `${apiVersion}/accessories/`;
+@Controller(controllerName)
 export class AccessoriesController {
     constructor(private readonly accessoriesService: AccessoriesService) {}
 

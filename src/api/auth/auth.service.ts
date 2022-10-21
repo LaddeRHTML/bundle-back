@@ -3,14 +3,21 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto, CreateUserSettingsDto } from 'api/users/dto/create-user.dto';
 import { UsersService } from 'api/users/users.service';
 import * as bcrypt from 'bcryptjs';
+import { ConfigurationService } from 'config/configuration.service';
 import { hashRounds } from 'src/common/constants/bcrypt';
 
 import { User } from '../users/schema/user.schema';
+import { jwtConstants } from './constants/jwt-const';
 import { AccessToken } from './interface/auth.interface';
+import { UserIdPayload } from './interface/userId.interface';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UsersService, private jwtService: JwtService) {}
+    constructor(
+        private readonly userService: UsersService,
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigurationService
+    ) {}
 
     async validateUser(email: string, password: string): Promise<CreateUserDto> {
         const user = await this.userService.findOneUserByEmail(email);
@@ -29,14 +36,17 @@ export class AuthService {
         return null;
     }
 
-    signJwt(payload: any) {
-        return this.jwtService.sign(payload);
+    signJwt(payload: UserIdPayload) {
+        return this.jwtService.sign(payload, {
+            expiresIn: this.configService.jwtExpiresIn
+        });
     }
 
     async login(req: User): Promise<AccessToken> {
         try {
             const userId = await req['_id'].toString();
-            return { access_token: this.signJwt({ userId }) };
+            const access_token = this.signJwt({ userId });
+            return { access_token };
         } catch (error) {
             throw error;
         }

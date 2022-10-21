@@ -18,7 +18,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { Product } from './schema/products.schema';
 
-@Controller(`${apiVersion}/products/finished/`)
+const controllerName = `${apiVersion}/products/`;
+
+@Controller(controllerName)
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 

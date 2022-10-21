@@ -18,7 +18,9 @@ import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { Application } from './schema/applications.schema';
 
-@Controller(`${apiVersion}/applications`)
+const controllerName = `${apiVersion}/applications`;
+
+@Controller(controllerName)
 export class ApplicationsController {
     constructor(private readonly applicationsService: ApplicationsService) {}
 

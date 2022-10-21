@@ -8,7 +8,7 @@ export class GridFsMulterConfigService implements MulterOptionsFactory {
 
     constructor() {
         this.gridFsStorage = new GridFsStorage({
-            url: process.env.DB_CONN,
+            url: process.env.MONGODB_URI,
             file: (req, file) => {
                 return new Promise((resolve, reject) => {
                     const filename = file.originalname.trim();

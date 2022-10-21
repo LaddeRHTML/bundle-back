@@ -4,17 +4,20 @@ import { Model } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
 import { calcRelToAnyDate, paginate } from '../../common/utils/index';
-import { Client } from '../clients/schema/clients.schema';
+import { Client, ClientDocument } from '../clients/schema/clients.schema';
 import { ClientsService } from './../clients/clients.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order, OrderDocument } from './schema/orders.schema';
 
+const clientRef = 'client';
+
 @Injectable()
 export class OrdersService {
     constructor(
-        @InjectModel('orders') private orderModel: Model<OrderDocument>,
-        private clientsService: ClientsService
+        @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
+        @InjectModel(Client.name) private readonly clientModel: Model<ClientDocument>,
+        private readonly clientsService: ClientsService
     ) {}
 
     async create(clientId: string, createOrderDto: CreateOrderDto): Promise<Order | Client> {
@@ -70,16 +73,22 @@ export class OrdersService {
 
     async findSortedItems(page: number, limit: number): Promise<Pagination> {
         const total = await this.orderModel.count({}).exec();
-        const query = this.orderModel.find({}).populate('client');
+        const query = this.orderModel
+            .find({})
+            .populate({ path: clientRef, model: this.clientModel });
         return paginate(page, query, limit, total);
     }
 
     async findAll(): Promise<Order[]> {
-        return await this.orderModel.find({}).populate('client');
+        return await this.orderModel
+            .find({})
+            .populate({ path: clientRef, model: this.clientModel });
     }
 
     async findOne(_id: string): Promise<Order> {
-        return await this.orderModel.findOne({ _id }).populate('client');
+        return await this.orderModel
+            .findOne({ _id })
+            .populate({ path: clientRef, model: this.clientModel });
     }
 
     async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {

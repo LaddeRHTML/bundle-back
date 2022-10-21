@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { UserSchema, UserSetgingsSchema } from './schema/user.schema';
+import { User, UserSchema, UserSettings, UserSettingsSchema } from './schema/user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
-            { name: process.env.COLLECTION_KEY_USERS, schema: UserSchema },
-            { name: process.env.COLLECTION_KEY_USERS_SETTINGS, schema: UserSetgingsSchema }
+            { name: User.name, schema: UserSchema },
+            { name: UserSettings.name, schema: UserSettingsSchema }
         ])
     ],
     controllers: [UsersController],

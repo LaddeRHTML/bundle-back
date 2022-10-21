@@ -11,7 +11,7 @@ import { Accessory } from './schema/accessories.schema';
 
 @Injectable()
 export class AccessoriesService {
-    constructor(@InjectModel('accessories') private accessoryModel: Model<AccessoriesDocument>) {}
+    constructor(@InjectModel(Accessory.name) private accessoryModel: Model<AccessoriesDocument>) {}
 
     async create(createAccessoryDto: CreateAccessoryDto): Promise<Accessory> {
         return await this.accessoryModel.create(createAccessoryDto);

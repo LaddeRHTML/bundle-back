@@ -4,7 +4,7 @@ import { KeyValueObject } from 'src/common/interfaces/product.interface';
 
 export type AssembliesDocument = Assembly & Document;
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_ASSEMBLIES })
 export class Assembly {
     @Prop({ required: true, default: 'assemblies' })
     category: string;

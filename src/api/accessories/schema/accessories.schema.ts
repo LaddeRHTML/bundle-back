@@ -5,7 +5,7 @@ import { KeyValueObject } from 'src/common/interfaces/product.interface';
 
 export type AccessoriesDocument = Accessory & Document;
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_ACCESSORIES })
 export class Accessory {
     @Prop({ required: true, default: 'accessories' })
     category: string;

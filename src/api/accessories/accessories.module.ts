@@ -4,14 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { AccessoriesController } from './accessories.controller';
 import { AccessoriesService } from './accessories.service';
-import { AccessorySchema } from './schema/accessories.schema';
+import { Accessory, AccessorySchema } from './schema/accessories.schema';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            { name: process.env.COLLECTION_KEY_ACCESSORIES, schema: AccessorySchema }
-        ])
-    ],
+    imports: [MongooseModule.forFeature([{ name: Accessory.name, schema: AccessorySchema }])],
     controllers: [AccessoriesController],
     providers: [AccessoriesService],
     exports: [AccessoriesService]

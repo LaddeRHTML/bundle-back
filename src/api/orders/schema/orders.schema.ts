@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { DeliveredBy } from '../types/deliverer.types';
-import { OrderManaged } from '../types/order-managed.types';
-import { OrderStatus } from '../types/order-status.types';
+import type { DeliveredBy } from '../types/deliverer.types';
+import type { OrderManaged } from '../types/order-managed.types';
+import type { OrderStatus } from '../types/order-status.types';
 
 export type OrderDocument = Order & Document;
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_ORDERS })
 export class Order {
     @Prop({ required: true, default: '', ref: 'clients' })
     client: string;
@@ -37,7 +37,7 @@ export class Order {
     @Prop({ required: true, default: new Date() })
     deliveryDate: Date;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: true, default: '', type: 'string' })
     deliveredBy: DeliveredBy;
 
     @Prop({ required: true, default: new Date() })
@@ -46,7 +46,7 @@ export class Order {
     @Prop({ required: true, default: '' })
     referal: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: true, default: '', type: 'string' })
     orderStatus: OrderStatus;
 
     @Prop({ required: false, default: 0 })
@@ -82,7 +82,7 @@ export class Order {
     @Prop({ required: true, default: new Date() })
     warrantyEndDate: Date;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: true, default: '', type: 'string' })
     orderManaged: OrderManaged;
 
     @Prop({ required: true, default: '' })

@@ -9,7 +9,9 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrdersService } from './orders.service';
 import { Order } from './schema/orders.schema';
 
-@Controller(`${apiVersion}/orders`)
+const controllerName = `${apiVersion}/orders`;
+
+@Controller(controllerName)
 export class OrdersController {
     constructor(private readonly orderService: OrdersService) {}
 

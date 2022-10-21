@@ -3,7 +3,10 @@ import { Document } from 'mongoose';
 
 export type ApplicationsDocument = Application & Document;
 
-@Schema({ versionKey: false })
+@Schema({
+    versionKey: false,
+    collection: process.env.COLLECTION_KEY_APPLICATIONS
+})
 export class Application {
     @Prop({ required: true })
     creatorName: string;

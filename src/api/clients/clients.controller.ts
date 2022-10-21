@@ -9,7 +9,9 @@ import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './schema/clients.schema';
 
-@Controller(`${apiVersion}/clients`)
+const controllerName = `${apiVersion}/clients`;
+
+@Controller(controllerName)
 export class ClientsController {
     constructor(private readonly clientsService: ClientsService) {}
 

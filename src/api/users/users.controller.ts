@@ -9,7 +9,9 @@ import { UpdateUserDto, UpdateUserSettingsDto } from './dto/update-user.dto';
 import { User, UserSettings } from './schema/user.schema';
 import { UsersService } from './users.service';
 
-@Controller(`${apiVersion}/users`)
+const controllerName = `${apiVersion}/users`;
+
+@Controller(controllerName)
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 

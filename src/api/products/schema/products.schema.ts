@@ -6,12 +6,12 @@ import { TemplateType } from '../types/template.types';
 
 export type ProductsDocument = Product & Document;
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_PRODUCTS })
 export class Product {
     @Prop({ required: true, default: 'assemblies' })
     category: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: true, default: '', type: 'string' })
     templateType: TemplateType;
 
     @Prop({ required: true, default: '' })

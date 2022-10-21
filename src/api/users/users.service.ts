@@ -13,9 +13,9 @@ import { User, UserDocument, UserSettings, UserSettingsDocument } from './schema
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel('users') private userModel: Model<UserDocument>,
-        @InjectModel('userSettings')
-        private userSettingsModel: Model<UserSettingsDocument>
+        @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+        @InjectModel(UserSettings.name)
+        private readonly userSettingsModel: Model<UserSettingsDocument>
     ) {}
 
     create(
@@ -48,9 +48,7 @@ export class UsersService {
     }
 
     async findAllUsersWithSettings(): Promise<UserSettings[]> {
-        const usersData = await this.userSettingsModel
-            .find({})
-            .populate(process.env.COLLECTION_KEY_USERS, 'name email');
+        const usersData = await this.userSettingsModel.find({}).populate('user', 'name email');
         return usersData;
     }
 

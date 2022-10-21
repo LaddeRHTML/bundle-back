@@ -11,7 +11,9 @@ import { apiVersion } from 'src/common/constants/api-const';
 import { User } from '../users/schema/user.schema';
 import { AccessToken } from './interface/auth.interface';
 
-@Controller(`${apiVersion}/auth/`)
+const controllerName = `${apiVersion}/auth/`;
+
+@Controller(controllerName)
 export class AuthController {
     constructor(private authService: AuthService, private usersService: UsersService) {}
 

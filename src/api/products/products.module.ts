@@ -3,14 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
-import { ProductsSchema } from './schema/products.schema';
+import { Product, ProductsSchema } from './schema/products.schema';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            { name: process.env.COLLECTION_KEY_PRODUCTS, schema: ProductsSchema }
-        ])
-    ],
+    imports: [MongooseModule.forFeature([{ name: Product.name, schema: ProductsSchema }])],
     controllers: [ProductsController],
     providers: [ProductsService],
     exports: [ProductsService]

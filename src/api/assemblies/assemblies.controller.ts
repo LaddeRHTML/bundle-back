@@ -18,7 +18,8 @@ import { CreateAssemblyDto } from './dto/create-assemblies.dto';
 import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
 import { Assembly } from './schema/assemblies.schema';
 
-@Controller(`${apiVersion}/products/assemblies/`)
+const controllerName = `${apiVersion}/assemblies/`;
+@Controller(controllerName)
 export class AssembliesController {
     constructor(private readonly assembliesService: AssembliesService) {}
 
