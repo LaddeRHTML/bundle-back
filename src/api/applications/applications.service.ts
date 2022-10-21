@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { paginate } from 'utils/index';
-import { Application, ApplicationsDocument } from './applications.schema';
+import { Pagination } from 'src/common/interfaces/utils.interface';
+import { paginate } from 'src/common/utils/index';
+
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
+import { Application, ApplicationsDocument } from './schema/applications.schema';
 
 @Injectable()
 export class ApplicationsService {
     constructor(
-        @InjectModel('applications') private applicationsModel: Model<ApplicationsDocument>
+        @InjectModel(Application.name) private applicationsModel: Model<ApplicationsDocument>
     ) {}
 
     async create(createApplicationDto: CreateApplicationDto): Promise<Application> {
         return await this.applicationsModel.create(createApplicationDto);
     }
 
-    async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
+    async findSortedItems(page: number, limit: number): Promise<Pagination> {
         const total = await this.applicationsModel.count({}).exec();
         const query = this.applicationsModel.find({});
         return paginate(page, query, limit, total);

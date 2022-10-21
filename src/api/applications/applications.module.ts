@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ApplicationsService } from './applications.service';
-import { ApplicationsController } from './applications.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ApplicationsSchema } from './applications.schema';
+
+import { ApplicationsController } from './applications.controller';
+import { ApplicationsService } from './applications.service';
+import { Application, ApplicationsSchema } from './schema/applications.schema';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{name: "applications", schema: ApplicationsSchema}])
-  ],
-  controllers: [ApplicationsController],
-  providers: [ApplicationsService]
+    imports: [MongooseModule.forFeature([{ name: Application.name, schema: ApplicationsSchema }])],
+    controllers: [ApplicationsController],
+    providers: [ApplicationsService]
 })
 export class ApplicationsModule {}

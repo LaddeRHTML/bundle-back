@@ -6,23 +6,21 @@ import {
     HttpException,
     HttpStatus,
     Param,
-    Patch,
     Post,
     Res,
     UploadedFile,
-    UploadedFiles,
     UseGuards,
     UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
-import { MulterFile } from 'interfaces/multer.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import { MulterFile } from 'api/files/interface/multer.interface';
+import { apiVersion } from 'src/common/constants/api-const';
 
-import { FileResponse } from './entities/file.response';
-import { FilesService } from './files.service';
+import { FileResponse } from './interface/file.response';
+import { FilesService } from './service/files.service';
 
-@Controller(`${apiv1}/files`)
+@Controller(`${apiVersion}/files`)
 export class FilesController {
     constructor(private readonly filesService: FilesService) {}
 

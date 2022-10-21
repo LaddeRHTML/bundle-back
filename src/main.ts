@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 
-import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './filters/exception.filters';
+import { AppModule } from './app/app.module';
+import { AllExceptionsFilter } from './common/filters/exception.filters';
 
 declare const module: any;
 

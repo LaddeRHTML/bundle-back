@@ -1,15 +1,17 @@
 import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
-import { UserData } from 'interfaces/user.interface';
-import { apiv1 } from 'src/constants/api-const';
-import { passwords } from 'types/passwords.types';
+import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import { UserPasswords } from 'api/users/interface/passwords.interface';
+import { UserData } from 'api/users/interface/user.interface';
+import { apiVersion } from 'src/common/constants/api-const';
 
 import { CreateUserDto, CreateUserSettingsDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserSettingsDto } from './dto/update-user.dto';
-import { User, UserSettings } from './user.schema';
+import { User, UserSettings } from './schema/user.schema';
 import { UsersService } from './users.service';
 
-@Controller(`${apiv1}/users`)
+const controllerName = `${apiVersion}/users`;
+
+@Controller(controllerName)
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
@@ -76,7 +78,10 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard)
     @Post('/password/update')
-    async updateUserPassword(@Request() req: any, @Body() passwords: passwords): Promise<boolean> {
+    async updateUserPassword(
+        @Request() req: any,
+        @Body() passwords: UserPasswords
+    ): Promise<boolean> {
         return await this.usersService.updateUserPassword(req, passwords);
     }
 

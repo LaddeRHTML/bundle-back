@@ -1,15 +1,17 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { apiv1 } from 'src/constants/api-const';
+import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import { apiVersion } from 'src/common/constants/api-const';
+import { Pagination } from 'src/common/interfaces/utils.interface';
 
-import { Client } from '../clients/clients.schema';
+import { Client } from '../clients/schema/clients.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Order } from './orders.schema';
 import { OrdersService } from './orders.service';
+import { Order } from './schema/orders.schema';
 
-@Controller(`${apiv1}/orders`)
+const controllerName = `${apiVersion}/orders`;
+
+@Controller(controllerName)
 export class OrdersController {
     constructor(private readonly orderService: OrdersService) {}
 
@@ -27,7 +29,7 @@ export class OrdersController {
     async findSortedItems(
         @Query('page') page: number,
         @Query('limit') limit: number
-    ): Promise<PaginationTypes> {
+    ): Promise<Pagination> {
         return await this.orderService.findSortedItems(page, limit);
     }
 

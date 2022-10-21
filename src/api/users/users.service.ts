@@ -1,20 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { UserPasswords } from 'api/users/interface/passwords.interface';
+import { UserData } from 'api/users/interface/user.interface';
 import * as bcrypt from 'bcryptjs';
-import { UserData } from 'interfaces/user.interface';
 import { Model } from 'mongoose';
-import { hashRounds } from 'src/constants/bcrypt';
-import { passwords } from 'types/passwords.types';
+import { hashRounds } from 'src/common/constants/bcrypt';
 
 import { CreateUserDto, CreateUserSettingsDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserSettingsDto } from './dto/update-user.dto';
-import { User, UserDocument, UserSettings, UserSettingsDocument } from './user.schema';
+import { User, UserDocument, UserSettings, UserSettingsDocument } from './schema/user.schema';
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel('user') private userModel: Model<UserDocument>,
-        @InjectModel('userSettings') private userSettingsModel: Model<UserSettingsDocument>
+        @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+        @InjectModel(UserSettings.name)
+        private readonly userSettingsModel: Model<UserSettingsDocument>
     ) {}
 
     create(
@@ -48,9 +49,6 @@ export class UsersService {
 
     async findAllUsersWithSettings(): Promise<UserSettings[]> {
         const usersData = await this.userSettingsModel.find({}).populate('user', 'name email');
-        usersData.forEach((user) => {
-            user.userId = undefined;
-        });
         return usersData;
     }
 
@@ -105,7 +103,7 @@ export class UsersService {
         };
     }
 
-    async updateUserPassword(req: any, passwords: passwords): Promise<boolean> {
+    async updateUserPassword(req: any, passwords: UserPasswords): Promise<boolean> {
         const { oldPassword, newPassword } = passwords;
         try {
             const samePass = 'Passwords are the same!';

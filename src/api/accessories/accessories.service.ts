@@ -1,16 +1,17 @@
-import { paginate } from 'utils/index';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { UpdateAccessoryDto } from './dto/update-accessories.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Pagination } from 'src/common/interfaces/utils.interface';
+import { paginate } from 'src/common/utils/index';
+
 import { CreateAccessoryDto } from './dto/create-accessories.dto';
-import { AccessoriesDocument } from './accessories.schema';
-import { Accessory } from './accessories.schema';
+import { UpdateAccessoryDto } from './dto/update-accessories.dto';
+import { AccessoriesDocument } from './schema/accessories.schema';
+import { Accessory } from './schema/accessories.schema';
 
 @Injectable()
 export class AccessoriesService {
-    constructor(@InjectModel('accessories') private accessoryModel: Model<AccessoriesDocument>) {}
+    constructor(@InjectModel(Accessory.name) private accessoryModel: Model<AccessoriesDocument>) {}
 
     async create(createAccessoryDto: CreateAccessoryDto): Promise<Accessory> {
         return await this.accessoryModel.create(createAccessoryDto);
@@ -20,7 +21,7 @@ export class AccessoriesService {
         return await this.accessoryModel.find({});
     }
 
-    async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
+    async findSortedItems(page: number, limit: number): Promise<Pagination> {
         const total = await this.accessoryModel.count({}).exec();
         const query = this.accessoryModel.find({});
         return paginate(page, query, limit, total);

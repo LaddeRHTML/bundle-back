@@ -1,16 +1,19 @@
-import { paginate } from 'utils/index';
-import { PaginationTypes } from 'interfaces/utils.interface';
-import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Pagination } from 'src/common/interfaces/utils.interface';
+import { paginate } from 'src/common/utils/index';
+
 import { CreateAssemblyDto } from './dto/create-assemblies.dto';
-import { AssembliesDocument } from './assemblies.schema';
-import { Assembly } from './assemblies.schema';
+import { UpdateAssemblyDto } from './dto/update-assemblies.dto';
+import { AssembliesDocument } from './schema/assemblies.schema';
+import { Assembly } from './schema/assemblies.schema';
 
 @Injectable()
 export class AssembliesService {
-    constructor(@InjectModel('assemblies') private assemblyModel: Model<AssembliesDocument>) {}
+    constructor(
+        @InjectModel(Assembly.name) private readonly assemblyModel: Model<AssembliesDocument>
+    ) {}
 
     async create(createAssemblyDto: CreateAssemblyDto): Promise<Assembly> {
         return await this.assemblyModel.create(createAssemblyDto);
@@ -20,7 +23,7 @@ export class AssembliesService {
         return await this.assemblyModel.find({});
     }
 
-    async findSortedItems(page: number, limit: number): Promise<PaginationTypes> {
+    async findSortedItems(page: number, limit: number): Promise<Pagination> {
         const total = await this.assemblyModel.count({}).exec();
         const query = this.assemblyModel.find({});
         return paginate(page, query, limit, total);
