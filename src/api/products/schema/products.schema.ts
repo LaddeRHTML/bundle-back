@@ -11,7 +11,7 @@ export class Product {
     @Prop({ required: true, default: 'assemblies' })
     category: string;
 
-    @Prop({ required: true, default: '', type: 'string' })
+    @Prop({ required: false, default: '', type: 'string' })
     templateType: TemplateType;
 
     @Prop({ required: true, default: '' })
@@ -35,32 +35,32 @@ export class Product {
     @Prop({ required: false })
     pictures: [string];
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     previewPicture: string;
 
     @Prop({ required: false, default: 0, min: 0, max: 5 })
     rating: number;
 
-    @Prop({ required: true, default: 0 })
+    @Prop({ required: false, default: 0 })
     count: number;
 
     @Prop({ default: [] })
     characteristics: [KeyValueObject];
 
     // notebook/other
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     class: string;
 
     @Prop({ required: false, default: '' })
     vendorСode: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     maker: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     weight: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     model: string;
 
     @Prop({ required: true })

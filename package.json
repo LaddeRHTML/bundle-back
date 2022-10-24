@@ -39,6 +39,7 @@
         "mongo-gridfs": "^1.1.0",
         "mongoose": "^6.3.3",
         "multer-gridfs-storage": "^5.0.2",
+        "node-xlsx": "^0.21.0",
         "passport": "^0.5.2",
         "passport-jwt": "^4.0.0",
         "passport-local": "^1.0.0",
@@ -46,7 +47,8 @@
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.2",
         "rxjs": "^7.2.0",
-        "swagger-ui-express": "^4.3.0"
+        "swagger-ui-express": "^4.3.0",
+        "xlsx": "^0.18.5"
     },
     "devDependencies": {
         "@babel/plugin-proposal-decorators": "^7.19.3",

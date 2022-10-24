@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 import { paginate } from 'src/common/utils/index';
+import { SortExcelSheetData } from 'utils/excel.sort';
+import * as XLSX from 'xlsx';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -42,5 +44,35 @@ export class ProductsService {
 
     async remove(_id: string): Promise<Product> {
         return await this.productModel.findOneAndRemove({ _id });
+    }
+
+    getDataFromExcel() {
+        const wb: XLSX.WorkBook = XLSX.readFile(`./WW_dealers.xlsx`);
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+        const products = SortExcelSheetData(data).map((i) => {
+            const categoryFromExcel = i?.category[0];
+            const productsFromExcel = i?.products.map((p) => {
+                const product = new CreateProductDto();
+
+                product.category = categoryFromExcel;
+                product.name = p?.[1];
+                product.marketprice = p?.[2];
+                product.price = p?.[3];
+                product.supplierPrice = p?.[4];
+                product.warrantyDays = (p?.[5] as unknown as number) * 30;
+
+                return product;
+            });
+
+            return productsFromExcel;
+        });
+
+        return products.flat(2);
+    }
+
+    async createMultipleItems(products: CreateProductDto[]) {
+        return await this.productModel.create(products);
     }
 }

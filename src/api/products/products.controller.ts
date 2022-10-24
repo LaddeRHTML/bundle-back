@@ -18,7 +18,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { Product } from './schema/products.schema';
 
-const controllerName = `${apiVersion}/products/`;
+const controllerName = `${apiVersion}/products`;
 
 @Controller(controllerName)
 export class ProductsController {
@@ -44,19 +44,26 @@ export class ProductsController {
         return await this.productsService.findSortedItems(page, limit);
     }
 
-    @Get(':id')
+    /* @UseGuards(JwtAuthGuard) */
+    @Post('/excel')
+    async createMultipleItems() {
+        const products = this.productsService.getDataFromExcel();
+        return await this.productsService.createMultipleItems(products);
+    }
+
+    @Get('/:id')
     findOne(@Param('id') id: string): Promise<Product> {
         return this.productsService.findOne(id);
     }
 
     @UseGuards(JwtAuthGuard)
-    @Patch(':id')
+    @Patch('/:id')
     update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {
         return this.productsService.update(id, updateProductDto);
     }
 
     @UseGuards(JwtAuthGuard)
-    @Delete(':id')
+    @Delete('/:id')
     remove(@Param('id') id: string): Promise<Product> {
         return this.productsService.remove(id);
     }
