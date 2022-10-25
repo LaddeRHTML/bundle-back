@@ -17,7 +17,7 @@ import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
 import { apiVersion } from 'src/common/constants/api-const';
 
-import { FileResponse } from './interface/file.response';
+import { FileResponse, UploadFileResponse } from './interface/file.response';
 import { FilesService } from './service/files.service';
 
 @Controller(`${apiVersion}/files`)
@@ -27,7 +27,7 @@ export class FilesController {
     @UseGuards(JwtAuthGuard)
     @Post()
     @UseInterceptors(FileInterceptor('image'))
-    async uploadFile(@UploadedFile() file: MulterFile): Promise<any> {
+    async uploadFile(@UploadedFile() file: MulterFile): Promise<UploadFileResponse> {
         const response = {
             originalname: file.originalname,
             encoding: file.encoding,

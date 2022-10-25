@@ -10,9 +10,6 @@ export class Accessory {
     @Prop({ required: true, default: 'accessories' })
     category: string;
 
-    @Prop({ required: true, default: 'accessories' })
-    templateType: string;
-
     @Prop({ required: true, default: '' })
     name: string;
 

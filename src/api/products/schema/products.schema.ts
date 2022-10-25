@@ -8,11 +8,8 @@ export type ProductsDocument = Product & Document;
 
 @Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_PRODUCTS })
 export class Product {
-    @Prop({ required: true, default: 'assemblies' })
+    @Prop({ required: true, default: 'home_c' })
     category: string;
-
-    @Prop({ required: false, default: '', type: 'string' })
-    templateType: TemplateType;
 
     @Prop({ required: true, default: '' })
     name: string;

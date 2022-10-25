@@ -9,6 +9,6 @@ export type ExcelClearSheetProduct = [
     string?
 ];
 export type FilteredItem = {
-    category: string[];
+    category: string;
     products: ExcelClearSheetProduct[];
 };

@@ -1,4 +1,4 @@
-import { CATEGORIES_TO_DELETE } from 'api/products/constants/categories';
+import { AVAILABLE_CATEGORIES, CATEGORIES_TO_DELETE } from 'api/products/constants/categories';
 import {
     ExcelClearSheetProduct,
     ExcelSheetProduct,
@@ -30,17 +30,17 @@ export const SortExcelSheetData = (data: unknown[]) => {
         const el: number = categoriesI[i];
         const nextEl: number = categoriesI[i + 1];
 
-        const currentCategory = cleanData[el];
+        const currentCategory = cleanData[el][0];
 
         const categorizedObj = {
-            category: currentCategory,
+            category: AVAILABLE_CATEGORIES[currentCategory] || currentCategory,
             products: cleanData.slice(el + 1, nextEl - 1)
         };
         filteredData.push(categorizedObj as FilteredItem);
     }
 
     const availableProducts = filteredData.filter((i) => {
-        return !CATEGORIES_TO_DELETE.includes(i.category[0]);
+        return !CATEGORIES_TO_DELETE.includes(i.category);
     });
 
     return availableProducts;
