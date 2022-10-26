@@ -15,7 +15,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
+import { Role } from 'api/users/enum/roles.enum';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
@@ -30,18 +32,24 @@ const controllerName = `${apiVersion}/products`;
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Post('')
     create(@Body() createProductDto: CreateProductDto): Promise<Product> {
         return this.productsService.create(createProductDto);
     }
 
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get()
     findAll(): Promise<Product[]> {
         return this.productsService.findAll();
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get('/search?')
     async findSortedItems(
         @Query('parameter') parameter: string,
@@ -51,7 +59,7 @@ export class ProductsController {
         return await this.productsService.findByQuery(parameter, page, limit);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Admin))
     @UseInterceptors(FileInterceptor('excel-dealer-file'))
     @Post('/excel')
     async createMultipleItems(@UploadedFile() file: MulterFile) {
@@ -62,18 +70,22 @@ export class ProductsController {
         return await this.productsService.manipulateMultipleItems(products);
     }
 
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<Product> {
         return this.productsService.findOne(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Patch('/:id')
     update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {
         return this.productsService.update(id, updateProductDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Admin))
     @Delete('/:id')
     remove(@Param('id') id: string): Promise<Product> {
         return this.productsService.remove(id);

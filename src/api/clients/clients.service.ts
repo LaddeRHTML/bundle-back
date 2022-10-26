@@ -80,7 +80,7 @@ export class ClientsService {
         }
     }
 
-    /* remove(id: number) {
-        return `This action removes a #${id} client`;
-    } */
+    async remove(id: string) {
+        return await this.clientModel.findOneAndDelete({ _id: id });
+    }
 }

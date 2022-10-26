@@ -134,7 +134,7 @@ export class OrdersService {
         return await this.orderModel.findByIdAndUpdate(id, updateOrderDto);
     }
 
-    /* remove(id: number) {
-        return `This action removes a #${id} client`;
-    } */
+    async remove(id: string) {
+        return await this.clientModel.findByIdAndDelete({ _id: id });
+    }
 }

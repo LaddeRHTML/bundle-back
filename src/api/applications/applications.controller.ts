@@ -10,6 +10,8 @@ import {
     UseGuards
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import RoleGuard from 'api/auth/guards/role-auth.guard';
+import { Role } from 'api/users/enum/roles.enum';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
@@ -24,12 +26,16 @@ const controllerName = `${apiVersion}/applications`;
 export class ApplicationsController {
     constructor(private readonly applicationsService: ApplicationsService) {}
 
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Post()
     create(@Body() createApplicationDto: CreateApplicationDto): Promise<Application> {
         return this.applicationsService.create(createApplicationDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
@@ -38,19 +44,24 @@ export class ApplicationsController {
         return await this.applicationsService.findSortedItems(page, limit);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get()
     findAll(): Promise<Application[]> {
         return this.applicationsService.findAll();
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Application> {
         return this.applicationsService.findOne(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Patch(':id')
     update(
         @Param('id') id: string,
@@ -59,8 +70,9 @@ export class ApplicationsController {
         return this.applicationsService.update(id, updateApplicationDto);
     }
 
-    /* @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.applicationsService.remove(+id);
-  } */
+    @UseGuards(RoleGuard(Role.Admin))
+    @Delete(':id')
+    async remove(@Param('id') id: string) {
+        return await this.applicationsService.remove(id);
+    }
 }

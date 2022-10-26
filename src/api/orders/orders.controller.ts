@@ -1,5 +1,16 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseGuards
+} from '@nestjs/common';
+import RoleGuard from 'api/auth/guards/role-auth.guard';
+import { Role } from 'api/users/enum/roles.enum';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
@@ -15,7 +26,8 @@ const controllerName = `${apiVersion}/orders`;
 export class OrdersController {
     constructor(private readonly orderService: OrdersService) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Post('/create?')
     create(
         @Query('clientId') clientId: string,
@@ -24,7 +36,9 @@ export class OrdersController {
         return this.orderService.create(clientId, createOrderDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
@@ -33,26 +47,32 @@ export class OrdersController {
         return await this.orderService.findSortedItems(page, limit);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get()
     findAll(): Promise<Order[]> {
         return this.orderService.findAll();
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Order> {
         return this.orderService.findOne(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Patch(':id')
     update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<Order> {
         return this.orderService.update(id, updateOrderDto);
     }
 
-    /* @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientsService.remove(id);
-  } */
+    @UseGuards(RoleGuard(Role.Admin))
+    @Delete(':id')
+    async remove(@Param('id') id: string) {
+        return await this.orderService.remove(id);
+    }
 }

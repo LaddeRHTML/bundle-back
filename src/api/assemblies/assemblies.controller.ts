@@ -10,6 +10,8 @@ import {
     UseGuards
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import RoleGuard from 'api/auth/guards/role-auth.guard';
+import { Role } from 'api/users/enum/roles.enum';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
@@ -23,18 +25,24 @@ const controllerName = `${apiVersion}/assemblies/`;
 export class AssembliesController {
     constructor(private readonly assembliesService: AssembliesService) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Post('')
     create(@Body() createAssemblyDto: CreateAssemblyDto): Promise<Assembly> {
         return this.assembliesService.create(createAssemblyDto);
     }
 
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get()
     findAll(): Promise<Assembly[]> {
         return this.assembliesService.findAll();
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
@@ -43,12 +51,16 @@ export class AssembliesController {
         return await this.assembliesService.findSortedItems(page, limit);
     }
 
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Assembly> {
         return this.assembliesService.findOne(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Patch(':id')
     update(
         @Param('id') id: string,
@@ -57,7 +69,7 @@ export class AssembliesController {
         return this.assembliesService.update(id, updateAssemblyDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Admin))
     @Delete(':id')
     remove(@Param('id') id: string): Promise<Assembly> {
         return this.assembliesService.remove(id);
