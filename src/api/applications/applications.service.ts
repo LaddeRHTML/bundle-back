@@ -40,7 +40,7 @@ export class ApplicationsService {
         );
     }
 
-    /* remove(id: number) {
-    return `This action removes a #${id} application`;
-  } */
+    async remove(id: string) {
+        return await this.applicationsModel.findByIdAndDelete({ _id: id });
+    }
 }

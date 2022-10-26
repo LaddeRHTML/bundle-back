@@ -18,26 +18,19 @@ export class UsersService {
         private readonly userSettingsModel: Model<UserSettingsDocument>
     ) {}
 
-    create(
+    async create(
         createUserDto: CreateUserDto,
         createUserSettingsDto: CreateUserSettingsDto
-    ): Promise<any> {
+    ): Promise<UserData> {
         try {
-            const newUser = new this.userModel(createUserDto);
+            const newUser = await this.userModel.create(createUserDto);
             const { _id } = newUser;
-            const newUserSettings = new this.userSettingsModel({
+            const newUserSettings = await this.userSettingsModel.create({
                 ...createUserSettingsDto,
                 user: _id
             });
 
-            return newUser.save().then(
-                (settings) => {
-                    return newUserSettings.save();
-                },
-                (err) => {
-                    throw new HttpException('BadRequestException', HttpStatus.BAD_REQUEST);
-                }
-            );
+            return { user: newUser, userSettings: newUserSettings };
         } catch {
             throw new HttpException('BadRequestException', HttpStatus.BAD_REQUEST);
         }
@@ -141,7 +134,9 @@ export class UsersService {
         }
     }
 
-    /* removeUser(id: number) {
-    return `This action removes a #${id} user`;
-  } */
+    async removeUser(id: string) {
+        return await this.userModel.deleteOne({ _id: id }).then(async () => {
+            await this.userSettingsModel.deleteOne({ user: id });
+        });
+    }
 }

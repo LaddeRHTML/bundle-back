@@ -45,7 +45,9 @@ export class AuthService {
     async login(req: User): Promise<AccessToken> {
         try {
             const userId = await req['_id'].toString();
-            const access_token = this.signJwt({ userId });
+            const role = req.role;
+            console.log(userId, role);
+            const access_token = this.signJwt({ userId, role });
             return { access_token };
         } catch (error) {
             throw error;
@@ -62,15 +64,15 @@ export class AuthService {
             throw new HttpException('User already exists', HttpStatus.CONFLICT);
         } else {
             try {
-                const createdUser = await this.userService.create(
+                const { user } = await this.userService.create(
                     {
                         ...registrationData,
                         password: hashedPassword
                     },
                     userSettings
                 );
-                createdUser.password = undefined;
-                return createdUser;
+                user.password = undefined;
+                return user;
             } catch (error) {
                 throw new HttpException('Server error!', HttpStatus.INTERNAL_SERVER_ERROR);
             }

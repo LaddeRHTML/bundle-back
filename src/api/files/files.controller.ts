@@ -1,5 +1,4 @@
 import {
-    Body,
     Controller,
     Delete,
     Get,
@@ -13,8 +12,9 @@ import {
     UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
+import { Role } from 'api/users/enum/roles.enum';
 import { apiVersion } from 'src/common/constants/api-const';
 
 import { FileResponse, UploadFileResponse } from './interface/file.response';
@@ -24,7 +24,8 @@ import { FilesService } from './service/files.service';
 export class FilesController {
     constructor(private readonly filesService: FilesService) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Post()
     @UseInterceptors(FileInterceptor('image'))
     async uploadFile(@UploadedFile() file: MulterFile): Promise<UploadFileResponse> {
@@ -46,7 +47,9 @@ export class FilesController {
         return response;
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get('info/:id')
     async getFileInfo(@Param('id') id: string): Promise<FileResponse> {
         const file = await this.filesService.findInfo(id);
@@ -63,6 +66,9 @@ export class FilesController {
         };
     }
 
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get(':id')
     async getFile(@Param('id') id: string, @Res() res): Promise<any> {
         const file = await this.filesService.findInfo(id);
@@ -77,6 +83,9 @@ export class FilesController {
         return filestream.pipe(res);
     }
 
+    @UseGuards(RoleGuard(Role.User))
+    @UseGuards(RoleGuard(Role.Moderator))
+    @UseGuards(RoleGuard(Role.Admin))
     @Get('download/:id')
     async downloadFile(@Param('id') id: string, @Res() res): Promise<any> {
         const file = await this.filesService.findInfo(id);
@@ -92,7 +101,7 @@ export class FilesController {
         return filestream.pipe(res);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard(Role.Admin))
     @Delete('delete/:id')
     async deleteFile(@Param('id') id: string): Promise<FileResponse> {
         const file = await this.filesService.findInfo(id);
