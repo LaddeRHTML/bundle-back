@@ -101,6 +101,7 @@ export class ProductsService {
                 productDto.supplierPrice = supplierPrice;
                 productDto.warrantyDays = countedWarranty;
                 productDto.maker = maker;
+                productDto.count = 1;
 
                 return productDto;
             });
