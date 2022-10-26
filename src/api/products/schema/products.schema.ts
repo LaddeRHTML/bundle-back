@@ -38,7 +38,7 @@ export class Product {
     @Prop({ required: false, default: 0, min: 0, max: 5 })
     rating: number;
 
-    @Prop({ required: false, default: 0 })
+    @Prop({ required: false, default: 1 })
     count: number;
 
     @Prop({ default: [] })

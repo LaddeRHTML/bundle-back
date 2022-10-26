@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { MulterFile } from 'api/files/interface/multer.interface';
+import * as moment from 'moment';
 import { Model } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 import { paginate } from 'src/common/utils/index';
@@ -79,16 +80,29 @@ export class ProductsService {
 
         const products = SortExcelSheetData(data).map((i) => {
             const productsFromExcel = i?.products.map((p) => {
-                const product = new CreateProductDto();
+                const productDto = new CreateProductDto();
+                const productName = p?.[1] || '';
+                const productModel = productName.split(',')[0];
+                const marketPrice = p?.[2] || 0;
+                const price = p?.[3] || 0;
+                const supplierPrice = p?.[4] || 0;
+                const warrantyDays = (p?.[5] as unknown as number) || 0;
+                const countedWarranty = moment.duration(warrantyDays, 'months').asDays();
+                const maker = productModel
+                    .replace(/[^a-z ]/gi, '')
+                    .trim()
+                    .split(' ')[0];
 
-                product.category = i?.category;
-                product.name = p?.[1] || '';
-                product.marketprice = p?.[2] || 0;
-                product.price = p?.[3] || 0;
-                product.supplierPrice = p?.[4] || 0;
-                product.warrantyDays = (p?.[5] as unknown as number) * 30.4166667 || 0;
+                productDto.category = i?.category;
+                productDto.name = productName;
+                productDto.model = productModel;
+                productDto.marketprice = marketPrice;
+                productDto.price = price;
+                productDto.supplierPrice = supplierPrice;
+                productDto.warrantyDays = countedWarranty;
+                productDto.maker = maker;
 
-                return product;
+                return productDto;
             });
 
             return productsFromExcel;
