@@ -19,7 +19,7 @@ export type TemplateType =
     | 'usb'
     | 'usbHardDrives'
     | 'mp3'
-    | '/mp4 Players'
+    | 'mp4 Players'
     | 'voiceRecorders'
     | 'navigator'
     | 'radarDetectors'

@@ -8,11 +8,8 @@ export type ProductsDocument = Product & Document;
 
 @Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_PRODUCTS })
 export class Product {
-    @Prop({ required: true, default: 'assemblies' })
+    @Prop({ required: true, default: 'home_c' })
     category: string;
-
-    @Prop({ required: true, default: '', type: 'string' })
-    templateType: TemplateType;
 
     @Prop({ required: true, default: '' })
     name: string;
@@ -35,32 +32,32 @@ export class Product {
     @Prop({ required: false })
     pictures: [string];
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     previewPicture: string;
 
     @Prop({ required: false, default: 0, min: 0, max: 5 })
     rating: number;
 
-    @Prop({ required: true, default: 0 })
+    @Prop({ required: false, default: 1 })
     count: number;
 
     @Prop({ default: [] })
     characteristics: [KeyValueObject];
 
     // notebook/other
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     class: string;
 
     @Prop({ required: false, default: '' })
     vendorСode: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     maker: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     weight: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ required: false, default: '' })
     model: string;
 
     @Prop({ required: true })
