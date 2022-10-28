@@ -131,7 +131,11 @@ export class OrdersService {
             false
         );
 
-        return await this.orderModel.findByIdAndUpdate(id, updateOrderDto);
+        return await this.orderModel.findOneAndUpdate(
+            { _id: id },
+            { ...updateOrderDto },
+            { returnNewDocument: true, returnOriginal: false }
+        );
     }
 
     async remove(id: string) {

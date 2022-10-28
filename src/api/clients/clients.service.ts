@@ -8,6 +8,7 @@ import { calcRelToCurrentDate } from 'src/common/utils/index';
 
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { UpdateSettings } from './interface/client.update.gui.interface';
 import { Client, ClientDocument } from './schema/clients.schema';
 
 @Injectable()
@@ -68,7 +69,11 @@ export class ClientsService {
         return await this.clientModel.findOne({ _id }).populate(this.configService.orderRef);
     }
 
-    async update(id: string, updateClientDto: UpdateClientDto, settings?: any): Promise<Client> {
+    async update(
+        id: string,
+        updateClientDto: UpdateClientDto,
+        settings?: UpdateSettings
+    ): Promise<Client> {
         try {
             if (updateClientDto?.birthDay) {
                 updateClientDto.age = calcRelToCurrentDate(updateClientDto?.birthDay, true);
