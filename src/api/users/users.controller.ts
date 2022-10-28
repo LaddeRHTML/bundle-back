@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { UserPasswords } from 'api/users/interface/passwords.interface';
@@ -17,8 +18,8 @@ const controllerName = `${apiVersion}/users`;
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Post()
     create(
         @Body() createUserDto: CreateUserDto,
@@ -27,60 +28,53 @@ export class UsersController {
         return this.usersService.create(createUserDto, createUserSettingsDto);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get()
     findAll(): Promise<User[]> {
         return this.usersService.findAllUsers();
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get('settings/all')
     findAllWithSettings(): Promise<UserSettings[]> {
         return this.usersService.findAllUsersWithSettings();
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get(':id')
     findOne(@Param('id') _id: string): Promise<User> {
         return this.usersService.findOneUserById(_id);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get('/email/:email')
     async findOneByEmail(@Param('email') email: string): Promise<User> {
-        const user = await this.usersService.findOneUserByEmail(email);
+        const user = await this.usersService.findOneByEmail(email);
         user.password = undefined;
         return user;
     }
 
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @UseGuards(JwtAuthGuard)
     @Post(':id')
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-        console.log(id);
         return this.usersService.updateUser(id, updateUserDto);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get('/settings/:userId')
     findOneUserSettings(@Param('userId') userId: string): Promise<UserSettings> {
         return this.usersService.findOneUserSettings(userId);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Post('/settings/:userId')
     async updateUserSettings(
         @Param('userId') userId: string,
@@ -89,9 +83,8 @@ export class UsersController {
         return await this.usersService.updateUserSettings(userId, updateUserSettingsDto);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Post('/update/:userId')
     async updateUserData(
         @Param('userId') userId: string,
@@ -101,9 +94,8 @@ export class UsersController {
         return await this.usersService.updateUserData(userId, updateUserSettingsDto, updateUserDto);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Post('/password/update')
     async updateUserPassword(
         @Request() req: any,
@@ -112,7 +104,8 @@ export class UsersController {
         return await this.usersService.updateUserPassword(req, passwords);
     }
 
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.usersService.removeUser(id);

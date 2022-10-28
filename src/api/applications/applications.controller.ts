@@ -9,7 +9,7 @@ import {
     Query,
     UseGuards
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
+import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { Role } from 'api/users/enum/roles.enum';
 import { apiVersion } from 'src/common/constants/api-const';
@@ -26,16 +26,15 @@ const controllerName = `${apiVersion}/applications`;
 export class ApplicationsController {
     constructor(private readonly applicationsService: ApplicationsService) {}
 
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.Admin)
+    @UseGuards(RoleGuard)
     @Post()
     create(@Body() createApplicationDto: CreateApplicationDto): Promise<Application> {
         return this.applicationsService.create(createApplicationDto);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
@@ -44,24 +43,22 @@ export class ApplicationsController {
         return await this.applicationsService.findSortedItems(page, limit);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get()
     findAll(): Promise<Application[]> {
         return this.applicationsService.findAll();
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Application> {
         return this.applicationsService.findOne(id);
     }
 
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Patch(':id')
     update(
         @Param('id') id: string,
@@ -70,7 +67,8 @@ export class ApplicationsController {
         return this.applicationsService.update(id, updateApplicationDto);
     }
 
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.Admin)
+    @UseGuards(RoleGuard)
     @Delete(':id')
     async remove(@Param('id') id: string) {
         return await this.applicationsService.remove(id);

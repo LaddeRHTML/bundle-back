@@ -9,6 +9,7 @@ import {
     Query,
     UseGuards
 } from '@nestjs/common';
+import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { Role } from 'api/users/enum/roles.enum';
 import { apiVersion } from 'src/common/constants/api-const';
@@ -24,24 +25,22 @@ const controllerName = `${apiVersion}/accessories/`;
 export class AccessoriesController {
     constructor(private readonly accessoriesService: AccessoriesService) {}
 
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.Moderator)
+    @UseGuards(RoleGuard)
     @Post('')
     create(@Body() createAccessoryDto: CreateAccessoryDto): Promise<Accessory> {
         return this.accessoriesService.create(createAccessoryDto);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get()
     findAll(): Promise<Accessory[]> {
         return this.accessoriesService.findAll();
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
@@ -50,16 +49,15 @@ export class AccessoriesController {
         return await this.accessoriesService.findSortedItems(page, limit);
     }
 
-    @UseGuards(RoleGuard(Role.User))
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Accessory> {
         return this.accessoriesService.findOne(id);
     }
 
-    @UseGuards(RoleGuard(Role.Moderator))
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
     @Patch(':id')
     update(
         @Param('id') id: string,
@@ -68,7 +66,8 @@ export class AccessoriesController {
         return this.accessoriesService.update(id, updateAccessoryDto);
     }
 
-    @UseGuards(RoleGuard(Role.Admin))
+    @HasRoles(Role.Admin)
+    @UseGuards(RoleGuard)
     @Delete(':id')
     remove(@Param('id') id: string): Promise<Accessory> {
         return this.accessoriesService.remove(id);

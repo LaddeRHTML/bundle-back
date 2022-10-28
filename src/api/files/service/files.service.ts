@@ -22,7 +22,6 @@ export class FilesService {
         const result = await this.fileModel
             .findById(id)
             .catch((err) => {
-                console.log(err);
                 throw new HttpException('File not found', HttpStatus.NOT_FOUND);
             })
             .then((result) => result);

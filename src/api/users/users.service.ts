@@ -49,7 +49,7 @@ export class UsersService {
         return await this.userModel.findOne(parameter);
     }
 
-    async findOneUserByEmail(email: string): Promise<User> {
+    async findOneByEmail(email: string): Promise<User> {
         return await this.userModel.findOne({ email });
     }
 

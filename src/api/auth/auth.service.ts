@@ -9,7 +9,7 @@ import { hashRounds } from 'src/common/constants/bcrypt';
 import { User } from '../users/schema/user.schema';
 import { jwtConstants } from './constants/jwt-const';
 import { AccessToken } from './interface/auth.interface';
-import { UserIdPayload } from './interface/userId.interface';
+import { UserPayload } from './interface/userId.interface';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +20,7 @@ export class AuthService {
     ) {}
 
     async validateUser(email: string, password: string): Promise<CreateUserDto> {
-        const user = await this.userService.findOneUserByEmail(email);
+        const user = await this.userService.findOneByEmail(email);
 
         if (user) {
             const compareResult = await bcrypt.compare(password, user.password);
@@ -36,7 +36,7 @@ export class AuthService {
         return null;
     }
 
-    signJwt(payload: UserIdPayload) {
+    signJwt(payload: UserPayload) {
         return this.jwtService.sign(payload, {
             expiresIn: this.configService.jwtExpiresIn
         });
@@ -46,7 +46,6 @@ export class AuthService {
         try {
             const userId = await req['_id'].toString();
             const role = req.role;
-            console.log(userId, role);
             const access_token = this.signJwt({ userId, role });
             return { access_token };
         } catch (error) {
@@ -59,7 +58,7 @@ export class AuthService {
         userSettings: CreateUserSettingsDto
     ): Promise<CreateUserDto> {
         const hashedPassword = await bcrypt.hash(registrationData.password, hashRounds);
-        const userExists = await this.userService.findOneUserByEmail(registrationData.email);
+        const userExists = await this.userService.findOneByEmail(registrationData.email);
         if (userExists) {
             throw new HttpException('User already exists', HttpStatus.CONFLICT);
         } else {
