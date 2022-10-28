@@ -80,7 +80,8 @@ export class ClientsService {
             }
 
             return await this.clientModel.findOneAndUpdate({ _id: id }, updateClientDto, {
-                settings
+                ...settings,
+                new: true
             });
         } catch (error) {
             throw new HttpException(error, HttpStatus.NOT_ACCEPTABLE);

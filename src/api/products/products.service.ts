@@ -65,7 +65,7 @@ export class ProductsService {
         return await this.productModel.findOneAndUpdate(
             { _id: id },
             { ...updateProductDto },
-            { returnNewDocument: true, returnOriginal: false }
+            { new: true }
         );
     }
 

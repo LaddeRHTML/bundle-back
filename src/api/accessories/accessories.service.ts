@@ -35,7 +35,7 @@ export class AccessoriesService {
         return await this.accessoryModel.findOneAndUpdate(
             { _id: id },
             { ...updateAccessoryDto },
-            { returnNewDocument: true, returnOriginal: false }
+            { new: true }
         );
     }
 

@@ -62,7 +62,7 @@ export class UsersService {
         return await this.userModel.findOneAndUpdate(
             { _id: id },
             { ...updateUserDto },
-            { returnNewDocument: true, returnOriginal: false }
+            { new: true }
         );
     }
 
@@ -79,7 +79,7 @@ export class UsersService {
         return await this.userSettingsModel.findOneAndUpdate(
             { _id: id },
             { ...updateUserSettingsDto },
-            { returnNewDocument: true, returnOriginal: false }
+            { new: true }
         );
     }
 
