@@ -102,7 +102,7 @@ export const AVAILABLE_CATEGORIES = {
     'Мониторы жидкокристаллические': 'LCD_monitor_c',
     'Винчестеры USB и сетевые накопители': 'USD_harddrives_and_network_device_c',
     'CD-ROM, DVD-ROM, CD-RW, DVD-RW': 'CD_DVD_c',
-    'Процессоры Intel 1150/1151': 'USD_harddrives_and_network_device_c',
+    'Процессоры Intel 1150/1151': 'intel_CPU_old_c',
     'Процессоры AMD': 'AMD_CPU_c',
     'Процессоры Intel 1156/1366/1155-LGA/2011': 'intel_CPU_under_2011_c',
     'Процессоры Intel 1700': 'Intel_CPU_c',
