@@ -16,6 +16,7 @@ import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
 import { Role } from 'api/users/enum/roles.enum';
+import { Response } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
 
 import { FileResponse, UploadFileResponse } from './interface/file.response';
@@ -66,10 +67,8 @@ export class FilesController {
         };
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
-    @UseGuards(RoleGuard)
     @Get(':id')
-    async getFile(@Param('id') id: string, @Res() res): Promise<any> {
+    async getFile(@Param('id') id: string, @Res() res: Response): Promise<any> {
         const file = await this.filesService.findInfo(id);
         const filestream = await this.filesService.readStream(id);
         if (!filestream) {
