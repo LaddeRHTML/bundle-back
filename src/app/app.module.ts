@@ -40,11 +40,6 @@ import { ConfigurationService } from 'config/configuration.service';
         AssemblyModule
     ],
     controllers: [],
-    providers: [
-        {
-            provide: APP_GUARD,
-            useClass: RoleGuard
-        }
-    ]
+    providers: []
 })
 export class AppModule {}
