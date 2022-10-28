@@ -36,7 +36,7 @@ export class ApplicationsService {
         return await this.applicationsModel.findOneAndUpdate(
             { _id },
             { ...updateApplicationDto },
-            { returnNewDocument: true, returnOriginal: false }
+            { new: true }
         );
     }
 
