@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { AccessoriesModule } from 'api/accessories/accessories.module';
 import { ApplicationsModule } from 'api/applications/applications.module';
 import { AssemblyModule } from 'api/assemblies/assemblies.module';
 import { AuthModule } from 'api/auth/auth.module';
+import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { ClientsModule } from 'api/clients/clients.module';
 import { FilesModule } from 'api/files/files.module';
 import { OrdersModule } from 'api/orders/orders.module';
@@ -38,6 +40,11 @@ import { ConfigurationService } from 'config/configuration.service';
         AssemblyModule
     ],
     controllers: [],
-    providers: []
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: RoleGuard
+        }
+    ]
 })
 export class AppModule {}

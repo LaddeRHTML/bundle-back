@@ -79,7 +79,9 @@ export class ClientsService {
                 updateClientDto.age = calcRelToCurrentDate(updateClientDto?.birthDay, true);
             }
 
-            return await this.clientModel.findByIdAndUpdate(id, updateClientDto, { settings });
+            return await this.clientModel.findOneAndUpdate({ _id: id }, updateClientDto, {
+                settings
+            });
         } catch (error) {
             throw new HttpException(error, HttpStatus.NOT_ACCEPTABLE);
         }
