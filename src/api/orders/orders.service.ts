@@ -61,7 +61,7 @@ export class OrdersService {
                 {
                     orders: client.orders.concat(order._id)
                 },
-                { returnNewDocument: true, returnOriginal: false }
+                { new: true }
             );
         } catch (error) {
             throw new HttpException(
@@ -134,7 +134,7 @@ export class OrdersService {
         return await this.orderModel.findOneAndUpdate(
             { _id: id },
             { ...updateOrderDto },
-            { returnNewDocument: true, returnOriginal: false }
+            { new: true }
         );
     }
 

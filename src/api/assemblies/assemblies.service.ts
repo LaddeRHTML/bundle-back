@@ -37,7 +37,7 @@ export class AssembliesService {
         return await this.assemblyModel.findOneAndUpdate(
             { _id: id },
             { ...updateAssemblyDto },
-            { returnNewDocument: true, returnOriginal: false }
+            { new: true }
         );
     }
 
