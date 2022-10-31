@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ConfigurationService } from 'config/configuration.service';
-import { Model } from 'mongoose';
+import mongoose, { FilterQuery, Model, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 import { paginate } from 'src/common/utils/index';
 import { calcRelToCurrentDate } from 'src/common/utils/index';
@@ -79,8 +79,10 @@ export class ClientsService {
                 updateClientDto.age = calcRelToCurrentDate(updateClientDto?.birthDay, true);
             }
 
+            const ObjectId = new mongoose.Types.ObjectId(id);
+
             return await this.clientModel
-                .findOneAndUpdate({ _id: id }, updateClientDto, {
+                .findOneAndUpdate({ _id: ObjectId }, updateClientDto, {
                     ...settings,
                     new: true
                 })
@@ -88,6 +90,19 @@ export class ClientsService {
         } catch (error) {
             throw new HttpException(error, HttpStatus.NOT_ACCEPTABLE);
         }
+    }
+
+    async updateMany(
+        filter?: FilterQuery<ClientDocument>,
+        parameter?: UpdateWithAggregationPipeline | UpdateQuery<ClientDocument>,
+        settings?: UpdateSettings
+    ) {
+        return await this.clientModel
+            .updateMany(filter, parameter, {
+                ...settings,
+                new: true
+            })
+            .populate(this.configService.orderRef);
     }
 
     async remove(id: string) {

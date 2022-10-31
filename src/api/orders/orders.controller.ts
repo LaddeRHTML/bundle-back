@@ -15,7 +15,6 @@ import { Role } from 'api/users/enum/roles.enum';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
-import { Client } from '../clients/schema/clients.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrdersService } from './orders.service';
@@ -30,10 +29,7 @@ export class OrdersController {
     @HasRoles(Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/create?')
-    create(
-        @Query('clientId') clientId: string,
-        @Body() createOrderDto: CreateOrderDto
-    ): Promise<Order | Client> {
+    create(@Query('clientId') clientId: string, @Body() createOrderDto: CreateOrderDto) {
         return this.orderService.create(clientId, createOrderDto);
     }
 
