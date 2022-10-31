@@ -81,6 +81,7 @@ export class ProductsService {
         const products = SortExcelSheetData(data).map((i) => {
             const productsFromExcel = i?.products.map((p) => {
                 const productDto = new CreateProductDto();
+                const vendorСode = p?.[0] || 0;
                 const productName = p?.[1] || '';
                 const productModel = productName.split(',')[0];
                 const marketPrice = p?.[2] || 0;
@@ -93,6 +94,7 @@ export class ProductsService {
                     .trim()
                     .split(' ')[0];
 
+                productDto.vendorСode = vendorСode.toString();
                 productDto.category = i?.category;
                 productDto.name = productName;
                 productDto.model = productModel;
