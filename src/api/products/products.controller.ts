@@ -51,10 +51,11 @@ export class ProductsController {
     @Get('/search?')
     async findSortedItems(
         @Query('parameter') parameter: string,
+        @Query('category') category: string,
         @Query('page') page: number,
         @Query('limit') limit: number
     ): Promise<Pagination> {
-        return await this.productsService.findByQuery(parameter, page, limit);
+        return await this.productsService.findByQuery(parameter, page, limit, category);
     }
 
     @HasRoles(Role.Admin)

@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { MulterFile } from 'api/files/interface/multer.interface';
 import * as moment from 'moment';
-import { Model } from 'mongoose';
+import { Model, QueryOptions } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
-import { paginate } from 'src/common/utils/index';
 import { SortExcelSheetData } from 'utils/excel.sort';
 import * as XLSX from 'xlsx';
 
@@ -30,8 +29,13 @@ export class ProductsService {
         return await this.productModel.find({ name: { $in: names } });
     }
 
-    async findByQuery(parameter: string, page: number, limit: number): Promise<Pagination> {
-        let options = {};
+    async findByQuery(
+        parameter: string,
+        page: number,
+        limit: number,
+        category: string
+    ): Promise<Pagination> {
+        let options = {} as QueryOptions;
 
         if (parameter) {
             options = {
@@ -51,10 +55,50 @@ export class ProductsService {
                 ]
             };
         }
+        const minMaxValues = await this.productModel.aggregate([
+            {
+                $facet: {
+                    min: [{ $sort: { price: 1 } }, { $limit: 1 }],
+                    max: [{ $sort: { price: -1 } }, { $limit: 1 }]
+                }
+            },
+            {
+                $project: {
+                    name: 'price',
+                    minPrice: { $first: '$min.price' },
+                    maxPrice: { $first: '$max.price' },
+                    minMarketPrice: { $first: '$min.marketPrice' },
+                    maxMarketPrice: { $first: '$max.marketPrice' },
+                    minSupplierPrice: { $first: '$min.supplierPrice' },
+                    maxSupplierPrice: { $first: '$max.supplierPrice' },
+                    minCount: { $first: '$min.count' },
+                    maxCount: { $first: '$max.count' },
+                    minWarrantyDays: { $first: '$min.warrantyDays' },
+                    maxWarrantyDays: { $first: '$max.warrantyDays' }
+                }
+            }
+        ]);
+
+        const warrantyVariations = await this.productModel.distinct('warrantyDays');
 
         const total = await this.productModel.count(options).exec();
-        const query = this.productModel.find(options);
-        return paginate(page, query, limit, total);
+        const lastPage = Math.ceil(total / limit);
+        const data = await this.productModel
+            .find(options)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .exec();
+
+        const sortedData = {
+            data,
+            total,
+            page,
+            lastPage,
+            minMaxValues,
+            warrantyVariations
+        };
+
+        return sortedData;
     }
 
     async findOne(_id: string): Promise<Product> {
