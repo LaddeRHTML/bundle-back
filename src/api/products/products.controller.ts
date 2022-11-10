@@ -35,15 +35,15 @@ export class ProductsController {
     @HasRoles(Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('')
-    create(@Body() createProductDto: CreateProductDto): Promise<Product> {
-        return this.productsService.create(createProductDto);
+    async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
+        return await this.productsService.create(createProductDto);
     }
 
     @HasRoles(Role.User, Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
     findAll(): Promise<Product[]> {
-        return this.productsService.findAll();
+        return this.productsService.findAllBy();
     }
 
     @HasRoles(Role.User, Role.Moderator, Role.Admin)
@@ -73,14 +73,14 @@ export class ProductsController {
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<Product> {
-        return this.productsService.findOne(id);
+        return this.productsService.findOneById(id);
     }
 
     @HasRoles(Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
     update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {
-        return this.productsService.update(id, updateProductDto);
+        return this.productsService.updateById(id, updateProductDto);
     }
 
     @HasRoles(Role.Admin)
