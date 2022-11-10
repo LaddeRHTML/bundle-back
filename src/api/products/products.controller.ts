@@ -23,6 +23,10 @@ import { Pagination } from 'src/common/interfaces/utils.interface';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import {
+    FilterProductsResponse,
+    MinMaxProductValues
+} from './interfaces/products.filter.interface';
 import { ProductsService } from './products.service';
 import { Product } from './schema/products.schema';
 
@@ -50,11 +54,33 @@ export class ProductsController {
     @UseGuards(RoleGuard)
     @Get('/search?')
     async findSortedItems(
-        @Query('parameter') parameter: string,
+        @Query('search-by') parameter: string,
+        @Query('onlyOrdered', {
+            transform(value) {
+                return value === 'true';
+            }
+        })
+        onlyOrdered: boolean,
         @Query('page') page: number,
-        @Query('limit') limit: number
+        @Query('limit') limit: number,
+        @Query('category') category: string,
+        @Body() filters: MinMaxProductValues
     ): Promise<Pagination> {
-        return await this.productsService.findByQuery(parameter, page, limit);
+        return await this.productsService.findByQuery(
+            parameter,
+            page,
+            limit,
+            onlyOrdered,
+            category,
+            filters
+        );
+    }
+
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Get('/min-max')
+    async getMinMaxValues() {
+        return await this.productsService.getMinMaxValues();
     }
 
     @HasRoles(Role.Admin)

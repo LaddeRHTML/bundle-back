@@ -15,12 +15,15 @@ import mongoose, {
     UpdateWithAggregationPipeline
 } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
-import { paginate } from 'src/common/utils/index';
 import { SortExcelSheetData } from 'utils/excel.sort';
 import * as XLSX from 'xlsx';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import {
+    FilterProductsResponse,
+    MinMaxProductValues
+} from './interfaces/products.filter.interface';
 import { Product, ProductsDocument } from './schema/products.schema';
 
 const orderRef = 'includedInOrders';
@@ -63,11 +66,51 @@ export class ProductsService {
             .populate({ path: clientRef, model: this.clientModel });
     }
 
-    async findByQuery(parameter: string, page: number, limit: number): Promise<Pagination> {
-        let options = {};
+    async findByQuery(
+        parameter: string,
+        page: number,
+        limit: number,
+        onlyOrdered: boolean,
+        category: string,
+        filters: MinMaxProductValues
+    ): Promise<Pagination> {
+        let options = {
+            ...(onlyOrdered && {
+                includedInOrders: {
+                    $exists: onlyOrdered,
+                    $not: { $size: 0 }
+                }
+            }),
+            ...(category && {
+                category
+            }),
+            ...(filters.maxPrice &&
+                filters.minPrice && {
+                    price: { $gte: filters.minPrice, $lte: filters.maxPrice }
+                }),
+
+            ...(filters.minSupplierPrice &&
+                filters.maxSupplierPrice && {
+                    supplierPrice: {
+                        $gte: filters.minSupplierPrice,
+                        $lte: filters.maxSupplierPrice
+                    }
+                }),
+
+            ...(filters.minCount &&
+                filters.maxCount && {
+                    count: { $gte: filters.minCount, $lte: filters.maxCount }
+                }),
+
+            ...(filters.minWarrantyDays &&
+                filters.maxWarrantyDays && {
+                    warrantyDays: { $gte: filters.minWarrantyDays, $lte: filters.maxWarrantyDays }
+                })
+        } as FilterQuery<ProductsDocument>;
 
         if (parameter) {
             options = {
+                ...options,
                 $or: [
                     {
                         category: new RegExp(parameter, 'i')
@@ -86,11 +129,53 @@ export class ProductsService {
         }
 
         const total = await this.productModel.count(options).exec();
-        const query = this.productModel
+        const lastPage = Math.ceil(total / limit);
+        const data = await this.productModel
             .find(options)
             .populate({ path: orderRef, model: this.orderModel })
-            .populate({ path: clientRef, model: this.clientModel });
-        return paginate(page, query, limit, total);
+            .populate({ path: clientRef, model: this.clientModel })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .exec();
+
+        return {
+            data,
+            total,
+            page,
+            lastPage
+        };
+    }
+
+    async getMinMaxValues(): Promise<FilterProductsResponse> {
+        const minMaxValues = await this.productModel.aggregate([
+            {
+                $facet: {
+                    min: [{ $sort: { price: 1 } }, { $limit: 1 }],
+                    max: [{ $sort: { price: -1 } }, { $limit: 1 }]
+                }
+            },
+            {
+                $project: {
+                    minPrice: { $first: '$min.price' },
+                    maxPrice: { $first: '$max.price' },
+                    minMarketPrice: { $first: '$min.marketPrice' },
+                    maxMarketPrice: { $first: '$max.marketPrice' },
+                    minSupplierPrice: { $first: '$min.supplierPrice' },
+                    maxSupplierPrice: { $first: '$max.supplierPrice' },
+                    minCount: { $first: '$min.count' },
+                    maxCount: { $first: '$max.count' },
+                    minWarrantyDays: { $first: '$min.warrantyDays' },
+                    maxWarrantyDays: { $first: '$max.warrantyDays' }
+                }
+            }
+        ]);
+
+        const warrantyVariations = await this.productModel.distinct('warrantyDays');
+
+        return {
+            minMaxValues: minMaxValues?.[0],
+            warrantyVariations
+        };
     }
 
     async findOneById(_id: string): Promise<Product> {

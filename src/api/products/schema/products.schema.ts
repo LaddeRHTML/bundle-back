@@ -10,10 +10,10 @@ export class Product {
     @Prop({ required: true, default: 'home_c' })
     category: string;
 
-    @Prop({ required: false, default: '', ref: 'orders' })
+    @Prop({ required: false, ref: 'orders' })
     includedInOrders: string[];
 
-    @Prop({ required: false, default: '', ref: 'clients' })
+    @Prop({ required: false, ref: 'clients' })
     buyers: string[];
 
     @Prop({ required: true, default: '' })
