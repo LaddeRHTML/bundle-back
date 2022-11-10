@@ -1,44 +1,116 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { ClientsService } from 'api/clients/clients.service';
+import { Client, ClientDocument } from 'api/clients/schema/clients.schema';
 import { MulterFile } from 'api/files/interface/multer.interface';
+import { Order, OrderDocument } from 'api/orders/schema/orders.schema';
 import * as moment from 'moment';
-import { Model, QueryOptions } from 'mongoose';
+import mongoose, {
+    Callback,
+    FilterQuery,
+    Model,
+    ProjectionType,
+    QueryOptions,
+    UpdateQuery,
+    UpdateWithAggregationPipeline
+} from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 import { SortExcelSheetData } from 'utils/excel.sort';
 import * as XLSX from 'xlsx';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import {
+    FilterProductsResponse,
+    MinMaxProductValues
+} from './interfaces/products.filter.interface';
 import { Product, ProductsDocument } from './schema/products.schema';
+
+const orderRef = 'includedInOrders';
+const clientRef = 'buyers';
 
 @Injectable()
 export class ProductsService {
     constructor(
-        @InjectModel(Product.name) private readonly productModel: Model<ProductsDocument>
+        @InjectModel(Product.name) private readonly productModel: Model<ProductsDocument>,
+        @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
+        @InjectModel(Client.name) private readonly clientModel: Model<ClientDocument>,
+        private readonly clientsService: ClientsService
     ) {}
 
     async create(createProductDto: CreateProductDto): Promise<Product> {
         return await this.productModel.create(createProductDto);
     }
 
-    async findAll(): Promise<Product[]> {
-        return await this.productModel.find({});
+    async findAllBy(
+        filter?: FilterQuery<ProductsDocument>,
+        projection?: ProjectionType<ProductsDocument>
+    ): Promise<Product[]> {
+        return await this.productModel
+            .find(filter, projection)
+            .populate({ path: orderRef, model: this.orderModel })
+            .populate({ path: clientRef, model: this.clientModel });
+    }
+
+    async findAllByWithOutPopulating(
+        filter?: FilterQuery<ProductsDocument>,
+        projection?: ProjectionType<ProductsDocument>
+    ): Promise<Product[]> {
+        return await this.productModel.find(filter, projection);
     }
 
     async findAllByNames(names: string[]): Promise<Product[]> {
-        return await this.productModel.find({ name: { $in: names } });
+        return await this.productModel
+            .find({ name: { $in: names } })
+            .populate({ path: orderRef, model: this.orderModel })
+            .populate({ path: clientRef, model: this.clientModel });
     }
 
     async findByQuery(
         parameter: string,
         page: number,
         limit: number,
-        category: string
+        onlyOrdered: boolean,
+        category: string,
+        filters: MinMaxProductValues
     ): Promise<Pagination> {
-        let options = {} as QueryOptions;
+        let options = {
+            ...(onlyOrdered && {
+                includedInOrders: {
+                    $exists: onlyOrdered,
+                    $not: { $size: 0 }
+                }
+            }),
+            ...(category && {
+                category
+            }),
+            ...(filters.maxPrice &&
+                filters.minPrice && {
+                    price: { $gte: filters.minPrice, $lte: filters.maxPrice }
+                }),
+
+            ...(filters.minSupplierPrice &&
+                filters.maxSupplierPrice && {
+                    supplierPrice: {
+                        $gte: filters.minSupplierPrice,
+                        $lte: filters.maxSupplierPrice
+                    }
+                }),
+
+            ...(filters.minCount &&
+                filters.maxCount && {
+                    count: { $gte: filters.minCount, $lte: filters.maxCount }
+                }),
+
+            ...(filters.minWarrantyDays &&
+                filters.maxWarrantyDays && {
+                    warrantyDays: { $gte: filters.minWarrantyDays, $lte: filters.maxWarrantyDays }
+                })
+        } as FilterQuery<ProductsDocument>;
 
         if (parameter) {
             options = {
+                ...options,
                 $or: [
                     {
                         category: new RegExp(parameter, 'i')
@@ -55,6 +127,26 @@ export class ProductsService {
                 ]
             };
         }
+
+        const total = await this.productModel.count(options).exec();
+        const lastPage = Math.ceil(total / limit);
+        const data = await this.productModel
+            .find(options)
+            .populate({ path: orderRef, model: this.orderModel })
+            .populate({ path: clientRef, model: this.clientModel })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .exec();
+
+        return {
+            data,
+            total,
+            page,
+            lastPage
+        };
+    }
+
+    async getMinMaxValues(): Promise<FilterProductsResponse> {
         const minMaxValues = await this.productModel.aggregate([
             {
                 $facet: {
@@ -64,7 +156,6 @@ export class ProductsService {
             },
             {
                 $project: {
-                    name: 'price',
                     minPrice: { $first: '$min.price' },
                     maxPrice: { $first: '$max.price' },
                     minMarketPrice: { $first: '$min.marketPrice' },
@@ -81,40 +172,56 @@ export class ProductsService {
 
         const warrantyVariations = await this.productModel.distinct('warrantyDays');
 
-        const total = await this.productModel.count(options).exec();
-        const lastPage = Math.ceil(total / limit);
-        const data = await this.productModel
-            .find(options)
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .exec();
-
-        const sortedData = {
-            data,
-            total,
-            page,
-            lastPage,
-            minMaxValues,
+        return {
+            minMaxValues: minMaxValues?.[0],
             warrantyVariations
         };
-
-        return sortedData;
     }
 
-    async findOne(_id: string): Promise<Product> {
-        return await this.productModel.findOne({ _id });
+    async findOneById(_id: string): Promise<Product> {
+        return await this.productModel
+            .findOne({ _id })
+            .populate({ path: orderRef, model: this.orderModel })
+            .populate({ path: clientRef, model: this.clientModel });
     }
 
-    async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-        return await this.productModel.findOneAndUpdate(
-            { _id: id },
-            { ...updateProductDto },
-            { new: true }
+    async updateById(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+        console.log(id, updateProductDto);
+        return await this.productModel
+            .findOneAndUpdate({ _id: id }, { ...updateProductDto }, { new: true })
+            .populate({ path: orderRef, model: this.orderModel })
+            .populate({ path: clientRef, model: this.clientModel });
+    }
+
+    async updateMany(
+        filter: FilterQuery<ProductsDocument>,
+        parameter: UpdateWithAggregationPipeline | UpdateQuery<ProductsDocument>,
+        settings?: QueryOptions
+    ) {
+        return await this.productModel
+            .updateMany(filter, parameter, {
+                ...settings,
+                new: true
+            })
+            .populate({ path: orderRef, model: this.orderModel })
+            .populate({ path: clientRef, model: this.clientModel });
+    }
+
+    async remove(id: string): Promise<Product> {
+        const updatedOrders = await this.orderModel.updateMany(
+            { orderedProducts: { $in: id } },
+            { $pull: { orderedProducts: { $in: id } } },
+            { new: false }
         );
-    }
 
-    async remove(_id: string): Promise<Product> {
-        return await this.productModel.findOneAndRemove({ _id });
+        if (!updatedOrders.acknowledged) {
+            throw new HttpException(
+                'An error occurred while creating order!',
+                HttpStatus.NOT_ACCEPTABLE
+            );
+        }
+
+        return await this.productModel.findOneAndRemove({ _id: id });
     }
 
     getDataFromExcel(file: MulterFile) {
@@ -160,7 +267,7 @@ export class ProductsService {
 
     async manipulateMultipleItems(products: CreateProductDto[]) {
         return products.forEach(async (p) => {
-            await this.productModel.findOneAndUpdate({ name: p.name }, p, { upsert: true });
+            return await this.productModel.findOneAndUpdate({ name: p.name }, p, { upsert: true });
         });
     }
 }

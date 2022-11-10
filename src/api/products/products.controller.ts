@@ -23,6 +23,10 @@ import { Pagination } from 'src/common/interfaces/utils.interface';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import {
+    FilterProductsResponse,
+    MinMaxProductValues
+} from './interfaces/products.filter.interface';
 import { ProductsService } from './products.service';
 import { Product } from './schema/products.schema';
 
@@ -35,27 +39,48 @@ export class ProductsController {
     @HasRoles(Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('')
-    create(@Body() createProductDto: CreateProductDto): Promise<Product> {
-        return this.productsService.create(createProductDto);
+    async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
+        return await this.productsService.create(createProductDto);
     }
 
     @HasRoles(Role.User, Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
     findAll(): Promise<Product[]> {
-        return this.productsService.findAll();
+        return this.productsService.findAllBy();
     }
 
     @HasRoles(Role.User, Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/search?')
     async findSortedItems(
-        @Query('parameter') parameter: string,
-        @Query('category') category: string,
+        @Query('search-by') parameter: string,
+        @Query('onlyOrdered', {
+            transform(value) {
+                return value === 'true';
+            }
+        })
+        onlyOrdered: boolean,
         @Query('page') page: number,
-        @Query('limit') limit: number
+        @Query('limit') limit: number,
+        @Query('category') category: string,
+        @Body() filters: MinMaxProductValues
     ): Promise<Pagination> {
-        return await this.productsService.findByQuery(parameter, page, limit, category);
+        return await this.productsService.findByQuery(
+            parameter,
+            page,
+            limit,
+            onlyOrdered,
+            category,
+            filters
+        );
+    }
+
+    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Get('/min-max')
+    async getMinMaxValues() {
+        return await this.productsService.getMinMaxValues();
     }
 
     @HasRoles(Role.Admin)
@@ -74,14 +99,14 @@ export class ProductsController {
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<Product> {
-        return this.productsService.findOne(id);
+        return this.productsService.findOneById(id);
     }
 
     @HasRoles(Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
     update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {
-        return this.productsService.update(id, updateProductDto);
+        return this.productsService.updateById(id, updateProductDto);
     }
 
     @HasRoles(Role.Admin)

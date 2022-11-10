@@ -1,8 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Order } from 'api/orders/schema/orders.schema';
 import { Document } from 'mongoose';
 import { KeyValueObject } from 'src/common/interfaces/product.interface';
-
-import { TemplateType } from '../types/template.types';
 
 export type ProductsDocument = Product & Document;
 
@@ -10,6 +9,12 @@ export type ProductsDocument = Product & Document;
 export class Product {
     @Prop({ required: true, default: 'home_c' })
     category: string;
+
+    @Prop({ required: false, ref: 'orders' })
+    includedInOrders: string[];
+
+    @Prop({ required: false, ref: 'clients' })
+    buyers: string[];
 
     @Prop({ required: true, default: '' })
     name: string;
