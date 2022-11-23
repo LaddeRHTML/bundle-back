@@ -3,10 +3,10 @@ export interface MinMaxProductValues {
     maxPrice: number;
     minSupplierPrice: number;
     maxSupplierPrice: number;
-    minCount: number;
-    maxCount: number;
-    minWarrantyDays: number;
-    maxWarrantyDays: number;
+}
+
+export interface ProductsFilter extends MinMaxProductValues {
+    warrantyDays: number;
 }
 
 export interface FilterProductsResponse {

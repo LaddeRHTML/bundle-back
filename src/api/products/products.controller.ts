@@ -25,7 +25,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import {
     FilterProductsResponse,
-    MinMaxProductValues
+    MinMaxProductValues,
+    ProductsFilter
 } from './interfaces/products.filter.interface';
 import { ProductsService } from './products.service';
 import { Product } from './schema/products.schema';
@@ -64,7 +65,7 @@ export class ProductsController {
         @Query('page') page: number,
         @Query('limit') limit: number,
         @Query('category') category: string,
-        @Body() filters: MinMaxProductValues
+        @Body() filters: ProductsFilter
     ): Promise<Pagination> {
         return await this.productsService.findByQuery(
             parameter,
@@ -79,7 +80,7 @@ export class ProductsController {
     @HasRoles(Role.User, Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/min-max')
-    async getMinMaxValues() {
+    async getMinMaxValues(): Promise<FilterProductsResponse> {
         return await this.productsService.getMinMaxValues();
     }
 
