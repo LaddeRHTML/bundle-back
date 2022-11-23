@@ -22,7 +22,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import {
     FilterProductsResponse,
-    MinMaxProductValues
+    MinMaxProductValues,
+    ProductsFilter
 } from './interfaces/products.filter.interface';
 import { Product, ProductsDocument } from './schema/products.schema';
 
@@ -72,7 +73,7 @@ export class ProductsService {
         limit: number,
         onlyOrdered: boolean,
         category: string,
-        filters: MinMaxProductValues
+        filters: ProductsFilter
     ): Promise<Pagination> {
         let options = {
             ...(onlyOrdered && {
@@ -96,16 +97,9 @@ export class ProductsService {
                         $lte: filters.maxSupplierPrice
                     }
                 }),
-
-            ...(filters.minCount &&
-                filters.maxCount && {
-                    count: { $gte: filters.minCount, $lte: filters.maxCount }
-                }),
-
-            ...(filters.minWarrantyDays &&
-                filters.maxWarrantyDays && {
-                    warrantyDays: { $gte: filters.minWarrantyDays, $lte: filters.maxWarrantyDays }
-                })
+            ...(typeof filters.warrantyDays === 'number' && {
+                warrantyDays: filters.warrantyDays
+            })
         } as FilterQuery<ProductsDocument>;
 
         if (parameter) {
