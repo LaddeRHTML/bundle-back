@@ -53,7 +53,7 @@ export class ProductsController {
 
     @HasRoles(Role.User, Role.Moderator, Role.Admin)
     @UseGuards(RoleGuard)
-    @Get('/search?')
+    @Post('/search?')
     async findSortedItems(
         @Query('search-by') parameter: string,
         @Query('onlyOrdered', {
