@@ -5,7 +5,9 @@ export interface MinMaxProductValues {
     maxSupplierPrice: number;
 }
 
-export interface ProductsFilter extends MinMaxProductValues {
+export interface ProductsFilter {
+    price: [number, number];
+    supplierPrice: [number, number];
     warrantyDays: number;
 }
 

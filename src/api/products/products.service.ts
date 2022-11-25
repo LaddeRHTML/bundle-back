@@ -73,7 +73,7 @@ export class ProductsService {
         limit: number,
         onlyOrdered: boolean,
         category: string,
-        filters: ProductsFilter
+        filters: Partial<ProductsFilter>
     ): Promise<Pagination> {
         let options = {
             ...(onlyOrdered && {
@@ -85,16 +85,16 @@ export class ProductsService {
             ...(category && {
                 category
             }),
-            ...(filters.maxPrice &&
-                filters.minPrice && {
-                    price: { $gte: filters.minPrice, $lte: filters.maxPrice }
+            ...(filters.price?.[0] &&
+                filters.price?.[1] && {
+                    price: { $gte: filters.price[0], $lte: filters.price[1] }
                 }),
 
-            ...(filters.minSupplierPrice &&
-                filters.maxSupplierPrice && {
+            ...(filters.supplierPrice?.[0] &&
+                filters.supplierPrice?.[1] && {
                     supplierPrice: {
-                        $gte: filters.minSupplierPrice,
-                        $lte: filters.maxSupplierPrice
+                        $gte: filters.supplierPrice[0],
+                        $lte: filters.supplierPrice[1]
                     }
                 }),
             ...(typeof filters.warrantyDays === 'number' && {
