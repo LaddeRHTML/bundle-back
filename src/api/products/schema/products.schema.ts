@@ -20,7 +20,7 @@ export class Product {
     name: string;
 
     @Prop({ required: true, default: 0 })
-    marketprice: number;
+    marketPrice: number;
 
     @Prop({ required: true, default: 0 })
     supplierPrice: number;

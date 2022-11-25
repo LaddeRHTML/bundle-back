@@ -97,6 +97,13 @@ export class ProductsService {
                         $lte: filters.supplierPrice[1]
                     }
                 }),
+            ...(filters.marketPrice?.[0] &&
+                filters.marketPrice?.[1] && {
+                    marketPrice: {
+                        $gte: filters.marketPrice[0],
+                        $lte: filters.marketPrice[1]
+                    }
+                }),
             ...(typeof filters.warrantyDays === 'number' && {
                 warrantyDays: filters.warrantyDays
             })
@@ -150,16 +157,12 @@ export class ProductsService {
             },
             {
                 $project: {
-                    minPrice: { $first: '$min.price' },
-                    maxPrice: { $first: '$max.price' },
-                    minMarketPrice: { $first: '$min.marketPrice' },
-                    maxMarketPrice: { $first: '$max.marketPrice' },
-                    minSupplierPrice: { $first: '$min.supplierPrice' },
-                    maxSupplierPrice: { $first: '$max.supplierPrice' },
-                    minCount: { $first: '$min.count' },
-                    maxCount: { $first: '$max.count' },
-                    minWarrantyDays: { $first: '$min.warrantyDays' },
-                    maxWarrantyDays: { $first: '$max.warrantyDays' }
+                    price: [{ $first: '$min.price' }, { $first: '$max.price' }],
+                    marketPrice: [{ $first: '$min.marketPrice' }, { $first: '$max.marketPrice' }],
+                    supplierPrice: [
+                        { $first: '$min.supplierPrice' },
+                        { $first: '$max.supplierPrice' }
+                    ]
                 }
             }
         ]);
@@ -243,7 +246,7 @@ export class ProductsService {
                 productDto.category = i?.category;
                 productDto.name = productName;
                 productDto.model = productModel;
-                productDto.marketprice = marketPrice;
+                productDto.marketPrice = marketPrice;
                 productDto.price = price;
                 productDto.supplierPrice = supplierPrice;
                 productDto.warrantyDays = countedWarranty;
