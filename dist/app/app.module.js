@@ -20,6 +20,7 @@ const products_module_1 = require("../api/products/products.module");
 const users_module_1 = require("../api/users/users.module");
 const configuration_module_1 = require("../common/config/configuration.module");
 const configuration_service_1 = require("../common/config/configuration.service");
+const app_controller_1 = require("./app.controller");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -48,7 +49,7 @@ AppModule = __decorate([
             accessories_module_1.AccessoriesModule,
             assemblies_module_1.AssemblyModule
         ],
-        controllers: [],
+        controllers: [app_controller_1.AppController],
         providers: []
     })
 ], AppModule);

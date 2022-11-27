@@ -1,0 +1,39 @@
+service: bundle-backend
+
+useDotenv: true
+
+plugins:
+    - serverless-offline
+
+provider:
+    name: aws
+    runtime: nodejs14.x
+    region: eu-north-1
+    environment:
+        PORT: ${env:PORT}
+        MONGODB_URI: ${env:MONGODB_URI}
+
+        SECRET_KEY: ${env:SECRET_KEY}
+        TOKEN_EXPIRATION_TIME: ${env:TOKEN_EXPIRATION_TIME}
+
+        COLLECTION_KEY_ASSEMBLIES: ${env:COLLECTION_KEY_ASSEMBLIES}
+        COLLECTION_KEY_APPLICATIONS: ${env:COLLECTION_KEY_APPLICATIONS}
+        COLLECTION_KEY_ACCESSORIES: ${env:COLLECTION_KEY_ACCESSORIES}
+        COLLECTION_KEY_CLIENTS: ${env:COLLECTION_KEY_CLIENTS}
+        COLLECTION_KEY_ORDERS: ${env:COLLECTION_KEY_ORDERS}
+        COLLECTION_KEY_PRODUCTS: ${env:COLLECTION_KEY_PRODUCTS}
+        COLLECTION_KEY_USERS: ${env:COLLECTION_KEY_USERS}
+        COLLECTION_KEY_USERS_SETTINGS: ${env:COLLECTION_KEY_USERS_SETTINGS}
+
+        ROLE_KEY: ${env:ROLE_KEY}
+
+functions:
+    main:
+        handler: dist/serverless.handler
+        events:
+            - http:
+                  method: ANY
+                  path: /
+            - http:
+                  method: ANY
+                  path: '{proxy+}'
