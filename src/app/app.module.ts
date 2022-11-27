@@ -14,6 +14,8 @@ import { UsersModule } from 'api/users/users.module';
 import { ConfigurationModule } from 'config/configuration.module';
 import { ConfigurationService } from 'config/configuration.service';
 
+import { AppController } from './app.controller';
+
 @Module({
     imports: [
         ConfigurationModule,
@@ -39,7 +41,7 @@ import { ConfigurationService } from 'config/configuration.service';
         AccessoriesModule,
         AssemblyModule
     ],
-    controllers: [],
+    controllers: [AppController],
     providers: []
 })
 export class AppModule {}
