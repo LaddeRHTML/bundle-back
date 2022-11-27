@@ -9,10 +9,10 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         cors: true
     });
-    if (module.hot) {
+    /* if (module.hot) {
         module.hot.accept();
         module.hot.dispose(() => app.close());
-    }
+    } */
 
     /* const config = new DocumentBuilder()
 		.setTitle('Cats example')
@@ -23,7 +23,7 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document); */
 
-    app.useGlobalFilters(new AllExceptionsFilter());
+    /* app.useGlobalFilters(new AllExceptionsFilter()); */
 
     await app.listen(parseInt(process.env.PORT) || 5000);
 }
