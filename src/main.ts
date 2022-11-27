@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app/app.module';
 import { AllExceptionsFilter } from './common/filters/exception.filters';
@@ -24,7 +23,6 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document); */
 
-    app.use(cookieParser());
     app.useGlobalFilters(new AllExceptionsFilter());
 
     await app.listen(parseInt(process.env.PORT) || 5000);
