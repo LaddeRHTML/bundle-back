@@ -3,6 +3,7 @@ service: bundle-backend
 useDotenv: true
 
 plugins:
+    - serverless-plugin-optimize
     - serverless-offline
 
 provider:
@@ -32,8 +33,6 @@ functions:
         handler: dist/serverless.handler
         events:
             - http:
-                  method: ANY
-                  path: /
-            - http:
-                  method: ANY
-                  path: '{proxy+}'
+                  cors: true
+                  path: '/{any+}'
+                  method: any

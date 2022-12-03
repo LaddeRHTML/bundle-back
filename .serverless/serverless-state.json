@@ -188,9 +188,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/bundle-backend/dev/1669567496816-2022-11-27T16:44:56.816Z/bundle-backend.zip"
+                "S3Key": "serverless/bundle-backend/dev/1670080243317-2022-12-03T15:10:43.317Z/bundle-backend.zip"
               },
-              "Handler": "dist/serverless.handler",
+              "Handler": "_optimize/bundle-backend-dev-main/dist/serverless.handler",
               "Runtime": "nodejs14.x",
               "FunctionName": "bundle-backend-dev-main",
               "MemorySize": 1024,
@@ -223,14 +223,14 @@
               "MainLogGroup"
             ]
           },
-          "MainLambdaVersionJYOBpyyVzrrDj72Ce0SskbgCswGVcF18IKa5yb0": {
+          "MainLambdaVersionTvZyoCQXXkMqhSIDjqrtNORrAXGzlwSkwk1H0URWSk": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "MainLambdaFunction"
               },
-              "CodeSha256": "WN3DopubV3+DcIot7gnCoB2mThnz8fzAI1BFoPjwAwc="
+              "CodeSha256": "G6S5K3onlD9HJMT18kTzcKZ3XqsKrejJhOA//j6cUD4="
             }
           },
           "ApiGatewayRestApi": {
@@ -245,7 +245,7 @@
               "Policy": ""
             }
           },
-          "ApiGatewayResourceProxyVar": {
+          "ApiGatewayResourceAnyVar": {
             "Type": "AWS::ApiGateway::Resource",
             "Properties": {
               "ParentId": {
@@ -254,68 +254,64 @@
                   "RootResourceId"
                 ]
               },
-              "PathPart": "{proxy+}",
+              "PathPart": "{any+}",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
             }
           },
-          "ApiGatewayMethodAny": {
+          "ApiGatewayMethodAnyVarOptions": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
-              "HttpMethod": "ANY",
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
               "RequestParameters": {},
-              "ResourceId": {
-                "Fn::GetAtt": [
-                  "ApiGatewayRestApi",
-                  "RootResourceId"
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
                 ]
               },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAnyVar"
+              },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "NONE",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "MainLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            },
-            "DependsOn": [
-              "MainLambdaPermissionApiGateway"
-            ]
+              }
+            }
           },
-          "ApiGatewayMethodProxyVarAny": {
+          "ApiGatewayMethodAnyVarAny": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
               "HttpMethod": "ANY",
               "RequestParameters": {},
               "ResourceId": {
-                "Ref": "ApiGatewayResourceProxyVar"
+                "Ref": "ApiGatewayResourceAnyVar"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
@@ -355,7 +351,7 @@
               "MainLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1669567435813": {
+          "ApiGatewayDeployment1670080209667": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -364,8 +360,8 @@
               "StageName": "dev"
             },
             "DependsOn": [
-              "ApiGatewayMethodAny",
-              "ApiGatewayMethodProxyVarAny"
+              "ApiGatewayMethodAnyVarOptions",
+              "ApiGatewayMethodAnyVarAny"
             ]
           },
           "MainLambdaPermissionApiGateway": {
@@ -418,7 +414,7 @@
           "MainLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "MainLambdaVersionJYOBpyyVzrrDj72Ce0SskbgCswGVcF18IKa5yb0"
+              "Ref": "MainLambdaVersionTvZyoCQXXkMqhSIDjqrtNORrAXGzlwSkwk1H0URWSk"
             },
             "Export": {
               "Name": "sls-bundle-backend-dev-MainLambdaFunctionQualifiedArn"
@@ -537,39 +533,57 @@
       "vpc": {}
     },
     "plugins": [
+      "serverless-plugin-optimize",
       "serverless-offline"
     ],
     "pluginsData": {},
     "functions": {
       "main": {
-        "handler": "dist/serverless.handler",
+        "handler": "_optimize/bundle-backend-dev-main/dist/serverless.handler",
         "events": [
           {
             "http": {
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "ANY"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "path": "{any+}",
               "method": "any",
-              "path": "",
-              "integration": "AWS_PROXY"
-            }
-          },
-          {
-            "http": {
-              "method": "any",
-              "path": "{proxy+}",
               "integration": "AWS_PROXY"
             }
           }
         ],
         "name": "bundle-backend-dev-main",
-        "package": {},
+        "package": {
+          "exclude": [
+            "**"
+          ],
+          "include": [
+            "_optimize/bundle-backend-dev-main/**"
+          ]
+        },
         "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "MainLambdaVersionJYOBpyyVzrrDj72Ce0SskbgCswGVcF18IKa5yb0"
+        "versionLogicalId": "MainLambdaVersionTvZyoCQXXkMqhSIDjqrtNORrAXGzlwSkwk1H0URWSk"
       }
     },
     "configValidationMode": "warn",
-    "serviceFilename": "serverless.yaml",
+    "serviceFilename": "serverless.yml",
     "initialServerlessConfig": {
       "service": "bundle-backend",
       "useDotenv": true,
@@ -588,7 +602,7 @@
     "artifact": "C:\\Users\\romap\\OneDrive\\Рабочий стол\\bundle\\bundle-back\\.serverless\\bundle-backend.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/bundle-backend/dev/1669567496816-2022-11-27T16:44:56.816Z",
+    "artifactDirectoryName": "serverless/bundle-backend/dev/1670080243317-2022-12-03T15:10:43.317Z",
     "artifact": "bundle-backend.zip"
   }
 }
