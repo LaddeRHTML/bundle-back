@@ -27,8 +27,12 @@ export class AuthController {
     @Get('check')
     async check(@Req() req: Request): Promise<UserData> {
         const userId = req.user['userId'] as string;
+
         const user = await this.usersService.findOneUserById(userId);
         const userSettings = await this.usersService.findOneUserSettings(userId);
+
+        user.password = undefined;
+
         return {
             user,
             userSettings

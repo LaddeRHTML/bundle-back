@@ -34,7 +34,7 @@ let AuthController = class AuthController {
         const user = await this.usersService.findOneUserById(userId);
         const userSettings = await this.usersService.findOneUserSettings(userId);
         return {
-            user,
+            user: Object.assign(Object.assign({}, user), { password: undefined }),
             userSettings
         };
     }
