@@ -23,6 +23,11 @@
         "COLLECTION_KEY_USERS_SETTINGS": "userSettings",
         "ROLE_KEY": "bundle-roles"
       },
+      "apiGateway": {
+        "binaryMediaTypes": [
+          "*/*"
+        ]
+      },
       "stage": "dev",
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -188,7 +193,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/bundle-backend/dev/1670080243317-2022-12-03T15:10:43.317Z/bundle-backend.zip"
+                "S3Key": "serverless/bundle-backend/dev/1670862543995-2022-12-12T16:29:03.995Z/bundle-backend.zip"
               },
               "Handler": "_optimize/bundle-backend-dev-main/dist/serverless.handler",
               "Runtime": "nodejs14.x",
@@ -237,6 +242,9 @@
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
               "Name": "dev-bundle-backend",
+              "BinaryMediaTypes": [
+                "*/*"
+              ],
               "EndpointConfiguration": {
                 "Types": [
                   "EDGE"
@@ -351,7 +359,7 @@
               "MainLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1670080209667": {
+          "ApiGatewayDeployment1670862509972": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -602,7 +610,7 @@
     "artifact": "C:\\Users\\romap\\OneDrive\\Рабочий стол\\bundle\\bundle-back\\.serverless\\bundle-backend.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/bundle-backend/dev/1670080243317-2022-12-03T15:10:43.317Z",
+    "artifactDirectoryName": "serverless/bundle-backend/dev/1670862543995-2022-12-12T16:29:03.995Z",
     "artifact": "bundle-backend.zip"
   }
 }

@@ -27,6 +27,9 @@ provider:
         COLLECTION_KEY_USERS_SETTINGS: ${env:COLLECTION_KEY_USERS_SETTINGS}
 
         ROLE_KEY: ${env:ROLE_KEY}
+    apiGateway:
+        binaryMediaTypes:
+            - '*/*'
 
 functions:
     main:
