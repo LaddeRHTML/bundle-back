@@ -1,1 +1,1 @@
-export type OrderStatus = 'first-touch' | 'client-ready' | 'purchased' | 'closed';
+export type OrderStatus = 'open' | 'success' | 'reject';

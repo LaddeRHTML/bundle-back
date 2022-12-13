@@ -1,42 +1,44 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { UserPayload } from 'api/auth/interface/userId.interface';
 import { UpdateSettings } from 'api/clients/interface/client.update.gui.interface';
 import { ProductsService } from 'api/products/products.service';
+import { User, UserDocument } from 'api/users/schema/user.schema';
 import mongoose, { FilterQuery, Model, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
-import { calcRelToAnyDate, paginate } from '../../common/utils/index';
+import { calcRelToAnyDate } from '../../common/utils/index';
 import { Client, ClientDocument } from '../clients/schema/clients.schema';
 import { ClientsService } from './../clients/clients.service';
 import { Product, ProductsDocument } from './../products/schema/products.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order, OrderDocument } from './schema/orders.schema';
+import { OrderStatus } from './types/order-status.types';
 
 const clientRef = 'client';
 const productRef = 'orderedProducts';
+const creatorRef = 'creator';
+const lastEditorRef = 'lastEditor';
+const currentManagerRef = 'currentManager';
 
 @Injectable()
 export class OrdersService {
     constructor(
         @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
+        @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
         @InjectModel(Product.name) private readonly productModel: Model<ProductsDocument>,
         @InjectModel(Client.name) private readonly clientModel: Model<ClientDocument>,
         private readonly clientsService: ClientsService,
         private readonly productService: ProductsService
     ) {}
 
-    async create(clientId: string, createOrderDto: CreateOrderDto) {
+    async create(clientId: string, createOrderDto: CreateOrderDto, userPayload: UserPayload) {
         try {
+            createOrderDto.creator = userPayload.userId;
+            createOrderDto.currentManager = userPayload.userId;
+
             const client = await this.clientsService.findOne(clientId);
-
-            createOrderDto.closeRequestInterval = calcRelToAnyDate(
-                createOrderDto.firstContactDate,
-                createOrderDto.deliveryDate,
-                false
-            );
-
-            console.log('client - >', client);
 
             if (!client) {
                 throw new HttpException(
@@ -46,15 +48,11 @@ export class OrdersService {
             }
             createOrderDto.client = clientId;
 
-            console.log(createOrderDto);
-
             const products = await this.productService.findAllByWithOutPopulating({
                 _id: {
                     $in: createOrderDto.orderedProducts.map((id) => new mongoose.Types.ObjectId(id))
                 }
             });
-
-            console.log('products->', products);
 
             if (!products || products?.length === 0) {
                 throw new HttpException(
@@ -74,8 +72,6 @@ export class OrdersService {
                 },
                 { new: true }
             );
-
-            console.log('order->', order);
 
             if (!clientUpdated) {
                 throw new HttpException(
@@ -99,48 +95,93 @@ export class OrdersService {
         }
     }
 
-    async findSortedItems(page: number, limit: number): Promise<Pagination> {
+    async findSortedItems(
+        page: number,
+        limit: number,
+        status: OrderStatus,
+        userId: string
+    ): Promise<Pagination> {
+        let options = {
+            ...(status && {
+                status
+            }),
+            ...(userId && {
+                currentManager: userId
+            })
+        };
+
         const total = await this.orderModel.count({}).exec();
-        const query = this.orderModel
-            .find({})
+        const lastPage = Math.ceil(total / limit);
+        const data = await this.orderModel
+            .find(options)
             .populate({ path: clientRef, model: this.clientModel })
-            .populate({ path: productRef, model: this.productModel });
-        return paginate(page, query, limit, total);
+            .populate({ path: productRef, model: this.productModel })
+            .populate(creatorRef, 'name email', this.userModel)
+            .populate(lastEditorRef, 'name email', this.userModel)
+            .populate(currentManagerRef, 'name email', this.userModel)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .exec();
+
+        const sortedData = {
+            data,
+            total,
+            page,
+            lastPage
+        };
+
+        return sortedData;
     }
 
     async findAll(): Promise<Order[]> {
         return await this.orderModel
             .find({})
             .populate({ path: clientRef, model: this.clientModel })
-            .populate({ path: productRef, model: this.productModel });
+            .populate({ path: productRef, model: this.productModel })
+            .populate(creatorRef, 'name email', this.userModel)
+            .populate(lastEditorRef, 'name email', this.userModel)
+            .populate(currentManagerRef, 'name email', this.userModel);
     }
 
     async findOne(_id: string): Promise<Order> {
         return await this.orderModel
             .findOne({ _id })
             .populate({ path: clientRef, model: this.clientModel })
-            .populate({ path: productRef, model: this.productModel });
+            .populate({ path: productRef, model: this.productModel })
+            .populate(creatorRef, 'name email', this.userModel)
+            .populate(lastEditorRef, 'name email', this.userModel)
+            .populate(currentManagerRef, 'name email', this.userModel);
     }
 
-    async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
-        const order = await this.findOne(id);
-
-        const firstContactDate = updateOrderDto?.firstContactDate
-            ? updateOrderDto?.firstContactDate
-            : order?.firstContactDate;
-        const deliveryDate = updateOrderDto?.deliveryDate
-            ? updateOrderDto?.deliveryDate
-            : order?.deliveryDate;
-
-        updateOrderDto.closeRequestInterval = calcRelToAnyDate(
-            firstContactDate,
-            deliveryDate,
-            false
-        );
+    async update(
+        id: string,
+        updateOrderDto: UpdateOrderDto,
+        userPayload: UserPayload
+    ): Promise<Order> {
+        updateOrderDto.lastEditor = userPayload.userId;
+        updateOrderDto.updateDate = new Date();
 
         return await this.orderModel
             .findOneAndUpdate({ _id: id }, { ...updateOrderDto }, { new: true })
-            .populate({ path: productRef, model: this.productModel });
+            .populate({ path: productRef, model: this.productModel })
+            .populate(creatorRef, 'name email', this.userModel)
+            .populate(lastEditorRef, 'name email', this.userModel)
+            .populate(currentManagerRef, 'name email', this.userModel);
+    }
+
+    async closeOrder(id: string, status: OrderStatus, userPayload: UserPayload) {
+        const order = await this.findOne(id);
+
+        const closeOrderInterval = calcRelToAnyDate(order.createDate, new Date(), false);
+
+        return this.update(
+            id,
+            {
+                status,
+                closeOrderInterval
+            },
+            userPayload
+        );
     }
 
     async updateMany(

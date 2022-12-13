@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Order } from 'api/orders/schema/orders.schema';
-import type { OrderManaged } from 'api/orders/types/order-managed.types';
 import { Document } from 'mongoose';
 
 export type ClientDocument = Client & Document;
@@ -54,9 +53,6 @@ export class Client {
 
     @Prop({ required: true, default: new Date() })
     firstContactDate: Date;
-
-    @Prop({ required: true, default: '', type: 'string' })
-    callManaged: OrderManaged;
 
     @Prop({ required: true, default: '' })
     comment: string;
