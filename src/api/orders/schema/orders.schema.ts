@@ -5,6 +5,7 @@ import { Document } from 'mongoose';
 import type { DeliveredBy } from '../types/deliverer.types';
 import type { OrderStatus } from '../types/order-status.types';
 import { PaymentMethodType } from '../types/payment-method.types';
+import { SourceType } from '../types/source.types';
 
 export type OrderDocument = Order & Document;
 
@@ -43,8 +44,8 @@ export class Order {
     @Prop({ required: false, default: 'cash', type: String })
     paymentMethod: PaymentMethodType;
 
-    @Prop({ required: true })
-    referal: string;
+    @Prop({ required: true, type: String })
+    source: SourceType;
 
     @Prop({ required: false, ref: 'users' })
     lastEditor: string;
