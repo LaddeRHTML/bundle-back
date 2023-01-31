@@ -1,102 +1,126 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Role } from 'api/users/enum/roles.enum';
 import { UserPasswords } from 'api/users/interface/passwords.interface';
-import { UserData } from 'api/users/interface/user.interface';
 import * as bcrypt from 'bcryptjs';
-import { Model } from 'mongoose';
+import { ConfigurationService } from 'config/configuration.service';
+import { Pagination } from 'interfaces/utils.interface';
+import {
+    FilterQuery,
+    Model,
+    QueryOptions,
+    UpdateQuery,
+    UpdateWithAggregationPipeline
+} from 'mongoose';
 import { hashRounds } from 'src/common/constants/bcrypt';
+import { calcRelToCurrentDate } from 'src/common/utils/index';
 
-import { CreateUserDto, CreateUserSettingsDto } from './dto/create-user.dto';
-import { UpdateUserDto, UpdateUserSettingsDto } from './dto/update-user.dto';
-import { User, UserDocument, UserSettings, UserSettingsDocument } from './schema/user.schema';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User, UserDocument } from './schema/user.schema';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-        @InjectModel(UserSettings.name)
-        private readonly userSettingsModel: Model<UserSettingsDocument>
+        private readonly configService: ConfigurationService
     ) {}
 
-    async create(
-        createUserDto: CreateUserDto,
-        createUserSettingsDto: CreateUserSettingsDto
-    ): Promise<UserData> {
+    async createOne(createUserDto: CreateUserDto, role: Role): Promise<User> {
         try {
-            const newUser = await this.userModel.create(createUserDto);
-            const { _id } = newUser;
-            const newUserSettings = await this.userSettingsModel.create({
-                ...createUserSettingsDto,
-                user: _id
-            });
+            createUserDto.age = calcRelToCurrentDate(createUserDto.birthDay, true);
+            createUserDto.role = role;
 
-            return { user: newUser, userSettings: newUserSettings };
+            return await this.userModel.create(createUserDto);
         } catch {
             throw new HttpException('BadRequestException', HttpStatus.BAD_REQUEST);
         }
     }
 
-    async findAllUsers(): Promise<User[]> {
-        return await this.userModel.find({});
+    async findAll(): Promise<User[]> {
+        return await this.userModel
+            .find({})
+            .select('-password')
+            .populate(this.configService.orderRef);
     }
 
-    async findAllUsersWithSettings(): Promise<UserSettings[]> {
-        const usersData = await this.userSettingsModel.find({}).populate('user', 'name email');
-        return usersData;
-    }
+    async findByQuery(parameter: string, page: number, limit: number): Promise<Pagination<User[]>> {
+        let options = {};
 
-    async findOne(parameter: any): Promise<User> {
-        return await this.userModel.findOne(parameter);
-    }
+        if (parameter) {
+            options = {
+                $or: [
+                    {
+                        address: new RegExp(parameter, 'i')
+                    },
+                    {
+                        name: new RegExp(parameter, 'i')
+                    },
+                    {
+                        familyName: new RegExp(parameter, 'i')
+                    },
+                    {
+                        patronymic: new RegExp(parameter, 'i')
+                    },
+                    {
+                        iin: new RegExp(parameter, 'i')
+                    },
+                    {
+                        phone: new RegExp(parameter, 'i')
+                    },
+                    {
+                        email: new RegExp(parameter, 'i')
+                    }
+                ]
+            };
+        }
 
-    async findOneByEmail(email: string): Promise<User> {
-        return await this.userModel.findOne({ email });
-    }
+        const total = await this.userModel.count(options).exec();
+        const lastPage = Math.ceil(total / limit);
+        const data = await this.userModel
+            .find(options)
+            .select('-password')
+            .populate(this.configService.orderRef)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .exec();
 
-    async findOneUserById(id: string): Promise<User> {
-        const user = await this.userModel.findOne({ _id: id });
-        return user;
-    }
-
-    async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        return await this.userModel.findOneAndUpdate(
-            { _id: id },
-            { ...updateUserDto },
-            { new: true }
-        );
-    }
-
-    async findOneUserSettings(userId: string): Promise<UserSettings> {
-        return await this.userSettingsModel.findOne({ user: userId });
-    }
-
-    async updateUserSettings(
-        userId: string,
-        updateUserSettingsDto: UpdateUserSettingsDto
-    ): Promise<UserSettings> {
-        const userSettingsToUpdate = await this.userSettingsModel.findOne({ user: userId });
-        const { id } = userSettingsToUpdate;
-        return await this.userSettingsModel.findOneAndUpdate(
-            { _id: id },
-            { ...updateUserSettingsDto },
-            { new: true }
-        );
-    }
-
-    async updateUserData(
-        userId: string,
-        updateUserSettingsDto: UpdateUserSettingsDto,
-        updateUserDto: UpdateUserDto
-    ): Promise<UserData> {
-        const user = await this.updateUser(userId, updateUserDto);
-        const userSettings = await this.updateUserSettings(userId, updateUserSettingsDto);
         return {
-            user,
-            userSettings
+            data,
+            total,
+            page,
+            lastPage
         };
     }
 
-    async updateUserPassword(req: any, passwords: UserPasswords): Promise<boolean> {
+    async findOne(parameter: User): Promise<User> {
+        return await this.userModel
+            .findOne(parameter)
+            .select('-password')
+            .populate(this.configService.orderRef);
+    }
+
+    async findOneByEmail(email: Pick<User, 'email'>): Promise<User> {
+        return await this.userModel.findOne({ email }).populate(this.configService.orderRef);
+    }
+
+    async findOneById(id: string): Promise<User> {
+        return await this.userModel.findOne({ _id: id }).populate(this.configService.orderRef);
+    }
+
+    async updateOne(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+        if (updateUserDto?.birthDay) {
+            updateUserDto.age = calcRelToCurrentDate(updateUserDto?.birthDay, true);
+        }
+
+        updateUserDto.updateDate = new Date();
+
+        return await this.userModel
+            .findOneAndUpdate({ _id: id }, { ...updateUserDto }, { new: true })
+            .populate(this.configService.orderRef);
+    }
+
+    async updatePassword(req: any, passwords: UserPasswords): Promise<boolean> {
         const { oldPassword, newPassword } = passwords;
         try {
             const samePass = 'Passwords are the same!';
@@ -106,7 +130,7 @@ export class UsersService {
             }
 
             const { userId } = req.user;
-            const user = await this.findOneUserById(userId);
+            const user = await this.findOneById(userId);
 
             if (!user) {
                 throw new HttpException("User wasn't found!", HttpStatus.CONFLICT);
@@ -120,7 +144,7 @@ export class UsersService {
 
             const newPasswordHash = await bcrypt.hash(newPassword, hashRounds);
 
-            const updatedUser = await this.updateUser(userId, {
+            const updatedUser = await this.updateOne(userId, {
                 password: newPasswordHash
             });
 
@@ -134,9 +158,24 @@ export class UsersService {
         }
     }
 
-    async removeUser(id: string) {
-        return await this.userModel.deleteOne({ _id: id }).then(async () => {
-            await this.userSettingsModel.deleteOne({ user: id });
-        });
+    async updateMany(
+        filter?: FilterQuery<UserDocument>,
+        parameter?: UpdateWithAggregationPipeline | UpdateQuery<UserDocument>,
+        settings?: QueryOptions
+    ) {
+        return await this.userModel
+            .updateMany(
+                filter,
+                { ...parameter, updateDate: new Date() },
+                {
+                    ...settings,
+                    new: true
+                }
+            )
+            .populate(this.configService.orderRef);
+    }
+
+    async removeOneById(id: string) {
+        return await this.userModel.deleteOne({ _id: id });
     }
 }

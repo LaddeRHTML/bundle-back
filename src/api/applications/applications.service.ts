@@ -14,11 +14,11 @@ export class ApplicationsService {
         @InjectModel(Application.name) private applicationsModel: Model<ApplicationsDocument>
     ) {}
 
-    async create(createApplicationDto: CreateApplicationDto): Promise<Application> {
+    async createOne(createApplicationDto: CreateApplicationDto): Promise<Application> {
         return await this.applicationsModel.create(createApplicationDto);
     }
 
-    async findSortedItems(page: number, limit: number): Promise<Pagination> {
+    async findSortedItems(page: number, limit: number): Promise<Pagination<Application[]>> {
         const total = await this.applicationsModel.count({}).exec();
         const query = this.applicationsModel.find({});
         return paginate(page, query, limit, total);

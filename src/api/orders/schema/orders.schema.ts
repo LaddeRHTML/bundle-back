@@ -11,7 +11,7 @@ export type OrderDocument = Order & Document;
 
 @Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_ORDERS })
 export class Order {
-    @Prop({ required: true, default: '', ref: 'clients' })
+    @Prop({ required: true, default: '', ref: 'users' })
     client: string;
 
     @Prop({ required: true, ref: 'users' })
@@ -33,7 +33,7 @@ export class Order {
     deliveredBy: DeliveredBy;
 
     @Prop({ required: true, default: [''], ref: Product.name })
-    orderedProducts: string[];
+    products: string[];
 
     @Prop({ required: false })
     purchaseDate: Date;

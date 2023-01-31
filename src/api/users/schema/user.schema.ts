@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Order } from 'api/orders/schema/orders.schema';
 import { Document } from 'mongoose';
 
 import { Role } from '../enum/roles.enum';
 
 export type UserDocument = User & Document;
-export type UserSettingsDocument = UserSettings & Document;
 
 @Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_USERS })
 export class User {
@@ -14,23 +14,11 @@ export class User {
     @Prop({ unique: true, required: true, max: 30 })
     email: string;
 
-    @Prop({ required: true })
+    @Prop({ required: true, type: String, default: null })
     password: string;
 
     @Prop({ type: String, enum: Role, default: Role.User })
     role: Role;
-}
-
-@Schema({
-    versionKey: false,
-    collection: process.env.COLLECTION_KEY_USERS_SETTINGS
-})
-export class UserSettings {
-    @Prop({ default: new Date() })
-    registrationDate: Date;
-
-    @Prop({ default: new Date() })
-    updateDate: Date;
 
     @Prop({ default: 0 })
     age: number;
@@ -42,11 +30,43 @@ export class UserSettings {
     gender: number;
 
     @Prop({ default: true })
-    allowToLogin: boolean;
+    allowedToLogin: boolean;
 
-    @Prop({ ref: User.name })
-    user: string;
+    @Prop({ required: false, ref: Order.name })
+    orders: string[];
+
+    @Prop({ required: false })
+    familyName: string;
+
+    @Prop({ required: false })
+    patronymic: string;
+
+    @Prop({ required: true })
+    birthDay: Date;
+
+    @Prop({ required: true, min: 11, max: 11 })
+    phone: string;
+
+    @Prop({ required: false, default: 'kazakhstan' })
+    country: string;
+
+    @Prop({ required: false, default: 'Almaty' })
+    city: string;
+
+    @Prop({ required: false, default: '' })
+    address: string;
+
+    @Prop({ required: false, default: false })
+    isLegalEntity: boolean;
+
+    @Prop({ required: false })
+    iin: string;
+
+    @Prop({ default: new Date() })
+    updateDate: Date;
+
+    @Prop({ default: new Date() })
+    registrationDate: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-export const UserSettingsSchema = SchemaFactory.createForClass(UserSettings);

@@ -15,7 +15,7 @@ export class AssembliesService {
         @InjectModel(Assembly.name) private readonly assemblyModel: Model<AssembliesDocument>
     ) {}
 
-    async create(createAssemblyDto: CreateAssemblyDto): Promise<Assembly> {
+    async createOne(createAssemblyDto: CreateAssemblyDto): Promise<Assembly> {
         return await this.assemblyModel.create(createAssemblyDto);
     }
 
@@ -23,7 +23,7 @@ export class AssembliesService {
         return await this.assemblyModel.find({});
     }
 
-    async findSortedItems(page: number, limit: number): Promise<Pagination> {
+    async findSortedItems(page: number, limit: number): Promise<Pagination<Assembly[]>> {
         const total = await this.assemblyModel.count({}).exec();
         const query = this.assemblyModel.find({});
         return paginate(page, query, limit, total);

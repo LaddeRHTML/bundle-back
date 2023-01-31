@@ -26,7 +26,7 @@ import { FilesService } from './service/files.service';
 export class FilesController {
     constructor(private readonly filesService: FilesService) {}
 
-    @HasRoles(Role.Moderator, Role.Admin)
+    @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post()
     @UseInterceptors(FileInterceptor('image'))
@@ -49,7 +49,7 @@ export class FilesController {
         return response;
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('info/:id')
     async getFileInfo(@Param('id') id: string): Promise<FileResponse> {
@@ -81,7 +81,7 @@ export class FilesController {
         return filestream.pipe(res);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('download/:id')
     async downloadFile(@Param('id') id: string, @Res() res): Promise<any> {

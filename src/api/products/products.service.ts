@@ -1,12 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ClientsService } from 'api/clients/clients.service';
-import { Client, ClientDocument } from 'api/clients/schema/clients.schema';
 import { MulterFile } from 'api/files/interface/multer.interface';
 import { Order, OrderDocument } from 'api/orders/schema/orders.schema';
 import * as moment from 'moment';
-import mongoose, {
-    Callback,
+import {
     FilterQuery,
     Model,
     ProjectionType,
@@ -20,26 +17,19 @@ import * as XLSX from 'xlsx';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import {
-    FilterProductsResponse,
-    MinMaxProductValues,
-    ProductsFilter
-} from './interfaces/products.filter.interface';
+import { FilterProductsResponse, ProductsFilter } from './interfaces/products.filter.interface';
 import { Product, ProductsDocument } from './schema/products.schema';
 
-const orderRef = 'includedInOrders';
-const clientRef = 'buyers';
+const orderRef = 'orders';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectModel(Product.name) private readonly productModel: Model<ProductsDocument>,
-        @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
-        @InjectModel(Client.name) private readonly clientModel: Model<ClientDocument>,
-        private readonly clientsService: ClientsService
+        @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>
     ) {}
 
-    async create(createProductDto: CreateProductDto): Promise<Product> {
+    async createOne(createProductDto: CreateProductDto): Promise<Product> {
         return await this.productModel.create(createProductDto);
     }
 
@@ -47,13 +37,10 @@ export class ProductsService {
         filter?: FilterQuery<ProductsDocument>,
         projection?: ProjectionType<ProductsDocument>
     ): Promise<Product[]> {
-        return await this.productModel
-            .find(filter, projection)
-            .populate({ path: orderRef, model: this.orderModel })
-            .populate({ path: clientRef, model: this.clientModel });
+        return await this.productModel.find(filter, projection);
     }
 
-    async findAllByWithOutPopulating(
+    async findAllWithOutPopulating(
         filter?: FilterQuery<ProductsDocument>,
         projection?: ProjectionType<ProductsDocument>
     ): Promise<Product[]> {
@@ -61,10 +48,7 @@ export class ProductsService {
     }
 
     async findAllByNames(names: string[]): Promise<Product[]> {
-        return await this.productModel
-            .find({ name: { $in: names } })
-            .populate({ path: orderRef, model: this.orderModel })
-            .populate({ path: clientRef, model: this.clientModel });
+        return await this.productModel.find({ name: { $in: names } });
     }
 
     async findByQuery(
@@ -74,7 +58,7 @@ export class ProductsService {
         onlyOrdered: boolean,
         category: string,
         filters: Partial<ProductsFilter>
-    ): Promise<Pagination> {
+    ): Promise<Pagination<Product[]>> {
         let options = {
             ...(onlyOrdered && {
                 includedInOrders: {
@@ -133,8 +117,6 @@ export class ProductsService {
         const lastPage = Math.ceil(total / limit);
         const data = await this.productModel
             .find(options)
-            .populate({ path: orderRef, model: this.orderModel })
-            .populate({ path: clientRef, model: this.clientModel })
             .skip((page - 1) * limit)
             .limit(limit)
             .exec();
@@ -176,18 +158,15 @@ export class ProductsService {
     }
 
     async findOneById(_id: string): Promise<Product> {
-        return await this.productModel
-            .findOne({ _id })
-            .populate({ path: orderRef, model: this.orderModel })
-            .populate({ path: clientRef, model: this.clientModel });
+        return await this.productModel.findOne({ _id });
     }
 
     async updateById(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-        console.log(id, updateProductDto);
-        return await this.productModel
-            .findOneAndUpdate({ _id: id }, { ...updateProductDto }, { new: true })
-            .populate({ path: orderRef, model: this.orderModel })
-            .populate({ path: clientRef, model: this.clientModel });
+        return await this.productModel.findOneAndUpdate(
+            { _id: id },
+            { ...updateProductDto },
+            { new: true }
+        );
     }
 
     async updateMany(
@@ -195,13 +174,10 @@ export class ProductsService {
         parameter: UpdateWithAggregationPipeline | UpdateQuery<ProductsDocument>,
         settings?: QueryOptions
     ) {
-        return await this.productModel
-            .updateMany(filter, parameter, {
-                ...settings,
-                new: true
-            })
-            .populate({ path: orderRef, model: this.orderModel })
-            .populate({ path: clientRef, model: this.clientModel });
+        return await this.productModel.updateMany(filter, parameter, {
+            ...settings,
+            new: true
+        });
     }
 
     async remove(id: string): Promise<Product> {

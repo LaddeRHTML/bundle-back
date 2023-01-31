@@ -30,18 +30,21 @@ const controllerName = `${apiVersion}/orders`;
 export class OrdersController {
     constructor(private readonly orderService: OrdersService) {}
 
-    @HasRoles(Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/create?')
-    create(
-        @Query('clientId') clientId: string,
-        @Body() createOrderDto: CreateOrderDto,
-        @Req() req: Request
-    ) {
-        return this.orderService.create(clientId, createOrderDto, req.user as UserPayload);
+    createOne(@Body() createOrderDto: CreateOrderDto, @Req() req: Request) {
+        return this.orderService.createOne(createOrderDto, req.user as UserPayload);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Get()
+    findAllBy(@Body() productDto: Order): Promise<Order[]> {
+        return this.orderService.findAllBy(productDto);
+    }
+
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/filter?')
     async findSortedItems(
@@ -49,50 +52,54 @@ export class OrdersController {
         @Query('limit') limit: number,
         @Query('status') status: OrderStatus,
         @Query('userId') userId: string
-    ): Promise<Pagination> {
+    ): Promise<Pagination<Order[]>> {
         return await this.orderService.findSortedItems(page, limit, status, userId);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
-    @UseGuards(RoleGuard)
-    @Get()
-    findAll(): Promise<Order[]> {
-        return this.orderService.findAll();
-    }
-
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Order> {
         return this.orderService.findOne(id);
     }
 
-    @HasRoles(Role.Moderator, Role.Admin)
+    @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Patch(':id')
-    update(
-        @Param('id') id: string,
-        @Body() updateOrderDto: UpdateOrderDto,
-        @Req() req: Request
-    ): Promise<Order> {
-        return this.orderService.update(id, updateOrderDto, req.user as UserPayload);
+    @Patch('/assign/:id')
+    assignOn(@Param('id') id: string, @Req() req: Request): Promise<Order> {
+        return this.orderService.updateOne(
+            id,
+            { currentManager: req.user['userId'] },
+            req.user as UserPayload
+        );
     }
 
-    @HasRoles(Role.Moderator, Role.Admin)
+    @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Patch('/close/:id')
-    closeOrder(
+    @Patch(':id')
+    updateOne(
         @Param('id') id: string,
         @Body() updateOrderDto: UpdateOrderDto,
         @Req() req: Request
     ): Promise<Order> {
-        return this.orderService.closeOrder(id, updateOrderDto.status, req.user as UserPayload);
+        return this.orderService.updateOne(id, updateOrderDto, req.user as UserPayload);
+    }
+
+    @HasRoles(Role.Manager, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Patch('/close/:id')
+    updateStatus(
+        @Param('id') id: string,
+        @Body() updateOrderDto: UpdateOrderDto,
+        @Req() req: Request
+    ): Promise<Order> {
+        return this.orderService.updateStatus(id, updateOrderDto.status, req.user as UserPayload);
     }
 
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete(':id')
-    async remove(@Param('id') id: string) {
-        return await this.orderService.remove(id);
+    async removeOneById(@Param('id') id: string) {
+        return await this.orderService.removeOneById(id);
     }
 }

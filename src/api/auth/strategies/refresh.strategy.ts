@@ -7,7 +7,7 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
-    constructor(private authService: AuthService) {
+    constructor() {
         super({
             ignoreExpiration: true,
             passReqToCallback: true,

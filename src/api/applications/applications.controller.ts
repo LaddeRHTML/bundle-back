@@ -29,35 +29,35 @@ export class ApplicationsController {
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Post()
-    create(@Body() createApplicationDto: CreateApplicationDto): Promise<Application> {
-        return this.applicationsService.create(createApplicationDto);
+    createOne(@Body() createApplicationDto: CreateApplicationDto): Promise<Application> {
+        return this.applicationsService.createOne(createApplicationDto);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
         @Query('limit') limit: number
-    ): Promise<Pagination> {
+    ): Promise<Pagination<Application[]>> {
         return await this.applicationsService.findSortedItems(page, limit);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
     findAll(): Promise<Application[]> {
         return this.applicationsService.findAll();
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Application> {
         return this.applicationsService.findOne(id);
     }
 
-    @HasRoles(Role.Moderator, Role.Admin)
+    @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch(':id')
     update(
