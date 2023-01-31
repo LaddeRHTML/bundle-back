@@ -73,11 +73,7 @@ export class AuthService {
 
                 return user;
             } catch (error) {
-                console.log(error);
-                throw new HttpException(
-                    `Server error suka! ${error}`,
-                    HttpStatus.INTERNAL_SERVER_ERROR
-                );
+                throw new HttpException(`Server error!`, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
