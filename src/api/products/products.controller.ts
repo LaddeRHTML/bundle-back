@@ -37,21 +37,21 @@ const controllerName = `${apiVersion}/products`;
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
 
-    @HasRoles(Role.Moderator, Role.Admin)
+    @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('')
-    async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
-        return await this.productsService.create(createProductDto);
+    async createOne(@Body() createProductDto: CreateProductDto): Promise<Product> {
+        return await this.productsService.createOne(createProductDto);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
-    findAll(): Promise<Product[]> {
-        return this.productsService.findAllBy();
+    findAll(@Query('param') productDto: Product): Promise<Product[]> {
+        return this.productsService.findAllBy(productDto);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
     async findSortedItems(
@@ -66,7 +66,7 @@ export class ProductsController {
         @Query('limit') limit: number,
         @Query('category') category: string,
         @Body() filters: ProductsFilter
-    ): Promise<Pagination> {
+    ): Promise<Pagination<Product[]>> {
         return await this.productsService.findByQuery(
             parameter,
             page,
@@ -77,7 +77,7 @@ export class ProductsController {
         );
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/min-max')
     async getMinMaxValues(): Promise<FilterProductsResponse> {
@@ -96,14 +96,14 @@ export class ProductsController {
         return await this.productsService.manipulateMultipleItems(products);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<Product> {
         return this.productsService.findOneById(id);
     }
 
-    @HasRoles(Role.Moderator, Role.Admin)
+    @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
     update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {

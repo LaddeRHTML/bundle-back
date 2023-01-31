@@ -25,38 +25,38 @@ const controllerName = `${apiVersion}/accessories/`;
 export class AccessoriesController {
     constructor(private readonly accessoriesService: AccessoriesService) {}
 
-    @HasRoles(Role.Moderator)
+    @HasRoles(Role.Manager)
     @UseGuards(RoleGuard)
     @Post('')
-    create(@Body() createAccessoryDto: CreateAccessoryDto): Promise<Accessory> {
-        return this.accessoriesService.create(createAccessoryDto);
+    createOne(@Body() createAccessoryDto: CreateAccessoryDto): Promise<Accessory> {
+        return this.accessoriesService.createOne(createAccessoryDto);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
     findAll(): Promise<Accessory[]> {
         return this.accessoriesService.findAll();
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/filter?')
     async findSortedItems(
         @Query('page') page: number,
         @Query('limit') limit: number
-    ): Promise<Pagination> {
+    ): Promise<Pagination<Accessory[]>> {
         return await this.accessoriesService.findSortedItems(page, limit);
     }
 
-    @HasRoles(Role.User, Role.Moderator, Role.Admin)
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Accessory> {
         return this.accessoriesService.findOne(id);
     }
 
-    @HasRoles(Role.Moderator, Role.Admin)
+    @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch(':id')
     update(

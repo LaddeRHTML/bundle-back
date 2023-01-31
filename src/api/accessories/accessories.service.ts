@@ -13,7 +13,7 @@ import { Accessory } from './schema/accessories.schema';
 export class AccessoriesService {
     constructor(@InjectModel(Accessory.name) private accessoryModel: Model<AccessoriesDocument>) {}
 
-    async create(createAccessoryDto: CreateAccessoryDto): Promise<Accessory> {
+    async createOne(createAccessoryDto: CreateAccessoryDto): Promise<Accessory> {
         return await this.accessoryModel.create(createAccessoryDto);
     }
 
@@ -21,7 +21,7 @@ export class AccessoriesService {
         return await this.accessoryModel.find({});
     }
 
-    async findSortedItems(page: number, limit: number): Promise<Pagination> {
+    async findSortedItems(page: number, limit: number): Promise<Pagination<Accessory[]>> {
         const total = await this.accessoryModel.count({}).exec();
         const query = this.accessoryModel.find({});
         return paginate(page, query, limit, total);

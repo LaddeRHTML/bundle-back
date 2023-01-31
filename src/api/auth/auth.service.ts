@@ -1,13 +1,13 @@
 import { HttpException, HttpStatus, Injectable, Req, Res } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto, CreateUserSettingsDto } from 'api/users/dto/create-user.dto';
+import { CreateUserDto } from 'api/users/dto/create-user.dto';
+import { Role } from 'api/users/enum/roles.enum';
 import { UsersService } from 'api/users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { ConfigurationService } from 'config/configuration.service';
 import { hashRounds } from 'src/common/constants/bcrypt';
 
 import { User } from '../users/schema/user.schema';
-import { jwtConstants } from './constants/jwt-const';
 import { AccessToken } from './interface/auth.interface';
 import { UserPayload } from './interface/userId.interface';
 
@@ -19,7 +19,7 @@ export class AuthService {
         private readonly configService: ConfigurationService
     ) {}
 
-    async validateUser(email: string, password: string): Promise<CreateUserDto> {
+    async validateUser(email: Pick<User, 'email'>, password: string): Promise<CreateUserDto> {
         const user = await this.userService.findOneByEmail(email);
 
         if (user) {
@@ -53,27 +53,31 @@ export class AuthService {
         }
     }
 
-    async register(
-        registrationData: CreateUserDto,
-        userSettings: CreateUserSettingsDto
-    ): Promise<CreateUserDto> {
-        const hashedPassword = await bcrypt.hash(registrationData.password, hashRounds);
-        const userExists = await this.userService.findOneByEmail(registrationData.email);
+    async register(createUserDto: CreateUserDto, role: Role): Promise<CreateUserDto> {
+        const hashedPassword = await bcrypt.hash(createUserDto.password, hashRounds);
+        const userExists = await this.userService.findOneByEmail(
+            createUserDto.email as unknown as Pick<User, 'email'>
+        );
         if (userExists) {
             throw new HttpException('User already exists', HttpStatus.CONFLICT);
         } else {
             try {
-                const { user } = await this.userService.create(
+                const user = await this.userService.createOne(
                     {
-                        ...registrationData,
+                        ...createUserDto,
                         password: hashedPassword
                     },
-                    userSettings
+                    role
                 );
                 user.password = undefined;
+
                 return user;
             } catch (error) {
-                throw new HttpException('Server error!', HttpStatus.INTERNAL_SERVER_ERROR);
+                console.log(error);
+                throw new HttpException(
+                    `Server error suka! ${error}`,
+                    HttpStatus.INTERNAL_SERVER_ERROR
+                );
             }
         }
     }

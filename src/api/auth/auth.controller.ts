@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from 'api/auth/auth.service';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'api/auth/guards/local-auth.guard';
-import { CreateUserDto, CreateUserSettingsDto } from 'api/users/dto/create-user.dto';
-import { UserData } from 'api/users/interface/user.interface';
+import { CreateUserDto } from 'api/users/dto/create-user.dto';
+import { Role } from 'api/users/enum/roles.enum';
 import { UsersService } from 'api/users/users.service';
 import { Request } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
@@ -25,26 +25,19 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get('check')
-    async check(@Req() req: Request): Promise<UserData> {
+    async check(@Req() req: Request): Promise<User> {
         const userId = req.user['userId'] as string;
 
-        const user = await this.usersService.findOneUserById(userId);
-        const userSettings = await this.usersService.findOneUserSettings(userId);
+        const user = await this.usersService.findOneById(userId);
 
         user.password = undefined;
 
-        return {
-            user,
-            userSettings
-        };
+        return user;
     }
 
     @Post('register')
-    async register(
-        @Req() req: Request,
-        userSettings: CreateUserSettingsDto
-    ): Promise<CreateUserDto> {
-        return this.authService.register(req.body, userSettings);
+    async register(@Req() req: Request, @Query('role') role: Role): Promise<CreateUserDto> {
+        return this.authService.register(req.body, role);
     }
 
     /* @UseGuards(RefreshAuthGuard)

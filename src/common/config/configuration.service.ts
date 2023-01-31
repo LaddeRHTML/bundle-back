@@ -9,7 +9,7 @@ export class ConfigurationService {
     private readonly _connectionString!: string;
     private readonly _jwtExpiresIn!: string;
     private readonly _orderRef!: string;
-    private readonly _clientRef!: string;
+    private readonly _productRef!: string;
 
     get connectionString(): string {
         return this._connectionString;
@@ -23,15 +23,15 @@ export class ConfigurationService {
         return this._orderRef;
     }
 
-    get clientRef(): string {
-        return this._clientRef;
+    get productRef(): string {
+        return this._productRef;
     }
 
     constructor(private readonly _configService: ConfigService) {
         this._connectionString = this._getConnectionStringFromEnvFile();
         this._jwtExpiresIn = this._getJwtFieldsFromEnvFile();
         this._orderRef = this._getCollectionNamesFromEnvFile().ordersCollectionName;
-        this._clientRef = this._getCollectionNamesFromEnvFile().clientsCollectionName;
+        this._productRef = this._getCollectionNamesFromEnvFile().productsCollectionName;
     }
 
     private _getConnectionStringFromEnvFile(): string {
@@ -56,12 +56,12 @@ export class ConfigurationService {
 
     private _getCollectionNamesFromEnvFile(): CollectionNames {
         const ordersCollectionName = this._configService.get<string>('COLLECTION_KEY_ORDERS');
-        const clientsCollectionName = this._configService.get<string>('COLLECTION_KEY_CLIENTS');
+        const productsCollectionName = this._configService.get<string>('COLLECTION_KEY_PRODUCTS');
 
-        if (!ordersCollectionName || !clientsCollectionName) {
+        if (!ordersCollectionName || !productsCollectionName) {
             throw new Error(ErrorMessages.collection_name_message);
         }
 
-        return { ordersCollectionName, clientsCollectionName };
+        return { ordersCollectionName, productsCollectionName };
     }
 }

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { jwtConstants } from 'api/auth/constants/jwt-const';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(payload: Payload): Promise<Payload> {
         if (payload === null) {
-            throw new UnauthorizedException();
+            throw new NotFoundException();
         }
 
         return payload;

@@ -1,15 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserPayload } from 'api/auth/interface/userId.interface';
-import { UpdateSettings } from 'api/clients/interface/client.update.gui.interface';
 import { ProductsService } from 'api/products/products.service';
+import { Role } from 'api/users/enum/roles.enum';
 import { User, UserDocument } from 'api/users/schema/user.schema';
-import mongoose, { FilterQuery, Model, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
+import { UsersService } from 'api/users/users.service';
+import mongoose, {
+    FilterQuery,
+    Model,
+    ProjectionType,
+    QueryOptions,
+    UpdateQuery,
+    UpdateWithAggregationPipeline
+} from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
 import { calcRelToAnyDate } from '../../common/utils/index';
-import { Client, ClientDocument } from '../clients/schema/clients.schema';
-import { ClientsService } from './../clients/clients.service';
 import { Product, ProductsDocument } from './../products/schema/products.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -17,7 +23,7 @@ import { Order, OrderDocument } from './schema/orders.schema';
 import { OrderStatus } from './types/order-status.types';
 
 const clientRef = 'client';
-const productRef = 'orderedProducts';
+const productRef = 'products';
 const creatorRef = 'creator';
 const lastEditorRef = 'lastEditor';
 const currentManagerRef = 'currentManager';
@@ -28,17 +34,18 @@ export class OrdersService {
         @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
         @InjectModel(Product.name) private readonly productModel: Model<ProductsDocument>,
-        @InjectModel(Client.name) private readonly clientModel: Model<ClientDocument>,
-        private readonly clientsService: ClientsService,
+        private readonly userService: UsersService,
         private readonly productService: ProductsService
     ) {}
 
-    async create(clientId: string, createOrderDto: CreateOrderDto, userPayload: UserPayload) {
+    async createOne(createOrderDto: CreateOrderDto, userPayload: UserPayload): Promise<Order> {
         try {
             createOrderDto.creator = userPayload.userId;
-            createOrderDto.currentManager = userPayload.userId;
+            if (userPayload.role !== Role.User) {
+                createOrderDto.currentManager = userPayload.userId;
+            }
 
-            const client = await this.clientsService.findOne(clientId);
+            const client = await this.userModel.findOne({ _id: userPayload.userId });
 
             if (!client) {
                 throw new HttpException(
@@ -46,11 +53,11 @@ export class OrdersService {
                     HttpStatus.NOT_ACCEPTABLE
                 );
             }
-            createOrderDto.client = clientId;
+            createOrderDto.client = userPayload.userId;
 
-            const products = await this.productService.findAllByWithOutPopulating({
+            const products = await this.productService.findAllWithOutPopulating({
                 _id: {
-                    $in: createOrderDto.orderedProducts.map((id) => new mongoose.Types.ObjectId(id))
+                    $in: createOrderDto.products.map((id) => new mongoose.Types.ObjectId(id))
                 }
             });
 
@@ -65,13 +72,9 @@ export class OrdersService {
 
             const orderId = order._id;
 
-            const clientUpdated = await this.clientsService.update(
-                clientId,
-                {
-                    orders: client.orders.concat(orderId)
-                },
-                { new: true }
-            );
+            const clientUpdated = await this.userService.updateOne(userPayload.userId, {
+                orders: client.orders.concat(orderId)
+            });
 
             if (!clientUpdated) {
                 throw new HttpException(
@@ -80,14 +83,8 @@ export class OrdersService {
                 );
             }
 
-            return products.forEach(async (p) => {
-                return await this.productService.updateById(p['_id'], {
-                    includedInOrders: orderId,
-                    buyers: [clientId]
-                });
-            });
+            return order;
         } catch (error) {
-            console.log(error);
             throw new HttpException(
                 'An error occurred while creating order!',
                 HttpStatus.NOT_ACCEPTABLE
@@ -100,7 +97,7 @@ export class OrdersService {
         limit: number,
         status: OrderStatus,
         userId: string
-    ): Promise<Pagination> {
+    ): Promise<Pagination<Order[]>> {
         let options = {
             ...(status && {
                 status
@@ -114,7 +111,7 @@ export class OrdersService {
         const lastPage = Math.ceil(total / limit);
         const data = await this.orderModel
             .find(options)
-            .populate({ path: clientRef, model: this.clientModel })
+            .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel })
             .populate(creatorRef, 'name email', this.userModel)
             .populate(lastEditorRef, 'name email', this.userModel)
@@ -133,10 +130,10 @@ export class OrdersService {
         return sortedData;
     }
 
-    async findAll(): Promise<Order[]> {
+    async findAllBy(filter?: FilterQuery<OrderDocument>): Promise<Order[]> {
         return await this.orderModel
-            .find({})
-            .populate({ path: clientRef, model: this.clientModel })
+            .find(filter)
+            .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel })
             .populate(creatorRef, 'name email', this.userModel)
             .populate(lastEditorRef, 'name email', this.userModel)
@@ -146,14 +143,14 @@ export class OrdersService {
     async findOne(_id: string): Promise<Order> {
         return await this.orderModel
             .findOne({ _id })
-            .populate({ path: clientRef, model: this.clientModel })
+            .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel })
             .populate(creatorRef, 'name email', this.userModel)
             .populate(lastEditorRef, 'name email', this.userModel)
             .populate(currentManagerRef, 'name email', this.userModel);
     }
 
-    async update(
+    async updateOne(
         id: string,
         updateOrderDto: UpdateOrderDto,
         userPayload: UserPayload
@@ -163,18 +160,22 @@ export class OrdersService {
 
         return await this.orderModel
             .findOneAndUpdate({ _id: id }, { ...updateOrderDto }, { new: true })
+            .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel })
             .populate(creatorRef, 'name email', this.userModel)
             .populate(lastEditorRef, 'name email', this.userModel)
             .populate(currentManagerRef, 'name email', this.userModel);
     }
 
-    async closeOrder(id: string, status: OrderStatus, userPayload: UserPayload) {
+    async updateStatus(id: string, status: OrderStatus, userPayload: UserPayload) {
+        let closeOrderInterval: number;
         const order = await this.findOne(id);
 
-        const closeOrderInterval = calcRelToAnyDate(order.createDate, new Date(), false);
+        if (status !== 'open') {
+            closeOrderInterval = calcRelToAnyDate(order.createDate, new Date(), false);
+        }
 
-        return this.update(
+        return this.updateOne(
             id,
             {
                 status,
@@ -187,20 +188,21 @@ export class OrdersService {
     async updateMany(
         filter?: FilterQuery<OrderDocument>,
         parameter?: UpdateWithAggregationPipeline | UpdateQuery<OrderDocument>,
-        settings?: UpdateSettings
+        settings?: QueryOptions
     ) {
         return await this.orderModel
             .updateMany(filter, parameter, {
                 ...settings,
                 new: true
             })
+            .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel });
     }
 
-    async remove(id: string) {
+    async removeOneById(id: string) {
         const ObjectId = new mongoose.Types.ObjectId(id);
 
-        const updatedClients = await this.clientsService.updateMany(
+        const updatedClients = await this.userModel.updateMany(
             { orders: { $in: ObjectId } },
             {
                 $pull: {
