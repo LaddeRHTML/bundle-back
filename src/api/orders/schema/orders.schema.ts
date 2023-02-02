@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Product } from 'api/products/schema/products.schema';
 import { Document } from 'mongoose';
 
-import type { DeliveredBy } from '../types/deliverer.types';
 import type { OrderStatus } from '../types/order-status.types';
 import { PaymentMethodType } from '../types/payment-method.types';
 import { SourceType } from '../types/source.types';
@@ -29,8 +28,8 @@ export class Order {
     @Prop()
     deliveryDate: Date;
 
-    @Prop({ required: true, type: String })
-    deliveredBy: DeliveredBy;
+    @Prop({ required: false })
+    deliveredBy: string;
 
     @Prop({ required: true, default: [''], ref: Product.name })
     products: string[];

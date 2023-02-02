@@ -32,7 +32,7 @@ export class OrdersController {
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Post('/create?')
+    @Post('/create')
     createOne(@Body() createOrderDto: CreateOrderDto, @Req() req: Request) {
         return this.orderService.createOne(createOrderDto, req.user as UserPayload);
     }
