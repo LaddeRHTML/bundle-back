@@ -14,6 +14,7 @@ import mongoose, {
     UpdateWithAggregationPipeline
 } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
+import sumAllFields from 'utils/sumAllFields';
 
 import { calcRelToAnyDate } from '../../common/utils/index';
 import { Product, ProductsDocument } from './../products/schema/products.schema';
@@ -92,11 +93,33 @@ export class OrdersService {
         }
     }
 
+    async getAllPrices() {
+        const orders = await this.findAllBy();
+
+        const products = [];
+
+        orders.forEach((o: Order) => {
+            o.products.forEach((s) => {
+                products.push(s);
+            });
+        });
+
+        const prices = sumAllFields<Product>(products, 'price');
+        const marketPrices = sumAllFields<Product>(products, 'marketPrice');
+        const supplierPrices = sumAllFields<Product>(products, 'supplierPrice');
+        return {
+            prices,
+            marketPrices,
+            supplierPrices
+        };
+    }
+
     async findSortedItems(
         page: number,
         limit: number,
         status: OrderStatus,
-        userId: string
+        userId: string,
+        createOrderDto: CreateOrderDto
     ): Promise<Pagination<Order[]>> {
         let options = {
             ...(status && {
@@ -104,6 +127,9 @@ export class OrdersService {
             }),
             ...(userId && {
                 currentManager: userId
+            }),
+            ...(createOrderDto && {
+                ...createOrderDto
             })
         };
 
