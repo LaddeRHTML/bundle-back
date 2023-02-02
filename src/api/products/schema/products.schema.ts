@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Order } from 'api/orders/schema/orders.schema';
 import { Document } from 'mongoose';
 import { KeyValueObject } from 'src/common/interfaces/product.interface';
 
