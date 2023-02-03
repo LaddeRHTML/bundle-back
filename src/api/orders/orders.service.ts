@@ -133,7 +133,7 @@ export class OrdersService {
             })
         };
 
-        const total = await this.orderModel.count({}).exec();
+        const total = await this.orderModel.count(options).exec();
         const lastPage = Math.ceil(total / limit);
         const data = await this.orderModel
             .find(options)
