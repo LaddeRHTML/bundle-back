@@ -65,7 +65,7 @@ export class ProductsController {
         @Query('page') page: number,
         @Query('limit') limit: number,
         @Query('category') category: string,
-        @Body() filters: ProductsFilter
+        @Body() filters: CreateProductDto
     ): Promise<Pagination<Product[]>> {
         return await this.productsService.findByQuery(
             parameter,

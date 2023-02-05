@@ -184,6 +184,14 @@ export class OrdersService {
         updateOrderDto.lastEditor = userPayload.userId;
         updateOrderDto.updateDate = new Date();
 
+        if (updateOrderDto.status !== 'open') {
+            updateOrderDto.closeOrderInterval = calcRelToAnyDate(
+                updateOrderDto.createDate,
+                new Date(),
+                false
+            );
+        }
+
         return await this.orderModel
             .findOneAndUpdate({ _id: id }, { ...updateOrderDto }, { new: true })
             .populate(clientRef, '-password', this.userModel)

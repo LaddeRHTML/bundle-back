@@ -57,7 +57,7 @@ export class ProductsService {
         limit: number,
         onlyOrdered: boolean,
         category: string,
-        filters: Partial<ProductsFilter>
+        filters: CreateProductDto
     ): Promise<Pagination<Product[]>> {
         let options = {
             ...(onlyOrdered && {
