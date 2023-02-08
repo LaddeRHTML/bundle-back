@@ -12,7 +12,9 @@ import {
 import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
+import { Payload } from 'api/auth/strategies/jwt-auth.strategy';
 import { UserPasswords } from 'api/users/interface/passwords.interface';
+import { Request as ExpressRequest } from 'express';
 import { Pagination } from 'interfaces/utils.interface';
 import { apiVersion } from 'src/common/constants/api-const';
 
@@ -23,6 +25,10 @@ import { User } from './schema/user.schema';
 import { UsersService } from './users.service';
 
 const controllerName = `${apiVersion}/users`;
+
+interface RequestWithUser extends ExpressRequest {
+    user: Payload;
+}
 
 @Controller(controllerName)
 export class UsersController {
@@ -81,10 +87,10 @@ export class UsersController {
     @UseGuards(RoleGuard)
     @Post('/password/update')
     async updateUserPassword(
-        @Request() req: any,
+        @Request() req: RequestWithUser,
         @Body() passwords: UserPasswords
     ): Promise<boolean> {
-        return await this.usersService.updatePassword(req, passwords);
+        return await this.usersService.updatePassword(req.user, passwords);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)

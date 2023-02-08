@@ -1,9 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Payload } from 'api/auth/strategies/jwt-auth.strategy';
 import { Role } from 'api/users/enum/roles.enum';
 import { UserPasswords } from 'api/users/interface/passwords.interface';
 import * as bcrypt from 'bcryptjs';
 import { ConfigurationService } from 'config/configuration.service';
+import { Request } from 'express';
 import { Pagination } from 'interfaces/utils.interface';
 import {
     FilterQuery,
@@ -120,7 +122,7 @@ export class UsersService {
             .populate(this.configService.orderRef);
     }
 
-    async updatePassword(req: any, passwords: UserPasswords): Promise<boolean> {
+    async updatePassword(payload: Payload, passwords: UserPasswords): Promise<boolean> {
         const { oldPassword, newPassword } = passwords;
         try {
             const samePass = 'Passwords are the same!';
@@ -129,16 +131,16 @@ export class UsersService {
                 throw new HttpException(samePass, HttpStatus.CONFLICT);
             }
 
-            const { userId } = req.user;
+            const userId = payload.userId;
             const user = await this.findOneById(userId);
 
             if (!user) {
                 throw new HttpException("User wasn't found!", HttpStatus.CONFLICT);
             }
 
-            const compareResult = await bcrypt.compare(newPassword, user.password);
+            const compareResult = await bcrypt.compare(oldPassword, user.password);
 
-            if (compareResult) {
+            if (!compareResult) {
                 throw new HttpException(samePass, HttpStatus.CONFLICT);
             }
 
@@ -154,6 +156,7 @@ export class UsersService {
 
             return true;
         } catch (error) {
+            console.log(error);
             throw new HttpException('Conflict!', HttpStatus.CONFLICT);
         }
     }
