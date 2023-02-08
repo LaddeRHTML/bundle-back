@@ -30,7 +30,7 @@ export class UsersService {
 
     async createOne(createUserDto: CreateUserDto, role: Role): Promise<User> {
         try {
-            createUserDto.age = calcRelToCurrentDate(createUserDto.birthDay, true);
+            createUserDto.age = calcRelToCurrentDate(createUserDto.birthday, true);
             createUserDto.role = role;
 
             return await this.userModel.create(createUserDto);
@@ -111,8 +111,8 @@ export class UsersService {
     }
 
     async updateOne(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        if (updateUserDto?.birthDay) {
-            updateUserDto.age = calcRelToCurrentDate(updateUserDto?.birthDay, true);
+        if (updateUserDto?.birthday) {
+            updateUserDto.age = calcRelToCurrentDate(updateUserDto?.birthday, true);
         }
 
         updateUserDto.updateDate = new Date();

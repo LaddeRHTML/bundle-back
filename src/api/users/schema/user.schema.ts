@@ -42,7 +42,7 @@ export class User {
     patronymic: string;
 
     @Prop({ required: true })
-    birthDay: Date;
+    birthday: Date;
 
     @Prop({ required: true, min: 11, max: 11 })
     phone: string;
