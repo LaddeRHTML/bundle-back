@@ -18,6 +18,7 @@ import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
 import { Role } from 'api/users/enum/roles.enum';
+import { DeleteResult } from 'interfaces/delete.result';
 import { UpdateResult } from 'interfaces/update.ruslt';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
@@ -93,6 +94,7 @@ export class ProductsController {
         if (file.originalname !== 'WW_dealers.xlsx') {
             throw new HttpException('Bad file provided', HttpStatus.CONFLICT);
         }
+        console.log(file);
         const products = this.productsService.getDataFromExcel(file);
         return await this.productsService.manipulateMultipleItems(products);
     }
@@ -126,6 +128,13 @@ export class ProductsController {
         isHidden: boolean
     ): Promise<UpdateResult> {
         return await this.productsService.updateVisiblityOfImportedProducts(isHidden);
+    }
+
+    @HasRoles(Role.Admin)
+    @UseGuards(RoleGuard)
+    @Delete('/remove/imported')
+    async removeImported(): Promise<DeleteResult> {
+        return await this.productsService.removeImported();
     }
 
     @HasRoles(Role.Admin)
