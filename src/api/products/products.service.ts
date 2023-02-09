@@ -71,6 +71,7 @@ export class ProductsService {
             ...(category && {
                 category
             }),
+            ...(filters && filters),
             ...(filters.price?.[0] &&
                 filters.price?.[1] && {
                     price: { $gte: filters.price[0], $lte: filters.price[1] }
