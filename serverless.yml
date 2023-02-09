@@ -11,7 +11,7 @@ provider:
     runtime: nodejs14.x
     region: eu-north-1
     stage: dev
-    timeout: 29
+    timeout: 59
     memorySize: 3008
     environment:
         PORT: ${env:PORT}
