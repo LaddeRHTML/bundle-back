@@ -200,6 +200,10 @@ export class ProductsService {
         return await this.productModel.findOneAndRemove({ _id: id });
     }
 
+    async removeImported(): Promise<DeleteResult> {
+        return await this.productModel.deleteMany({ isImported: true });
+    }
+
     async updateVisiblityOfImportedProducts(isHidden: boolean): Promise<UpdateResult> {
         try {
             return await this.updateMany(
