@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { MulterFile } from 'api/files/interface/multer.interface';
 import { Order, OrderDocument } from 'api/orders/schema/orders.schema';
+import { DeleteResult } from 'interfaces/delete.result';
+import { UpdateResult } from 'interfaces/update.ruslt';
 import * as moment from 'moment';
 import {
     FilterQuery,
@@ -51,7 +53,7 @@ export class ProductsService {
         return await this.productModel.find({ name: { $in: names } });
     }
 
-    async findByQuery(
+    async findByFilters(
         parameter: string,
         page: number,
         limit: number,
@@ -173,28 +175,40 @@ export class ProductsService {
         filter: FilterQuery<ProductsDocument>,
         parameter: UpdateWithAggregationPipeline | UpdateQuery<ProductsDocument>,
         settings?: QueryOptions
-    ) {
-        return await this.productModel.updateMany(filter, parameter, {
+    ): Promise<UpdateResult> {
+        return (await this.productModel.updateMany(filter, parameter, {
             ...settings,
             new: true
-        });
+        })) as unknown as UpdateResult;
     }
 
-    async remove(id: string): Promise<Product> {
+    async removeOne(id: string): Promise<Product> {
         const updatedOrders = await this.orderModel.updateMany(
-            { orderedProducts: { $in: id } },
-            { $pull: { orderedProducts: { $in: id } } },
+            { products: { $in: id } },
+            { $pull: { products: { $in: id } } },
             { new: false }
         );
 
         if (!updatedOrders.acknowledged) {
             throw new HttpException(
-                'An error occurred while creating order!',
+                'An error occurred while after updating orders!',
                 HttpStatus.NOT_ACCEPTABLE
             );
         }
 
         return await this.productModel.findOneAndRemove({ _id: id });
+    }
+
+    async updateVisiblityOfImportedProducts(isHidden: boolean): Promise<UpdateResult> {
+        try {
+            return await this.updateMany(
+                { isImported: { $in: true } },
+                { $set: { isHidden } },
+                { new: false }
+            );
+        } catch (error) {
+            throw new HttpException('', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     getDataFromExcel(file: MulterFile) {
@@ -228,6 +242,7 @@ export class ProductsService {
                 productDto.warrantyDays = countedWarranty;
                 productDto.maker = maker;
                 productDto.count = 1;
+                productDto.isImported = true;
 
                 return productDto;
             });

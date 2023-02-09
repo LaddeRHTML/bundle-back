@@ -9,23 +9,38 @@ export class Product {
     @Prop({ required: true, default: 'home_c' })
     category: string;
 
-    @Prop({ required: true, default: '' })
-    name: string;
+    @Prop({ default: [] })
+    characteristics: [KeyValueObject];
 
-    @Prop({ required: true, default: 0 })
-    marketPrice: number;
+    @Prop({ required: false, default: '' })
+    class: string;
 
-    @Prop({ required: true, default: 0 })
-    supplierPrice: number;
+    @Prop({ required: false, default: 1 })
+    count: number;
 
-    @Prop({ required: true, default: 0 })
-    price: number;
+    @Prop({ required: false, default: '' })
+    description: string;
 
     @Prop({ required: false, default: 0 })
     discountPrice: number;
 
+    @Prop({ required: false, default: false })
+    isHidden: boolean;
+
+    @Prop({ required: false, default: false })
+    isImported: boolean;
+
     @Prop({ required: false, default: '' })
-    description: string;
+    maker: string;
+
+    @Prop({ required: true, default: 0 })
+    marketPrice: number;
+
+    @Prop({ required: false, default: '' })
+    model: string;
+
+    @Prop({ required: true, default: '' })
+    name: string;
 
     @Prop({ required: false })
     pictures: [string];
@@ -33,39 +48,29 @@ export class Product {
     @Prop({ required: false })
     previewPicture: string;
 
+    @Prop({ required: true, default: 0 })
+    price: number;
+
     @Prop({ required: false, default: 0, min: 0, max: 5 })
     rating: number;
 
-    @Prop({ required: false, default: 1 })
-    count: number;
+    @Prop({ required: true, default: 0 })
+    supplierPrice: number;
 
-    @Prop({ default: [] })
-    characteristics: [KeyValueObject];
+    @Prop({ required: false, default: new Date() })
+    updateDate: Date;
 
-    // notebook/other
-    @Prop({ required: false, default: '' })
-    class: string;
+    @Prop({ required: false, default: new Date() })
+    uploadDate: Date;
+
+    @Prop({ required: true })
+    warrantyDays: number;
 
     @Prop({ required: false, default: '' })
     vendorСode: string;
 
     @Prop({ required: false, default: '' })
-    maker: string;
-
-    @Prop({ required: false, default: '' })
     weight: string;
-
-    @Prop({ required: false, default: '' })
-    model: string;
-
-    @Prop({ required: true })
-    warrantyDays: number;
-
-    @Prop({ required: false, default: new Date() })
-    uploadDate: Date;
-
-    @Prop({ required: false, default: new Date() })
-    updateDate: Date;
 }
 
 export const ProductsSchema = SchemaFactory.createForClass(Product);

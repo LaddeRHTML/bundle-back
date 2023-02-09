@@ -18,6 +18,7 @@ import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
 import { Role } from 'api/users/enum/roles.enum';
+import { UpdateResult } from 'interfaces/update.ruslt';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 
@@ -47,8 +48,8 @@ export class ProductsController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
-    findAll(@Query('param') productDto: Product): Promise<Product[]> {
-        return this.productsService.findAllBy(productDto);
+    async findAll(@Query('param') productDto: Product): Promise<Product[]> {
+        return await this.productsService.findAllBy(productDto);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -67,7 +68,7 @@ export class ProductsController {
         @Query('category') category: string,
         @Body() filters: CreateProductDto
     ): Promise<Pagination<Product[]>> {
-        return await this.productsService.findByQuery(
+        return await this.productsService.findByFilters(
             parameter,
             page,
             limit,
@@ -106,14 +107,31 @@ export class ProductsController {
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
-    update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {
-        return this.productsService.updateById(id, updateProductDto);
+    async updateById(
+        @Param('id') id: string,
+        @Body() updateProductDto: UpdateProductDto
+    ): Promise<Product> {
+        return await this.productsService.updateById(id, updateProductDto);
+    }
+
+    @HasRoles(Role.Manager, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Patch('/hide/many?')
+    async updateVisiblityOfImportedProducts(
+        @Query('isHidden', {
+            transform(value) {
+                return value === 'true';
+            }
+        })
+        isHidden: boolean
+    ): Promise<UpdateResult> {
+        return await this.productsService.updateVisiblityOfImportedProducts(isHidden);
     }
 
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')
-    remove(@Param('id') id: string): Promise<Product> {
-        return this.productsService.remove(id);
+    async removeOne(@Param('id') id: string): Promise<Product> {
+        return await this.productsService.removeOne(id);
     }
 }
