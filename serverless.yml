@@ -10,6 +10,9 @@ provider:
     name: aws
     runtime: nodejs14.x
     region: eu-north-1
+    stage: dev
+    timeout: 29
+    memorySize: 3008
     environment:
         PORT: ${env:PORT}
         MONGODB_URI: ${env:MONGODB_URI}
@@ -27,7 +30,10 @@ provider:
         ROLE_KEY: ${env:ROLE_KEY}
     apiGateway:
         binaryMediaTypes:
+            - '*~1*'
             - '*/*'
+            - 'multipart~1form-data'
+            - 'multipart/form-data'
 
 functions:
     main:
