@@ -42,7 +42,7 @@ export class FilesController {
             chunkSize: file.chunkSize,
             size: file.size,
             md5: file.md5,
-            uploadDate: file.uploadDate,
+            upload_date: file.upload_date,
             contentType: file.contentType
         };
 

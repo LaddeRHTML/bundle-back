@@ -1,4 +1,7 @@
-export interface KeyValueObject {
-    key: string;
-    value: string;
+export interface Characteristic {
+    group: string;
+    characteristics: {
+        name: string;
+        value: string;
+    }[];
 }

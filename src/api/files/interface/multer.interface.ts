@@ -15,6 +15,6 @@ export interface MulterFile {
     bucketName: string;
     chunkSize: number;
     md5: undefined | string;
-    uploadDate: Date;
+    upload_date: Date;
     contentType: string;
 }

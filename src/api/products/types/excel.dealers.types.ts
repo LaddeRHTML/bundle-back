@@ -8,7 +8,7 @@ export type ExcelClearSheetProduct = [
     string?,
     string?
 ];
-export type FilteredItem = {
+export type Group = {
     category: string;
     products: ExcelClearSheetProduct[];
 };
