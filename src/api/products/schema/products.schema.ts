@@ -1,16 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { KeyValueObject } from 'src/common/interfaces/product.interface';
+import { Characteristic } from 'src/common/interfaces/product.interface';
 
 export type ProductsDocument = Product & Document;
 
 @Schema({ versionKey: false, collection: process.env.COLLECTION_KEY_PRODUCTS })
 export class Product {
-    @Prop({ required: true, default: 'home_c' })
-    category: string;
+    @Prop({ required: true })
+    categories: string[];
 
     @Prop({ default: [] })
-    characteristics: [KeyValueObject];
+    characteristics: Characteristic[];
 
     @Prop({ required: false, default: '' })
     class: string;
@@ -22,19 +22,19 @@ export class Product {
     description: string;
 
     @Prop({ required: false, default: 0 })
-    discountPrice: number;
+    discount_price: number;
 
     @Prop({ required: false, default: false })
-    isHidden: boolean;
+    is_hidden: boolean;
 
     @Prop({ required: false, default: false })
-    isImported: boolean;
+    is_imported: boolean;
 
     @Prop({ required: false, default: '' })
     maker: string;
 
     @Prop({ required: true, default: 0 })
-    marketPrice: number;
+    market_price: number;
 
     @Prop({ required: false, default: '' })
     model: string;
@@ -46,7 +46,7 @@ export class Product {
     pictures: [string];
 
     @Prop({ required: false })
-    previewPicture: string;
+    preview_picture: string;
 
     @Prop({ required: true, default: 0 })
     price: number;
@@ -55,19 +55,22 @@ export class Product {
     rating: number;
 
     @Prop({ required: true, default: 0 })
-    supplierPrice: number;
+    supplier_price: number;
+
+    @Prop()
+    template: Characteristic[];
 
     @Prop({ required: false, default: new Date() })
-    updateDate: Date;
+    update_date: Date;
 
     @Prop({ required: false, default: new Date() })
-    uploadDate: Date;
+    upload_date: Date;
 
     @Prop({ required: true })
-    warrantyDays: number;
+    warranty_days: number;
 
     @Prop({ required: false, default: '' })
-    vendorСode: string;
+    vendor_code: string;
 
     @Prop({ required: false, default: '' })
     weight: string;

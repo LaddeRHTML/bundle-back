@@ -14,13 +14,24 @@ import {
     UpdateWithAggregationPipeline
 } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
-import { SortExcelSheetData } from 'utils/excel.sort';
+import { SortExcelSheets } from 'utils/excel.sort';
 import * as XLSX from 'xlsx';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { FilterProductsResponse, ProductsFilter } from './interfaces/products.filter.interface';
+import {
+    FilterProductsResponse,
+    ProductsFilter,
+    UpsertedProduct
+} from './interfaces/products.filter.interface';
 import { Product, ProductsDocument } from './schema/products.schema';
+import { ExcelClearSheetProduct } from './types/excel.dealers.types';
+import getCategories from './utils/getCategories';
+import getMaker from './utils/getMaker';
+import getName from './utils/getName';
+import getPrice from './utils/getPrice';
+import getTemplate from './utils/getTemplate';
+import getWarranty from './utils/getWarranty';
 
 const orderRef = 'orders';
 
@@ -77,22 +88,22 @@ export class ProductsService {
                     price: { $gte: filters.price[0], $lte: filters.price[1] }
                 }),
 
-            ...(filters.supplierPrice?.[0] &&
-                filters.supplierPrice?.[1] && {
-                    supplierPrice: {
-                        $gte: filters.supplierPrice[0],
-                        $lte: filters.supplierPrice[1]
+            ...(filters.supplier_price?.[0] &&
+                filters.supplier_price?.[1] && {
+                    supplier_price: {
+                        $gte: filters.supplier_price[0],
+                        $lte: filters.supplier_price[1]
                     }
                 }),
-            ...(filters.marketPrice?.[0] &&
-                filters.marketPrice?.[1] && {
-                    marketPrice: {
-                        $gte: filters.marketPrice[0],
-                        $lte: filters.marketPrice[1]
+            ...(filters.market_price?.[0] &&
+                filters.market_price?.[1] && {
+                    market_price: {
+                        $gte: filters.market_price[0],
+                        $lte: filters.market_price[1]
                     }
                 }),
-            ...(typeof filters.warrantyDays === 'number' && {
-                warrantyDays: filters.warrantyDays
+            ...(typeof filters.warranty_days === 'number' && {
+                warranty_days: filters.warranty_days
             })
         } as FilterQuery<ProductsDocument>;
 
@@ -143,16 +154,19 @@ export class ProductsService {
             {
                 $project: {
                     price: [{ $first: '$min.price' }, { $first: '$max.price' }],
-                    marketPrice: [{ $first: '$min.marketPrice' }, { $first: '$max.marketPrice' }],
-                    supplierPrice: [
-                        { $first: '$min.supplierPrice' },
-                        { $first: '$max.supplierPrice' }
+                    market_price: [
+                        { $first: '$min.market_price' },
+                        { $first: '$max.market_price' }
+                    ],
+                    supplier_price: [
+                        { $first: '$min.supplier_price' },
+                        { $first: '$max.supplier_price' }
                     ]
                 }
             }
         ]);
 
-        const warrantyVariations = await this.productModel.distinct('warrantyDays');
+        const warrantyVariations = await this.productModel.distinct('warranty_days');
 
         return {
             minMaxValues: minMaxValues?.[0],
@@ -201,14 +215,14 @@ export class ProductsService {
     }
 
     async removeImported(): Promise<DeleteResult> {
-        return await this.productModel.deleteMany({ isImported: true });
+        return await this.productModel.deleteMany({ is_imported: true });
     }
 
-    async updateVisiblityOfImportedProducts(isHidden: boolean): Promise<UpdateResult> {
+    async updateVisiblityOfImportedProducts(is_hidden: boolean): Promise<UpdateResult> {
         try {
             return await this.updateMany(
-                { isImported: { $in: true } },
-                { $set: { isHidden } },
+                { is_imported: { $in: true } },
+                { $set: { is_hidden } },
                 { new: false }
             );
         } catch (error) {
@@ -219,35 +233,34 @@ export class ProductsService {
     getDataFromExcel(file: MulterFile) {
         const wb: XLSX.WorkBook = XLSX.read(file.buffer);
         const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        const data: ExcelClearSheetProduct[] = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
-        const products = SortExcelSheetData(data).map((i) => {
+        const products = SortExcelSheets(data).map((i) => {
             const productsFromExcel = i?.products.map((p) => {
                 const productDto = new CreateProductDto();
-                const vendorСode = p?.[0] || 0;
-                const productName = p?.[1] || '';
-                const productModel = productName.split(',')[0];
-                const marketPrice = p?.[2] || 0;
+                const warranty_days = (p?.[5] as unknown as number) || 0;
+                const vendor_code = p?.[0] || 0;
+                const product_name = p?.[1] || '';
+                const market_price = p?.[2] || 0;
                 const price = p?.[3] || 0;
-                const supplierPrice = p?.[4] || 0;
-                const warrantyDays = (p?.[5] as unknown as number) || 0;
-                const countedWarranty = moment.duration(warrantyDays, 'months').asDays();
-                const maker = productModel
-                    .replace(/[^a-z ]/gi, '')
-                    .trim()
-                    .split(' ')[0];
+                const supplier_price = p?.[4] || 0;
 
-                productDto.vendorСode = vendorСode.toString();
-                productDto.category = i?.category;
-                productDto.name = productName;
+                const productModel = getName(product_name);
+                const countedWarranty = getWarranty(warranty_days);
+                const maker = getMaker(productModel);
+
+                productDto.vendor_code = vendor_code.toString();
+                productDto.categories = getCategories(product_name, i?.category);
+                productDto.name = product_name;
                 productDto.model = productModel;
-                productDto.marketPrice = marketPrice;
-                productDto.price = price;
-                productDto.supplierPrice = supplierPrice;
-                productDto.warrantyDays = countedWarranty;
+                productDto.market_price = market_price;
+                productDto.price = getPrice(price);
+                productDto.supplier_price = supplier_price;
+                productDto.warranty_days = countedWarranty;
                 productDto.maker = maker;
                 productDto.count = 1;
-                productDto.isImported = true;
+                productDto.is_imported = true;
+                productDto.template = getTemplate(productDto.categories);
 
                 return productDto;
             });
@@ -259,8 +272,40 @@ export class ProductsService {
     }
 
     async manipulateMultipleItems(products: CreateProductDto[]) {
-        return products.forEach(async (p) => {
-            return await this.productModel.findOneAndUpdate({ name: p.name }, p, { upsert: true });
+        return await new Promise(async (resolve, reject) => {
+            const affectedProductsIds = [];
+
+            for (const p of products) {
+                await this.productModel
+                    .findOneAndUpdate({ name: p.name }, p, {
+                        upsert: true,
+                        new: true
+                    })
+                    .then((p) => {
+                        if (p._id) {
+                            affectedProductsIds.push(p._id.toString());
+                        }
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            }
+            const allProducts = await this.findAllBy();
+
+            const notAffectedProducts =
+                affectedProductsIds.length !== 0 &&
+                allProducts.filter((p) => !affectedProductsIds.includes(p['_id'].toString()));
+
+            if (notAffectedProducts.length !== 0) {
+                for (const p of notAffectedProducts) {
+                    await this.productModel
+                        .updateOne({ name: p.name }, { count: 0 })
+                        .catch((error) => {
+                            reject(error);
+                        });
+                }
+            }
+            resolve({ affectedProductsIds, notAffectedProducts, allProducts });
         });
     }
 }

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { KeyValueObject } from 'src/common/interfaces/product.interface';
+import { Characteristic } from 'src/common/interfaces/product.interface';
 
 export type AssembliesDocument = Assembly & Document;
 
@@ -19,16 +19,16 @@ export class Assembly {
     name: string;
 
     @Prop({ required: true, default: 0 })
-    marketprice: number;
+    market_price: number;
 
     @Prop({ required: true, default: 0 })
-    supplierPrice: number;
+    supplier_price: number;
 
     @Prop({ required: true, default: 0 })
     price: number;
 
     @Prop({ required: false, default: 0 })
-    discountPrice: number;
+    discount_price: number;
 
     @Prop({ required: false, default: '' })
     description: string;
@@ -37,7 +37,7 @@ export class Assembly {
     pictures: [string];
 
     @Prop({ required: true })
-    previewPicture: string;
+    preview_picture: string;
 
     @Prop({ required: false, default: 0, min: 0, max: 5 })
     rating: number;
@@ -46,7 +46,7 @@ export class Assembly {
     count: number;
 
     @Prop({ default: [] })
-    characteristics: [KeyValueObject];
+    characteristics: Characteristic[];
 
     @Prop({ required: false, default: '' })
     vendorСode: string;
@@ -55,13 +55,13 @@ export class Assembly {
     weight: string;
 
     @Prop({ required: true })
-    warrantyDays: number;
+    warranty_days: number;
 
     @Prop({ required: false, default: new Date() })
-    uploadDate: Date;
+    upload_date: Date;
 
     @Prop({ required: false, default: new Date() })
-    updateDate: Date;
+    update_date: Date;
 }
 
 export const AssemblySchema = SchemaFactory.createForClass(Assembly);

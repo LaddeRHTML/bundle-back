@@ -18,6 +18,6 @@ export interface UploadFileResponse {
     chunkSize: number;
     size: number;
     md5: string;
-    uploadDate: Date;
+    upload_date: Date;
     contentType: string;
 }

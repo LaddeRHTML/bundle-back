@@ -1,47 +1,61 @@
-import { AVAILABLE_CATEGORIES, CATEGORIES_TO_DELETE } from 'api/products/constants/categories';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { AVAILABLE_CATEGORIES, AVAILABLE_CATEGORIES_KEYS } from 'api/products/constants/categories';
 import {
     ExcelClearSheetProduct,
     ExcelSheetProduct,
-    FilteredItem
+    Group
 } from 'api/products/types/excel.dealers.types';
 
-export const SortExcelSheetData = (data: unknown[]) => {
-    const categoryLenght = 1;
+export const SortExcelSheets = (allExcelSheets: ExcelClearSheetProduct[]): Group[] => {
+    const category_lenght = 1;
 
-    const categoriesI = [];
+    let category_indeces: number[] = [];
 
-    const filteredData = [] as FilteredItem[];
+    const groups = [];
 
-    const cleanData = data
+    const filledExcelSheets = allExcelSheets
         .map((el: ExcelSheetProduct) => el.filter((c) => c))
         .filter((c) => c.length > 0);
 
-    for (let i = 0; i < cleanData.length; i++) {
-        const el = cleanData[i] as ExcelClearSheetProduct;
+    for (let i = 0; i < filledExcelSheets.length; i++) {
+        const el = filledExcelSheets[i];
 
-        if (el.length > 0) {
-            if (el.length === categoryLenght) {
-                categoriesI.push(i);
-            }
+        if (el.length === category_lenght) {
+            category_indeces.push(i);
         }
     }
 
-    for (let i = 0; i < categoriesI.length; i++) {
-        const el: number = categoriesI[i];
-        const nextEl: number = categoriesI[i + 1];
+    const allowedCategories = category_indeces.filter((i) =>
+        AVAILABLE_CATEGORIES_KEYS.includes(filledExcelSheets[i][0] as string)
+    );
 
-        const currentCategory = cleanData[el][0];
-
-        const categorizedObj = {
-            category: AVAILABLE_CATEGORIES[currentCategory] || currentCategory,
-            products: cleanData.slice(el + 1, nextEl - 1)
-        };
-        filteredData.push(categorizedObj as FilteredItem);
+    if (allowedCategories.length !== 2) {
+        throw new HttpException('Wrong categories in file!', HttpStatus.BAD_REQUEST);
     }
 
-    const availableProducts = filteredData.filter((i) => {
-        return !CATEGORIES_TO_DELETE.includes(i.category);
-    });
+    for (let i = 0; i < allowedCategories.length; i++) {
+        const current_i = allowedCategories[i];
+        const next_i = category_indeces.find((i) => i > current_i);
+        const firstProductIndexAfterCategory = current_i + 1;
 
-    return availableProducts;
+        const currentCategory = filledExcelSheets[current_i][0];
+
+        let products = filledExcelSheets.slice(firstProductIndexAfterCategory, next_i);
+
+        if (!next_i) {
+            products = filledExcelSheets.slice(
+                firstProductIndexAfterCategory,
+                filledExcelSheets.length
+            );
+        }
+
+        const sortedGroup = {
+            category: AVAILABLE_CATEGORIES[currentCategory],
+            products: products
+        };
+
+        groups.push(sortedGroup);
+    }
+
+    return groups;
 };

@@ -105,12 +105,12 @@ export class OrdersService {
         });
 
         const prices = sumAllFields<Product>(products, 'price');
-        const marketPrices = sumAllFields<Product>(products, 'marketPrice');
-        const supplierPrices = sumAllFields<Product>(products, 'supplierPrice');
+        const market_prices = sumAllFields<Product>(products, 'market_price');
+        const supplier_prices = sumAllFields<Product>(products, 'supplier_price');
         return {
             prices,
-            marketPrices,
-            supplierPrices
+            market_prices,
+            supplier_prices
         };
     }
 
@@ -182,7 +182,7 @@ export class OrdersService {
         userPayload: UserPayload
     ): Promise<Order> {
         updateOrderDto.lastEditor = userPayload.userId;
-        updateOrderDto.updateDate = new Date();
+        updateOrderDto.update_date = new Date();
 
         if (updateOrderDto.status !== 'open') {
             updateOrderDto.closeOrderInterval = calcRelToAnyDate(

@@ -53,7 +53,7 @@ export class Order {
     status: OrderStatus;
 
     @Prop({ required: true, default: new Date() })
-    updateDate: Date;
+    update_date: Date;
 
     @Prop({ required: true, default: new Date() })
     createDate: Date;

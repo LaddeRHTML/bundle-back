@@ -115,7 +115,7 @@ export class UsersService {
             updateUserDto.age = calcRelToCurrentDate(updateUserDto?.birthday, true);
         }
 
-        updateUserDto.updateDate = new Date();
+        updateUserDto.update_date = new Date();
 
         return await this.userModel
             .findOneAndUpdate({ _id: id }, { ...updateUserDto }, { new: true })
@@ -169,7 +169,7 @@ export class UsersService {
         return await this.userModel
             .updateMany(
                 filter,
-                { ...parameter, updateDate: new Date() },
+                { ...parameter, update_date: new Date() },
                 {
                     ...settings,
                     new: true

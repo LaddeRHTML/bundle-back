@@ -1,7 +1,7 @@
-import { ConfigService } from '@nestjs/config';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { KeyValueObject } from 'src/common/interfaces/product.interface';
+
+import { Characteristic } from './../../../common/interfaces/product.interface';
 
 export type AccessoriesDocument = Accessory & Document;
 
@@ -14,16 +14,16 @@ export class Accessory {
     name: string;
 
     @Prop({ required: true, default: 0 })
-    marketprice: number;
+    market_price: number;
 
     @Prop({ required: true, default: 0 })
-    supplierPrice: number;
+    supplier_price: number;
 
     @Prop({ required: true, default: 0 })
     price: number;
 
     @Prop({ required: false, default: 0 })
-    discountPrice: number;
+    discount_price: number;
 
     @Prop({ required: false, default: '' })
     description: string;
@@ -32,7 +32,7 @@ export class Accessory {
     pictures: [string];
 
     @Prop({ required: true })
-    previewPicture: string;
+    preview_picture: string;
 
     @Prop({ required: false, default: 0, min: 0, max: 5 })
     rating: number;
@@ -41,7 +41,7 @@ export class Accessory {
     count: number;
 
     @Prop({ default: [] })
-    characteristics: [KeyValueObject];
+    characteristics: Characteristic[];
 
     // CPU/GPU/other
     @Prop({ required: true, default: '' })
@@ -60,13 +60,13 @@ export class Accessory {
     model: string;
 
     @Prop({ required: true })
-    warrantyDays: number;
+    warranty_days: number;
 
     @Prop({ required: false, default: new Date() })
-    uploadDate: Date;
+    upload_date: Date;
 
     @Prop({ required: false, default: new Date() })
-    updateDate: Date;
+    update_date: Date;
 }
 
 export const AccessorySchema = SchemaFactory.createForClass(Accessory);

@@ -63,7 +63,7 @@ export class User {
     iin: string;
 
     @Prop({ default: new Date() })
-    updateDate: Date;
+    update_date: Date;
 
     @Prop({ default: new Date() })
     registrationDate: Date;

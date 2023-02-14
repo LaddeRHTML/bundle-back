@@ -94,7 +94,7 @@ export class ProductsController {
         if (file.originalname !== 'WW_dealers.xlsx') {
             throw new HttpException('Bad file provided', HttpStatus.CONFLICT);
         }
-        console.log(file);
+
         const products = this.productsService.getDataFromExcel(file);
         return await this.productsService.manipulateMultipleItems(products);
     }
@@ -120,14 +120,14 @@ export class ProductsController {
     @UseGuards(RoleGuard)
     @Patch('/hide/many?')
     async updateVisiblityOfImportedProducts(
-        @Query('isHidden', {
+        @Query('is_hidden', {
             transform(value) {
                 return value === 'true';
             }
         })
-        isHidden: boolean
+        is_hidden: boolean
     ): Promise<UpdateResult> {
-        return await this.productsService.updateVisiblityOfImportedProducts(isHidden);
+        return await this.productsService.updateVisiblityOfImportedProducts(is_hidden);
     }
 
     @HasRoles(Role.Admin)
