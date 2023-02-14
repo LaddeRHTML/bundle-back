@@ -26,8 +26,8 @@ import { OrderStatus } from './types/order-status.types';
 const clientRef = 'client';
 const productRef = 'products';
 const creatorRef = 'creator';
-const lastEditorRef = 'lastEditor';
-const currentManagerRef = 'currentManager';
+const last_editorRef = 'last_editor';
+const current_managerRef = 'current_manager';
 
 @Injectable()
 export class OrdersService {
@@ -43,7 +43,7 @@ export class OrdersService {
         try {
             createOrderDto.creator = userPayload.userId;
             if (userPayload.role !== Role.User) {
-                createOrderDto.currentManager = userPayload.userId;
+                createOrderDto.current_manager = userPayload.userId;
             }
 
             const client = await this.userModel.findOne({ _id: userPayload.userId });
@@ -126,7 +126,7 @@ export class OrdersService {
                 status
             }),
             ...(userId && {
-                currentManager: userId
+                current_manager: userId
             }),
             ...(createOrderDto && {
                 ...createOrderDto
@@ -140,8 +140,8 @@ export class OrdersService {
             .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel })
             .populate(creatorRef, 'name email', this.userModel)
-            .populate(lastEditorRef, 'name email', this.userModel)
-            .populate(currentManagerRef, 'name email', this.userModel)
+            .populate(last_editorRef, 'name email', this.userModel)
+            .populate(current_managerRef, 'name email', this.userModel)
             .skip((page - 1) * limit)
             .limit(limit)
             .exec();
@@ -162,8 +162,8 @@ export class OrdersService {
             .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel })
             .populate(creatorRef, 'name email', this.userModel)
-            .populate(lastEditorRef, 'name email', this.userModel)
-            .populate(currentManagerRef, 'name email', this.userModel);
+            .populate(last_editorRef, 'name email', this.userModel)
+            .populate(current_managerRef, 'name email', this.userModel);
     }
 
     async findOne(_id: string): Promise<Order> {
@@ -172,8 +172,8 @@ export class OrdersService {
             .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel })
             .populate(creatorRef, 'name email', this.userModel)
-            .populate(lastEditorRef, 'name email', this.userModel)
-            .populate(currentManagerRef, 'name email', this.userModel);
+            .populate(last_editorRef, 'name email', this.userModel)
+            .populate(current_managerRef, 'name email', this.userModel);
     }
 
     async updateOne(
@@ -181,12 +181,12 @@ export class OrdersService {
         updateOrderDto: UpdateOrderDto,
         userPayload: UserPayload
     ): Promise<Order> {
-        updateOrderDto.lastEditor = userPayload.userId;
+        updateOrderDto.last_editor = userPayload.userId;
         updateOrderDto.update_date = new Date();
 
         if (updateOrderDto.status !== 'open') {
-            updateOrderDto.closeOrderInterval = calcRelToAnyDate(
-                updateOrderDto.createDate,
+            updateOrderDto.close_interval = calcRelToAnyDate(
+                updateOrderDto.create_date,
                 new Date(),
                 false
             );
@@ -197,23 +197,23 @@ export class OrdersService {
             .populate(clientRef, '-password', this.userModel)
             .populate({ path: productRef, model: this.productModel })
             .populate(creatorRef, 'name email', this.userModel)
-            .populate(lastEditorRef, 'name email', this.userModel)
-            .populate(currentManagerRef, 'name email', this.userModel);
+            .populate(last_editorRef, 'name email', this.userModel)
+            .populate(current_managerRef, 'name email', this.userModel);
     }
 
     async updateStatus(id: string, status: OrderStatus, userPayload: UserPayload) {
-        let closeOrderInterval: number;
+        let close_interval: number;
         const order = await this.findOne(id);
 
         if (status !== 'open') {
-            closeOrderInterval = calcRelToAnyDate(order.createDate, new Date(), false);
+            close_interval = calcRelToAnyDate(order.create_date, new Date(), false);
         }
 
         return this.updateOne(
             id,
             {
                 status,
-                closeOrderInterval
+                close_interval
             },
             userPayload
         );

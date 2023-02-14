@@ -77,7 +77,7 @@ export class OrdersController {
     async assignOn(@Param('id') id: string, @Req() req: Request): Promise<Order> {
         return await this.orderService.updateOne(
             id,
-            { currentManager: req.user['userId'] },
+            { current_manager: req.user['userId'] },
             req.user as UserPayload
         );
     }

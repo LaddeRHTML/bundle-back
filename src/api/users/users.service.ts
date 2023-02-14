@@ -59,7 +59,7 @@ export class UsersService {
                         name: new RegExp(parameter, 'i')
                     },
                     {
-                        familyName: new RegExp(parameter, 'i')
+                        family_name: new RegExp(parameter, 'i')
                     },
                     {
                         patronymic: new RegExp(parameter, 'i')

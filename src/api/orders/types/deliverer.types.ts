@@ -1,1 +1,1 @@
-export type DeliveredBy = 'Kirill' | 'Stepan' | 'Roman' | 'Oleg' | 'Azamat' | 'Curier';
+export type delivered_by = 'Kirill' | 'Stepan' | 'Roman' | 'Oleg' | 'Azamat' | 'Curier';

@@ -1,1 +1,1 @@
-export type PaymentMethodType = 'cash' | 'kaspi' | 'otherbank';
+export type payment_methodType = 'cash' | 'kaspi' | 'otherbank';

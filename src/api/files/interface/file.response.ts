@@ -15,9 +15,9 @@ export interface UploadFileResponse {
     filename: string;
     metadata: string;
     bucketName: string;
-    chunkSize: number;
+    chunk_size: number;
     size: number;
     md5: string;
     upload_date: Date;
-    contentType: string;
+    content_type: string;
 }
