@@ -39,11 +39,11 @@ export class FilesController {
             filename: file.filename,
             metadata: file.metadata,
             bucketName: file.bucketName,
-            chunkSize: file.chunkSize,
+            chunk_size: file.chunk_size,
             size: file.size,
             md5: file.md5,
             upload_date: file.upload_date,
-            contentType: file.contentType
+            content_type: file.content_type
         };
 
         return response;
@@ -77,7 +77,7 @@ export class FilesController {
                 HttpStatus.EXPECTATION_FAILED
             );
         }
-        res.header('Content-Type', file.contentType);
+        res.header('Content-Type', file.content_type);
         return filestream.pipe(res);
     }
 
@@ -93,7 +93,7 @@ export class FilesController {
                 HttpStatus.EXPECTATION_FAILED
             );
         }
-        res.header('Content-Type', file.contentType);
+        res.header('Content-Type', file.content_type);
         res.header('Content-Disposition', 'attachment; filename=' + file.filename);
         return filestream.pipe(res);
     }

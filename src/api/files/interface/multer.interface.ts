@@ -13,8 +13,8 @@ export interface MulterFile {
     id: ObjectId;
     metadata: null | string;
     bucketName: string;
-    chunkSize: number;
+    chunk_size: number;
     md5: undefined | string;
     upload_date: Date;
-    contentType: string;
+    content_type: string;
 }

@@ -30,13 +30,13 @@ export class User {
     gender: number;
 
     @Prop({ default: true })
-    allowedToLogin: boolean;
+    allowed_to_login: boolean;
 
     @Prop({ required: false, ref: Order.name })
     orders: string[];
 
     @Prop({ required: false })
-    familyName: string;
+    family_name: string;
 
     @Prop({ required: false })
     patronymic: string;
@@ -57,7 +57,7 @@ export class User {
     address: string;
 
     @Prop({ required: false, default: false })
-    isLegalEntity: boolean;
+    is_legal_entity: boolean;
 
     @Prop({ required: false })
     iin: string;
@@ -66,7 +66,7 @@ export class User {
     update_date: Date;
 
     @Prop({ default: new Date() })
-    registrationDate: Date;
+    registration_date: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

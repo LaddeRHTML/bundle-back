@@ -21,6 +21,6 @@ export class Application {
     message: string;
 
     @Prop({ default: new Date() })
-    createDate: Date;
+    create_date: Date;
 }
 export const ApplicationsSchema = SchemaFactory.createForClass(Application);

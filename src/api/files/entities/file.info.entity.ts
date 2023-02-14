@@ -1,7 +1,7 @@
 export class FileInfo {
     length: number;
-    chunkSize: number;
+    chunk_size: number;
     filename: string;
     md5: string;
-    contentType: string;
+    content_type: string;
 }

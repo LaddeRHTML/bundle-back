@@ -3,7 +3,7 @@ import { Product } from 'api/products/schema/products.schema';
 import { Document } from 'mongoose';
 
 import type { OrderStatus } from '../types/order-status.types';
-import { PaymentMethodType } from '../types/payment-method.types';
+import { payment_methodType } from '../types/payment-method.types';
 import { SourceType } from '../types/source.types';
 
 export type OrderDocument = Order & Document;
@@ -17,37 +17,37 @@ export class Order {
     creator: string;
 
     @Prop({ required: true, ref: 'users' })
-    currentManager: string;
+    current_manager: string;
 
     @Prop({ required: false })
     comment: string;
 
     @Prop({ required: false })
-    closeOrderInterval: number;
+    close_interval: number;
 
     @Prop()
-    deliveryDate: Date;
+    delivery_date: Date;
 
     @Prop({ required: false })
-    deliveredBy: string;
+    delivered_by: string;
 
     @Prop({ required: true, default: [''], ref: Product.name })
     products: string[];
 
     @Prop({ required: false })
-    purchaseDate: Date;
+    purchase_date: Date;
 
     @Prop({ required: true })
-    plannedDeliveryDate: Date;
+    planneddelivery_date: Date;
 
     @Prop({ required: false, default: 'cash', type: String })
-    paymentMethod: PaymentMethodType;
+    payment_method: payment_methodType;
 
     @Prop({ required: true, type: String })
     source: SourceType;
 
     @Prop({ required: false, ref: 'users' })
-    lastEditor: string;
+    last_editor: string;
 
     @Prop({ required: true, default: 'open', type: String })
     status: OrderStatus;
@@ -56,6 +56,6 @@ export class Order {
     update_date: Date;
 
     @Prop({ required: true, default: new Date() })
-    createDate: Date;
+    create_date: Date;
 }
 export const OrdersSchema = SchemaFactory.createForClass(Order);

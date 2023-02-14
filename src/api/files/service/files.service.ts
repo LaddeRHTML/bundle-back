@@ -29,9 +29,9 @@ export class FilesService {
         return {
             filename: result.filename,
             length: result.length,
-            chunkSize: result.chunkSize,
+            chunk_size: result.chunkSize,
             md5: result.md5,
-            contentType: result.contentType
+            content_type: result.contentType
         };
     }
 
