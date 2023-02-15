@@ -38,7 +38,7 @@ export class Order {
     purchase_date: Date;
 
     @Prop({ required: true })
-    planneddelivery_date: Date;
+    planned_delivery_date: Date;
 
     @Prop({ required: false, default: 'cash', type: String })
     payment_method: payment_methodType;
