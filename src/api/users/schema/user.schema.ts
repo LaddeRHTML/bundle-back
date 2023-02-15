@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Order } from 'api/orders/schema/orders.schema';
 import { Document } from 'mongoose';
+import { EMAIL_REGEX } from 'src/common/regex/email';
+import validateEmail from 'utils/validateEmail';
 
 import { Role } from '../enum/roles.enum';
 
@@ -11,7 +13,12 @@ export class User {
     @Prop({ required: true })
     name: string;
 
-    @Prop({ unique: true, required: true, max: 30 })
+    @Prop({
+        unique: true,
+        max: 30,
+        validate: [validateEmail, 'Please fill a valid email address'],
+        match: [EMAIL_REGEX, 'Please fill a valid email address']
+    })
     email: string;
 
     @Prop({ required: true, type: String, default: null, min: 6, max: 50 })
