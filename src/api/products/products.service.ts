@@ -112,9 +112,6 @@ export class ProductsService {
                 ...options,
                 $or: [
                     {
-                        category: new RegExp(parameter, 'i')
-                    },
-                    {
                         name: new RegExp(parameter, 'i')
                     },
                     {
@@ -122,6 +119,9 @@ export class ProductsService {
                     },
                     {
                         model: new RegExp(parameter, 'i')
+                    },
+                    {
+                        vendor_code: new RegExp(parameter, 'i')
                     }
                 ]
             };
