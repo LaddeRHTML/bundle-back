@@ -68,20 +68,9 @@ export class ProductsService {
         parameter: string,
         page: number,
         limit: number,
-        onlyOrdered: boolean,
-        category: string,
         filters: CreateProductDto
     ): Promise<Pagination<Product[]>> {
         let options = {
-            ...(onlyOrdered && {
-                includedInOrders: {
-                    $exists: onlyOrdered,
-                    $not: { $size: 0 }
-                }
-            }),
-            ...(category && {
-                category
-            }),
             ...(filters && filters),
             ...(filters.price?.[0] &&
                 filters.price?.[1] && {

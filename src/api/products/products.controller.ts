@@ -58,25 +58,12 @@ export class ProductsController {
     @Post('/search?')
     async findSortedItems(
         @Query('search-by') parameter: string,
-        @Query('onlyOrdered', {
-            transform(value) {
-                return value === 'true';
-            }
-        })
-        onlyOrdered: boolean,
-        @Query('page') page: number,
+        @Query('page')
+        page: number,
         @Query('limit') limit: number,
-        @Query('category') category: string,
         @Body() filters: CreateProductDto
     ): Promise<Pagination<Product[]>> {
-        return await this.productsService.findByFilters(
-            parameter,
-            page,
-            limit,
-            onlyOrdered,
-            category,
-            filters
-        );
+        return await this.productsService.findByFilters(parameter, page, limit, filters);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
