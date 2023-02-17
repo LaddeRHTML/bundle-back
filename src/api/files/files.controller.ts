@@ -5,19 +5,22 @@ import {
     HttpException,
     HttpStatus,
     Param,
+    ParseFilePipeBuilder,
     Post,
     Res,
     UploadedFile,
+    UploadedFiles,
     UseGuards,
     UseInterceptors
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
 import { Role } from 'api/users/enum/roles.enum';
 import { Response } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
+import { MAX_FILE_SIZE_IN_B } from 'src/common/constants/file-size';
 
 import { FileResponse, UploadFileResponse } from './interface/file.response';
 import { FilesService } from './service/files.service';
@@ -30,7 +33,18 @@ export class FilesController {
     @UseGuards(RoleGuard)
     @Post()
     @UseInterceptors(FileInterceptor('image'))
-    async uploadFile(@UploadedFile() file: MulterFile): Promise<UploadFileResponse> {
+    async uploadFile(
+        @UploadedFile(
+            new ParseFilePipeBuilder()
+                .addMaxSizeValidator({
+                    maxSize: MAX_FILE_SIZE_IN_B
+                })
+                .build({
+                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+                })
+        )
+        file: MulterFile
+    ): Promise<UploadFileResponse> {
         const response = {
             originalname: file.originalname,
             encoding: file.encoding,
@@ -47,6 +61,40 @@ export class FilesController {
         };
 
         return response;
+    }
+
+    @HasRoles(Role.Manager, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Post('/many')
+    @UseInterceptors(FilesInterceptor('images'))
+    async uploadFiles(
+        @UploadedFiles(
+            new ParseFilePipeBuilder()
+                .addMaxSizeValidator({
+                    maxSize: MAX_FILE_SIZE_IN_B
+                })
+                .build({
+                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+                })
+        )
+        files: MulterFile[]
+    ): Promise<UploadFileResponse[]> {
+        const UploadedFilesResponse = files.map((f) => ({
+            originalname: f.originalname,
+            encoding: f.encoding,
+            mimetype: f.mimetype,
+            id: f.id,
+            filename: f.filename,
+            metadata: f.metadata,
+            bucketName: f.bucketName,
+            chunk_size: f.chunk_size,
+            size: f.size,
+            md5: f.md5,
+            upload_date: f.upload_date,
+            content_type: f.content_type
+        }));
+
+        return UploadedFilesResponse;
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
