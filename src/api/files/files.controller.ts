@@ -1,4 +1,5 @@
 import {
+    Body,
     Controller,
     Delete,
     Get,
@@ -22,7 +23,8 @@ import { Response } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
 import { MAX_FILE_SIZE_IN_B } from 'src/common/constants/file-size';
 
-import { FileResponse, UploadFileResponse } from './interface/file.response';
+import { FileInfo } from './entities/file.info.entity';
+import { FileResponse, FilesResponse, UploadFileResponse } from './interface/file.response';
 import { FilesService } from './service/files.service';
 
 @Controller(`${apiVersion}/files`)
@@ -68,15 +70,7 @@ export class FilesController {
     @Post('/many')
     @UseInterceptors(FilesInterceptor('images'))
     async uploadFiles(
-        @UploadedFiles(
-            new ParseFilePipeBuilder()
-                .addMaxSizeValidator({
-                    maxSize: MAX_FILE_SIZE_IN_B
-                })
-                .build({
-                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
-                })
-        )
+        @UploadedFiles()
         files: MulterFile[]
     ): Promise<UploadFileResponse[]> {
         const UploadedFilesResponse = files.map((f) => ({
@@ -161,6 +155,40 @@ export class FilesController {
         return {
             message: 'File has been deleted',
             file: file
+        };
+    }
+
+    @HasRoles(Role.Admin)
+    @UseGuards(RoleGuard)
+    @Delete('delete-many/')
+    async deleteFiles(@Body() filesId: string[]): Promise<FilesResponse> {
+        let files: FileInfo[] = [];
+
+        for (const id of filesId) {
+            const file = await this.filesService.findInfo(id);
+            if (!file) {
+                throw new HttpException(
+                    'An error occurred during file searching',
+                    HttpStatus.EXPECTATION_FAILED
+                );
+            }
+            const filestream = await this.filesService.deleteFile(id);
+            if (!filestream) {
+                throw new HttpException(
+                    'An error occurred during file deletion',
+                    HttpStatus.EXPECTATION_FAILED
+                );
+            }
+            files.push(file);
+        }
+
+        if (files.length === 0) {
+            throw new HttpException('0 files deleted!', HttpStatus.EXPECTATION_FAILED);
+        }
+
+        return {
+            message: 'Files has been deleted',
+            files
         };
     }
 }
