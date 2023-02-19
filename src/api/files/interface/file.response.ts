@@ -2,6 +2,11 @@ import { ObjectId } from 'mongoose';
 
 import { FileInfo } from '../entities/file.info.entity';
 
+export interface FilesResponse {
+    message: string;
+    files: FileInfo[] | [];
+}
+
 export interface FileResponse {
     message: string;
     file: FileInfo;
