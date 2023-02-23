@@ -179,7 +179,7 @@ export class FilesController {
                     HttpStatus.EXPECTATION_FAILED
                 );
             }
-            files.push(file);
+            files.push({ ...file, id });
         }
 
         if (files.length === 0) {
