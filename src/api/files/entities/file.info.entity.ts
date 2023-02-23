@@ -4,5 +4,5 @@ export class FileInfo {
     filename: string;
     md5: string;
     content_type: string;
-    id: string;
+    id?: string;
 }
