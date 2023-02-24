@@ -181,42 +181,34 @@ export class OrdersService {
         updateOrderDto: UpdateOrderDto,
         userPayload: UserPayload
     ): Promise<Order> {
-        updateOrderDto.last_editor = userPayload.userId;
-        updateOrderDto.update_date = new Date();
+        try {
+            const order = await this.findOne(id);
 
-        if (updateOrderDto.status !== 'open') {
-            updateOrderDto.close_interval = calcRelToAnyDate(
-                updateOrderDto.create_date,
-                new Date(),
-                false
-            );
+            updateOrderDto.last_editor = userPayload.userId;
+            updateOrderDto.update_date = new Date();
+
+            if (updateOrderDto.status !== 'open') {
+                updateOrderDto.close_interval = calcRelToAnyDate(
+                    order.create_date,
+                    updateOrderDto.update_date,
+                    false
+                );
+            }
+
+            return await this.orderModel
+                .findOneAndUpdate({ _id: id }, { ...updateOrderDto }, { new: true })
+                .populate(clientRef, '-password', this.userModel)
+                .populate({ path: productRef, model: this.productModel })
+                .populate(creatorRef, 'name email', this.userModel)
+                .populate(last_editorRef, 'name email', this.userModel)
+                .populate(current_managerRef, 'name email', this.userModel);
+        } catch (error) {
+            throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return await this.orderModel
-            .findOneAndUpdate({ _id: id }, { ...updateOrderDto }, { new: true })
-            .populate(clientRef, '-password', this.userModel)
-            .populate({ path: productRef, model: this.productModel })
-            .populate(creatorRef, 'name email', this.userModel)
-            .populate(last_editorRef, 'name email', this.userModel)
-            .populate(current_managerRef, 'name email', this.userModel);
     }
 
     async updateStatus(id: string, status: OrderStatus, userPayload: UserPayload) {
-        let close_interval: number;
-        const order = await this.findOne(id);
-
-        if (status !== 'open') {
-            close_interval = calcRelToAnyDate(order.create_date, new Date(), false);
-        }
-
-        return this.updateOne(
-            id,
-            {
-                status,
-                close_interval
-            },
-            userPayload
-        );
+        return this.updateOne(id, { status }, userPayload);
     }
 
     async updateMany(
