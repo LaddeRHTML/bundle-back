@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
-import { Role } from 'api/users/enum/roles.enum';
+import { Role } from 'api/users/enum';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
 

@@ -1,7 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Payload } from 'api/auth/strategies/jwt-auth.strategy';
-import { Role } from 'api/users/enum/roles.enum';
+import { Role } from 'api/users/enum';
 import { UserPasswords } from 'api/users/interface/passwords.interface';
 import * as bcrypt from 'bcryptjs';
 import { ConfigurationService } from 'config/configuration.service';
@@ -16,169 +17,170 @@ import {
 } from 'mongoose';
 import { hashRounds } from 'src/common/constants/bcrypt';
 import { calcRelToCurrentDate } from 'src/common/utils/index';
+import { InsertResult, Repository } from 'typeorm';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument } from './schema/user.schema';
+import { User } from './entity/user.entity';
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-        private readonly configService: ConfigurationService
+        @InjectRepository(User)
+        private usersRepository: Repository<User>
     ) {}
 
-    async createOne(createUserDto: CreateUserDto, role: Role): Promise<User> {
+    async createOne(createUserDto: CreateUserDto, role: Role): Promise<InsertResult> {
         try {
             createUserDto.age = calcRelToCurrentDate(createUserDto.birthday, true);
             createUserDto.role = role;
 
-            return await this.userModel.create(createUserDto);
+            return this.usersRepository.insert(createUserDto);
         } catch {
             throw new HttpException('BadRequestException', HttpStatus.BAD_REQUEST);
         }
     }
 
     async findAll(): Promise<User[]> {
-        return await this.userModel
-            .find({})
-            .select('-password')
-            .populate(this.configService.orderRef);
+        return await this.usersRepository.find();
+        // return await this.userModel
+        //     .find({})
+        //     .select('-password')
+        //     .populate(this.configService.orderRef);
     }
 
-    async findByQuery(parameter: string, page: number, limit: number): Promise<Pagination<User[]>> {
-        let options = {};
+    // async findByQuery(parameter: string, page: number, limit: number): Promise<Pagination<User[]>> {
+    //     let options = {};
 
-        if (parameter) {
-            options = {
-                $or: [
-                    {
-                        address: new RegExp(parameter, 'i')
-                    },
-                    {
-                        name: new RegExp(parameter, 'i')
-                    },
-                    {
-                        family_name: new RegExp(parameter, 'i')
-                    },
-                    {
-                        patronymic: new RegExp(parameter, 'i')
-                    },
-                    {
-                        iin: new RegExp(parameter, 'i')
-                    },
-                    {
-                        phone: new RegExp(parameter, 'i')
-                    },
-                    {
-                        email: new RegExp(parameter, 'i')
-                    }
-                ]
-            };
-        }
+    //     if (parameter) {
+    //         options = {
+    //             $or: [
+    //                 {
+    //                     address: new RegExp(parameter, 'i')
+    //                 },
+    //                 {
+    //                     name: new RegExp(parameter, 'i')
+    //                 },
+    //                 {
+    //                     family_name: new RegExp(parameter, 'i')
+    //                 },
+    //                 {
+    //                     patronymic: new RegExp(parameter, 'i')
+    //                 },
+    //                 {
+    //                     iin: new RegExp(parameter, 'i')
+    //                 },
+    //                 {
+    //                     phone: new RegExp(parameter, 'i')
+    //                 },
+    //                 {
+    //                     email: new RegExp(parameter, 'i')
+    //                 }
+    //             ]
+    //         };
+    //     }
 
-        const total = await this.userModel.count(options).exec();
-        const lastPage = Math.ceil(total / limit);
-        const data = await this.userModel
-            .find(options)
-            .select('-password')
-            .populate(this.configService.orderRef)
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .exec();
+    //     const total = await this.userModel.count(options).exec();
+    //     const lastPage = Math.ceil(total / limit);
+    //     const data = await this.userModel
+    //         .find(options)
+    //         .select('-password')
+    //         .populate(this.configService.orderRef)
+    //         .skip((page - 1) * limit)
+    //         .limit(limit)
+    //         .exec();
 
-        return {
-            data,
-            total,
-            page,
-            lastPage
-        };
-    }
+    //     return {
+    //         data,
+    //         total,
+    //         page,
+    //         lastPage
+    //     };
+    // }
 
-    async findOne(parameter: User): Promise<User> {
-        return await this.userModel
-            .findOne(parameter)
-            .select('-password')
-            .populate(this.configService.orderRef);
-    }
+    // async findOne(parameter: User): Promise<User> {
+    //     return await this.userModel
+    //         .findOne(parameter)
+    //         .select('-password')
+    //         .populate(this.configService.orderRef);
+    // }
 
-    async findOneByEmail(email: Pick<User, 'email'>): Promise<User> {
-        return await this.userModel.findOne({ email }).populate(this.configService.orderRef);
-    }
+    // async findOneByEmail(email: Pick<User, 'email'>): Promise<User> {
+    //     return await this.userModel.findOne({ email }).populate(this.configService.orderRef);
+    // }
 
-    async findOneById(id: string): Promise<User> {
-        return await this.userModel.findOne({ _id: id }).populate(this.configService.orderRef);
-    }
+    // async findOneById(id: string): Promise<User> {
+    //     return await this.userModel.findOne({ _id: id }).populate(this.configService.orderRef);
+    // }
 
-    async updateOne(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        if (updateUserDto?.birthday) {
-            updateUserDto.age = calcRelToCurrentDate(updateUserDto?.birthday, true);
-        }
+    // async updateOne(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    //     if (updateUserDto?.birthday) {
+    //         updateUserDto.age = calcRelToCurrentDate(updateUserDto?.birthday, true);
+    //     }
 
-        updateUserDto.update_date = new Date();
+    //     updateUserDto.update_date = new Date();
 
-        return await this.userModel
-            .findOneAndUpdate({ _id: id }, { ...updateUserDto }, { new: true })
-            .populate(this.configService.orderRef);
-    }
+    //     return await this.userModel
+    //         .findOneAndUpdate({ _id: id }, { ...updateUserDto }, { new: true })
+    //         .populate(this.configService.orderRef);
+    // }
 
-    async updatePassword(payload: Payload, passwords: UserPasswords): Promise<boolean> {
-        const { oldPassword, newPassword } = passwords;
-        try {
-            const samePass = 'Passwords are the same!';
+    // async updatePassword(payload: Payload, passwords: UserPasswords): Promise<boolean> {
+    //     const { oldPassword, newPassword } = passwords;
+    //     try {
+    //         const samePass = 'Passwords are the same!';
 
-            if (oldPassword === newPassword) {
-                throw new HttpException(samePass, HttpStatus.CONFLICT);
-            }
+    //         if (oldPassword === newPassword) {
+    //             throw new HttpException(samePass, HttpStatus.CONFLICT);
+    //         }
 
-            const userId = payload.userId;
-            const user = await this.findOneById(userId);
+    //         const userId = payload.userId;
+    //         const user = await this.findOneById(userId);
 
-            if (!user) {
-                throw new HttpException("User wasn't found!", HttpStatus.CONFLICT);
-            }
+    //         if (!user) {
+    //             throw new HttpException("User wasn't found!", HttpStatus.CONFLICT);
+    //         }
 
-            const compareResult = await bcrypt.compare(oldPassword, user.password);
+    //         const compareResult = await bcrypt.compare(oldPassword, user.password);
 
-            if (!compareResult) {
-                throw new HttpException(samePass, HttpStatus.CONFLICT);
-            }
+    //         if (!compareResult) {
+    //             throw new HttpException(samePass, HttpStatus.CONFLICT);
+    //         }
 
-            const newPasswordHash = await bcrypt.hash(newPassword, hashRounds);
+    //         const newPasswordHash = await bcrypt.hash(newPassword, hashRounds);
 
-            const updatedUser = await this.updateOne(userId, {
-                password: newPasswordHash
-            });
+    //         const updatedUser = await this.updateOne(userId, {
+    //             password: newPasswordHash
+    //         });
 
-            if (!updatedUser) {
-                throw new HttpException("Password wasn't updated!", HttpStatus.CONFLICT);
-            }
+    //         if (!updatedUser) {
+    //             throw new HttpException("Password wasn't updated!", HttpStatus.CONFLICT);
+    //         }
 
-            return true;
-        } catch (error) {
-            console.log(error);
-            throw new HttpException('Conflict!', HttpStatus.CONFLICT);
-        }
-    }
+    //         return true;
+    //     } catch (error) {
+    //         console.log(error);
+    //         throw new HttpException('Conflict!', HttpStatus.CONFLICT);
+    //     }
+    // }
 
-    async updateMany(
+    /*  async updateMany(
         filter?: FilterQuery<UserDocument>,
         parameter?: UpdateWithAggregationPipeline | UpdateQuery<UserDocument>,
         settings?: QueryOptions
     ) {
-        return await this.userModel
-            .updateMany(
-                filter,
-                { ...parameter, update_date: new Date() },
-                {
-                    ...settings,
-                    new: true
-                }
-            )
-            .populate(this.configService.orderRef);
-    }
+        return await this.userModel.updateMany(
+            filter,
+            { ...parameter, update_date: new Date() },
+            {
+                ...settings,
+                new: true
+            }
+        );
+        .populate(this.configService.orderRef);
+    } */
 
-    async removeOneById(id: string) {
+    /* async removeOneById(id: string) {
         return await this.userModel.deleteOne({ _id: id });
-    }
+    } */
 }

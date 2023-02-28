@@ -18,7 +18,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
-import { Role } from 'api/users/enum/roles.enum';
+import { Role } from 'api/users/enum';
 import { Response } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
 import { MAX_FILE_SIZE_IN_B } from 'src/common/constants/file-size';

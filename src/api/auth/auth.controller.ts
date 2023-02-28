@@ -3,7 +3,7 @@ import { AuthService } from 'api/auth/auth.service';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'api/auth/guards/local-auth.guard';
 import { CreateUserDto } from 'api/users/dto/create-user.dto';
-import { Role } from 'api/users/enum/roles.enum';
+import { Role } from 'api/users/enum';
 import { UsersService } from 'api/users/users.service';
 import { Request } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
@@ -23,22 +23,22 @@ export class AuthController {
         return await this.authService.login(req.user as User);
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Get('check')
-    async check(@Req() req: Request): Promise<User> {
-        const userId = req.user['userId'] as string;
+    // @UseGuards(JwtAuthGuard)
+    // @Get('check')
+    // async check(@Req() req: Request): Promise<User> {
+    //     const userId = req.user['userId'] as string;
 
-        const user = await this.usersService.findOneById(userId);
+    //     const user = await this.usersService.findOneById(userId);
 
-        user.password = undefined;
+    //     user.password = undefined;
 
-        return user;
-    }
+    //     return user;
+    // }
 
-    @Post('register')
-    async register(@Req() req: Request, @Query('role') role: Role): Promise<CreateUserDto> {
-        return this.authService.register(req.body, role);
-    }
+    // @Post('register')
+    // async register(@Req() req: Request, @Query('role') role: Role): Promise<CreateUserDto> {
+    //     return this.authService.register(req.body, role);
+    // }
 
     /* @UseGuards(RefreshAuthGuard)
     @Get('refresh-tokens')

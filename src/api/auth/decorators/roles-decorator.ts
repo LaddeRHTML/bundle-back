@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { Role } from 'api/users/enum/roles.enum';
+import { Role } from 'api/users/enum';
 
 import { ROLE_KEY } from '../constants/roles-const';
 

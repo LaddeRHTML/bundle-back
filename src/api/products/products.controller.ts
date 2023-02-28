@@ -17,7 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
 import { MulterFile } from 'api/files/interface/multer.interface';
-import { Role } from 'api/users/enum/roles.enum';
+import { Role } from 'api/users/enum';
 import { DeleteResult } from 'interfaces/delete.result';
 import { UpdateResult } from 'interfaces/update.ruslt';
 import { apiVersion } from 'src/common/constants/api-const';

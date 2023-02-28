@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 import { EMAIL_REGEX } from 'src/common/regex/email';
 import validateEmail from 'utils/validateEmail';
 
-import { Role } from '../enum/roles.enum';
+import { Role } from '../enum';
 
 export type UserDocument = User & Document;
 

@@ -7,8 +7,8 @@ import { UsersService } from 'api/users/users.service';
 import { ConfigurationModule } from 'config/configuration.module';
 
 import { User, UserSchema } from './../users/schema/user.schema';
-import { OrdersController } from './orders.controller';
-import { OrdersService } from './orders.service';
+// import { OrdersController } from './orders.controller';
+// import { OrdersService } from './orders.service';
 import { Order, OrdersSchema } from './schema/orders.schema';
 
 @Module({
@@ -20,8 +20,12 @@ import { Order, OrdersSchema } from './schema/orders.schema';
             { name: Product.name, schema: ProductsSchema }
         ])
     ],
-    controllers: [OrdersController],
-    providers: [OrdersService, ProductsService, UsersService],
-    exports: [OrdersService]
+    controllers: [
+        /* OrdersController */
+    ],
+    providers: [, /* OrdersService */ ProductsService, UsersService],
+    exports: [
+        /* OrdersService */
+    ]
 })
 export class OrdersModule {}
