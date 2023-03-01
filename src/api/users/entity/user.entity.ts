@@ -5,7 +5,7 @@ import { Gender, Role } from '../enum';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()
@@ -37,7 +37,7 @@ export class User {
     avatar: string;
 
     @Column({ type: 'enum', enum: Gender, default: Gender.Unknown })
-    gender: number;
+    gender: string;
 
     @Column({ default: true })
     allowed_to_login: boolean;

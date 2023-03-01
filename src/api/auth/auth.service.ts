@@ -1,13 +1,13 @@
 import { HttpException, HttpStatus, Injectable, Req, Res } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'api/users/dto/create-user.dto';
+import { User } from 'api/users/entity/user.entity';
 import { Role } from 'api/users/enum';
 import { UsersService } from 'api/users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { ConfigurationService } from 'config/configuration.service';
 import { hashRounds } from 'src/common/constants/bcrypt';
 
-import { User } from '../users/schema/user.schema';
 import { AccessToken } from './interface/auth.interface';
 import { UserPayload } from './interface/userId.interface';
 

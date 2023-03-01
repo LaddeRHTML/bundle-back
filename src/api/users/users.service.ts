@@ -1,23 +1,17 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payload } from 'api/auth/strategies/jwt-auth.strategy';
 import { Role } from 'api/users/enum';
 import { UserPasswords } from 'api/users/interface/passwords.interface';
 import * as bcrypt from 'bcryptjs';
-import { ConfigurationService } from 'config/configuration.service';
-import { Request } from 'express';
-import { Pagination } from 'interfaces/utils.interface';
-import {
-    FilterQuery,
-    Model,
-    QueryOptions,
-    UpdateQuery,
-    UpdateWithAggregationPipeline
-} from 'mongoose';
 import { hashRounds } from 'src/common/constants/bcrypt';
+import { SAME_PASSWORD_EXCEPTION } from 'src/common/constants/passwords';
+import { PageMetaDto } from 'src/common/pagination/dtos/page-meta.dto';
+import { PageOptionsDto } from 'src/common/pagination/dtos/page-options.dto';
+import { PageDto } from 'src/common/pagination/dtos/page.dto';
 import { calcRelToCurrentDate } from 'src/common/utils/index';
-import { InsertResult, Repository } from 'typeorm';
+import { FindOneOptions, InsertResult, Repository } from 'typeorm';
+import getSQLSearch from 'utils/array/getSQLSearch';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -36,151 +30,132 @@ export class UsersService {
             createUserDto.role = role;
 
             return this.usersRepository.insert(createUserDto);
-        } catch {
-            throw new HttpException('BadRequestException', HttpStatus.BAD_REQUEST);
+        } catch (error) {
+            throw new Error(`users.service | createOne error: ${error.message}`);
         }
     }
 
     async findAll(): Promise<User[]> {
-        return await this.usersRepository.find();
-        // return await this.userModel
-        //     .find({})
-        //     .select('-password')
-        //     .populate(this.configService.orderRef);
+        try {
+            return await this.usersRepository.find();
+        } catch (error) {
+            throw new Error(`users.service | findAll error: ${error.message}`);
+        }
     }
 
-    // async findByQuery(parameter: string, page: number, limit: number): Promise<Pagination<User[]>> {
-    //     let options = {};
+    async findSome(pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
+        try {
+            const includedInSearchFields = [
+                'address',
+                'name',
+                'family_name',
+                'patronymic',
+                'iin',
+                'phone_number',
+                'email'
+            ];
 
-    //     if (parameter) {
-    //         options = {
-    //             $or: [
-    //                 {
-    //                     address: new RegExp(parameter, 'i')
-    //                 },
-    //                 {
-    //                     name: new RegExp(parameter, 'i')
-    //                 },
-    //                 {
-    //                     family_name: new RegExp(parameter, 'i')
-    //                 },
-    //                 {
-    //                     patronymic: new RegExp(parameter, 'i')
-    //                 },
-    //                 {
-    //                     iin: new RegExp(parameter, 'i')
-    //                 },
-    //                 {
-    //                     phone: new RegExp(parameter, 'i')
-    //                 },
-    //                 {
-    //                     email: new RegExp(parameter, 'i')
-    //                 }
-    //             ]
-    //         };
-    //     }
+            const queryBuilder = this.usersRepository.createQueryBuilder(User.name.toLowerCase());
 
-    //     const total = await this.userModel.count(options).exec();
-    //     const lastPage = Math.ceil(total / limit);
-    //     const data = await this.userModel
-    //         .find(options)
-    //         .select('-password')
-    //         .populate(this.configService.orderRef)
-    //         .skip((page - 1) * limit)
-    //         .limit(limit)
-    //         .exec();
-
-    //     return {
-    //         data,
-    //         total,
-    //         page,
-    //         lastPage
-    //     };
-    // }
-
-    // async findOne(parameter: User): Promise<User> {
-    //     return await this.userModel
-    //         .findOne(parameter)
-    //         .select('-password')
-    //         .populate(this.configService.orderRef);
-    // }
-
-    // async findOneByEmail(email: Pick<User, 'email'>): Promise<User> {
-    //     return await this.userModel.findOne({ email }).populate(this.configService.orderRef);
-    // }
-
-    // async findOneById(id: string): Promise<User> {
-    //     return await this.userModel.findOne({ _id: id }).populate(this.configService.orderRef);
-    // }
-
-    // async updateOne(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    //     if (updateUserDto?.birthday) {
-    //         updateUserDto.age = calcRelToCurrentDate(updateUserDto?.birthday, true);
-    //     }
-
-    //     updateUserDto.update_date = new Date();
-
-    //     return await this.userModel
-    //         .findOneAndUpdate({ _id: id }, { ...updateUserDto }, { new: true })
-    //         .populate(this.configService.orderRef);
-    // }
-
-    // async updatePassword(payload: Payload, passwords: UserPasswords): Promise<boolean> {
-    //     const { oldPassword, newPassword } = passwords;
-    //     try {
-    //         const samePass = 'Passwords are the same!';
-
-    //         if (oldPassword === newPassword) {
-    //             throw new HttpException(samePass, HttpStatus.CONFLICT);
-    //         }
-
-    //         const userId = payload.userId;
-    //         const user = await this.findOneById(userId);
-
-    //         if (!user) {
-    //             throw new HttpException("User wasn't found!", HttpStatus.CONFLICT);
-    //         }
-
-    //         const compareResult = await bcrypt.compare(oldPassword, user.password);
-
-    //         if (!compareResult) {
-    //             throw new HttpException(samePass, HttpStatus.CONFLICT);
-    //         }
-
-    //         const newPasswordHash = await bcrypt.hash(newPassword, hashRounds);
-
-    //         const updatedUser = await this.updateOne(userId, {
-    //             password: newPasswordHash
-    //         });
-
-    //         if (!updatedUser) {
-    //             throw new HttpException("Password wasn't updated!", HttpStatus.CONFLICT);
-    //         }
-
-    //         return true;
-    //     } catch (error) {
-    //         console.log(error);
-    //         throw new HttpException('Conflict!', HttpStatus.CONFLICT);
-    //     }
-    // }
-
-    /*  async updateMany(
-        filter?: FilterQuery<UserDocument>,
-        parameter?: UpdateWithAggregationPipeline | UpdateQuery<UserDocument>,
-        settings?: QueryOptions
-    ) {
-        return await this.userModel.updateMany(
-            filter,
-            { ...parameter, update_date: new Date() },
-            {
-                ...settings,
-                new: true
+            if (pageOptionsDto.searchBy) {
+                queryBuilder.where(getSQLSearch(includedInSearchFields, User.name.toLowerCase()), {
+                    s: `%${pageOptionsDto.searchBy}%`
+                });
             }
-        );
-        .populate(this.configService.orderRef);
-    } */
 
-    /* async removeOneById(id: string) {
-        return await this.userModel.deleteOne({ _id: id });
-    } */
+            queryBuilder
+                .orderBy('user.registration_date', pageOptionsDto.order)
+                .skip(pageOptionsDto.skip)
+                .take(pageOptionsDto.limit);
+
+            const total = await queryBuilder.getCount();
+            const { entities } = await queryBuilder.getRawAndEntities();
+
+            const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
+
+            return new PageDto(entities, pageMetaDto);
+        } catch (error) {
+            throw new Error(`users.service | findSome error: ${error.message}`);
+        }
+    }
+
+    async findOne(parameter: FindOneOptions<User>): Promise<User> {
+        try {
+            return await this.usersRepository.findOne(parameter);
+        } catch (error) {
+            throw new Error(`users.service | findOne error: ${error.message}`);
+        }
+    }
+
+    async updateOne(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+        try {
+            if (updateUserDto?.birthday) {
+                updateUserDto.age = calcRelToCurrentDate(updateUserDto?.birthday, true);
+            }
+
+            updateUserDto.update_date = new Date();
+
+            return await this.usersRepository.save({ id, ...updateUserDto });
+        } catch (error) {
+            throw new Error(`users.service | updateOne error: ${error.message}`);
+        }
+    }
+
+    async updatePassword(payload: Payload, passwords: UserPasswords): Promise<boolean> {
+        const { oldPassword, newPassword } = passwords;
+        try {
+            if (oldPassword === newPassword) {
+                throw new Error(SAME_PASSWORD_EXCEPTION);
+            }
+
+            const userId = payload.userId;
+            const user = await this.findOne({ where: { id: userId } });
+
+            if (!user) {
+                throw new HttpException('User not found!', HttpStatus.CONFLICT);
+            }
+
+            const compareResult = await bcrypt.compare(oldPassword, user.password);
+
+            if (!compareResult) {
+                throw new Error(SAME_PASSWORD_EXCEPTION);
+            }
+
+            const newPasswordHash = await bcrypt.hash(newPassword, hashRounds);
+
+            const updatedUser = await this.updateOne(userId, {
+                password: newPasswordHash
+            });
+
+            if (!updatedUser) {
+                throw new HttpException("Password wasn't updated!", HttpStatus.CONFLICT);
+            }
+
+            return true;
+        } catch (error) {
+            throw new Error(`users.service | updatePassword error: ${error.message}`);
+        }
+    }
+
+    async updateMany(userIds: string[], updateUserDto: UpdateUserDto) {
+        try {
+            return await this.usersRepository
+                .createQueryBuilder()
+                .update(User)
+                .set({ ...updateUserDto, update_date: new Date() })
+                .whereInIds(userIds)
+                .execute();
+        } catch (error) {
+            throw new Error(`users.service | updateMany error: ${error.message}`);
+        }
+    }
+
+    async removeOneById(id: string) {
+        try {
+            const user = await this.findOne({ where: { id } });
+            return this.usersRepository.remove(user);
+        } catch (error) {
+            throw new Error(`users.service | removeOneById error: ${error.message}`);
+        }
+    }
 }

@@ -9,5 +9,8 @@ export const DatabaseCredentials: DataSourceOptions = {
     password: 'k_ZSFlTHxDRLcDKQbkT5UJiX29D9A0PL',
     database: 'rnlsfpmv',
     entities: [User],
-    synchronize: true
+    synchronize: true,
+    extra: {
+        connectionLimit: 5
+    }
 };

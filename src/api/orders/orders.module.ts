@@ -6,7 +6,6 @@ import { Product, ProductsSchema } from 'api/products/schema/products.schema';
 import { UsersService } from 'api/users/users.service';
 import { ConfigurationModule } from 'config/configuration.module';
 
-import { User, UserSchema } from './../users/schema/user.schema';
 // import { OrdersController } from './orders.controller';
 // import { OrdersService } from './orders.service';
 import { Order, OrdersSchema } from './schema/orders.schema';
@@ -16,7 +15,7 @@ import { Order, OrdersSchema } from './schema/orders.schema';
         ConfigurationModule,
         MongooseModule.forFeature([
             { name: Order.name, schema: OrdersSchema },
-            { name: User.name, schema: UserSchema },
+            // { name: User.name, schema: UserSchema },
             { name: Product.name, schema: ProductsSchema }
         ])
     ],

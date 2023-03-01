@@ -17,7 +17,9 @@ import { UserPasswords } from 'api/users/interface/passwords.interface';
 import { Request as ExpressRequest } from 'express';
 import { Pagination } from 'interfaces/utils.interface';
 import { apiVersion } from 'src/common/constants/api-const';
-import { InsertResult } from 'typeorm';
+import { PageOptionsDto } from 'src/common/pagination/dtos/page-options.dto';
+import { PageDto } from 'src/common/pagination/dtos/page.dto';
+import { InsertResult, UpdateResult } from 'typeorm';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -54,53 +56,47 @@ export class UsersController {
 
     // @HasRoles(Role.Manager, Role.Admin)
     // @UseGuards(RoleGuard)
-    // @Get('/filter?')
-    // async findSortedItems(
-    //     @Query('page') page: number,
-    //     @Query('limit') limit: number,
-    //     @Query('search-by') parameter: string
-    // ): Promise<Pagination<User[]>> {
-    //     return await this.usersService.findByQuery(parameter, page, limit);
-    // }
+    @Get('/filter?')
+    async findSortedItems(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
+        return await this.usersService.findSome(pageOptionsDto);
+    }
 
     // @HasRoles(Role.User, Role.Manager, Role.Admin)
     // @UseGuards(RoleGuard)
-    // @Get(':id')
-    // findOne(@Param('id') id: string): Promise<User> {
-    //     return this.usersService.findOneById(id);
-    // }
+    @Get(':id')
+    findOne(@Param('id') id: string): Promise<User> {
+        return this.usersService.findOne({ where: { id } });
+    }
 
     // @HasRoles(Role.User, Role.Manager, Role.Admin)
     // @UseGuards(RoleGuard)
-    // @Get('/email/:email')
-    // async findOneByEmail(@Param('email') email: Pick<User, 'email'>): Promise<User> {
-    //     const user = await this.usersService.findOneByEmail(email);
-    //     user.password = undefined;
-    //     return user;
-    // }
+    @Get('/email/:email')
+    async findOneByEmail(@Param('email') email: string): Promise<User> {
+        return await this.usersService.findOne({ where: { email } });
+    }
 
     // @HasRoles(Role.User, Role.Manager, Role.Admin)
     // @UseGuards(RoleGuard)
     // @UseGuards(JwtAuthGuard)
-    // @Post(':id')
-    // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-    //     return this.usersService.updateOne(id, updateUserDto);
-    // }
+    @Post(':id')
+    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+        return this.usersService.updateOne(id, updateUserDto);
+    }
 
     // @HasRoles(Role.User, Role.Manager, Role.Admin)
     // @UseGuards(RoleGuard)
     // @Post('/password/update')
-    // async updateUserPassword(
-    //     @Request() req: RequestWithUser,
-    //     @Body() passwords: UserPasswords
-    // ): Promise<boolean> {
-    //     return await this.usersService.updatePassword(req.user, passwords);
-    // }
+    async updateUserPassword(
+        @Request() req: RequestWithUser,
+        @Body() passwords: UserPasswords
+    ): Promise<boolean> {
+        return await this.usersService.updatePassword(req.user, passwords);
+    }
 
-    /* @HasRoles(Role.User, Role.Manager, Role.Admin)
-    @UseGuards(RoleGuard)
+    // @HasRoles(Role.User, Role.Manager, Role.Admin)
+    // @UseGuards(RoleGuard)
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.usersService.removeOneById(id);
-    } */
+    }
 }

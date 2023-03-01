@@ -3,12 +3,12 @@ import { AuthService } from 'api/auth/auth.service';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'api/auth/guards/local-auth.guard';
 import { CreateUserDto } from 'api/users/dto/create-user.dto';
+import { User } from 'api/users/entity/user.entity';
 import { Role } from 'api/users/enum';
 import { UsersService } from 'api/users/users.service';
 import { Request } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
 
-import { User } from '../users/schema/user.schema';
 import { AccessToken } from './interface/auth.interface';
 
 const controllerName = `${apiVersion}/auth/`;

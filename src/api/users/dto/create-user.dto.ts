@@ -1,3 +1,3 @@
-import { User } from '../schema/user.schema';
+import { User } from '../entity/user.entity';
 
 export class CreateUserDto extends User {}
