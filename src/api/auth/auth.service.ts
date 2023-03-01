@@ -7,6 +7,7 @@ import { UsersService } from 'api/users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { ConfigurationService } from 'config/configuration.service';
 import { hashRounds } from 'src/common/constants/bcrypt';
+import { InsertResult } from 'typeorm';
 
 import { AccessToken } from './interface/auth.interface';
 import { UserPayload } from './interface/userId.interface';
@@ -19,22 +20,29 @@ export class AuthService {
         private readonly configService: ConfigurationService
     ) {}
 
-    // async validateUser(email: Pick<User, 'email'>, password: string): Promise<CreateUserDto> {
-    //     const user = await this.userService.findOneByEmail(email);
+    async validateUser(email: string, password: string): Promise<CreateUserDto> {
+        try {
+            const user = await this.userService.findOne({
+                where: { email },
+                select: ['id', 'role', 'password']
+            });
 
-    //     if (user) {
-    //         const compareResult = await bcrypt.compare(password, user.password);
+            if (user) {
+                const compareResult = await bcrypt.compare(password, user.password);
 
-    //         if (compareResult) {
-    //             user.password = undefined;
+                if (compareResult) {
+                    user.password = undefined;
 
-    //             return user;
-    //         } else {
-    //             throw new HttpException('Unauthorized!', HttpStatus.UNAUTHORIZED);
-    //         }
-    //     }
-    //     return null;
-    // }
+                    return user;
+                } else {
+                    throw new HttpException('Unauthorized!', HttpStatus.UNAUTHORIZED);
+                }
+            }
+            return null;
+        } catch (error) {
+            throw new Error(`auth.service | validateUser error: ${error.message}`);
+        }
+    }
 
     signJwt(payload: UserPayload) {
         return this.jwtService.sign(payload, {
@@ -42,10 +50,10 @@ export class AuthService {
         });
     }
 
-    async login(req: User): Promise<AccessToken> {
+    async login(user: User): Promise<AccessToken> {
         try {
-            const userId = await req['_id'].toString();
-            const role = req.role;
+            const userId = user.id;
+            const role = user.role;
             const access_token = this.signJwt({ userId, role });
             return { access_token };
         } catch (error) {
@@ -53,30 +61,27 @@ export class AuthService {
         }
     }
 
-    // async register(createUserDto: CreateUserDto, role: Role): Promise<CreateUserDto> {
-    //     const hashedPassword = await bcrypt.hash(createUserDto.password, hashRounds);
-    //     const userExists = await this.userService.findOneByEmail(
-    //         createUserDto.email as unknown as Pick<User, 'email'>
-    //     );
-    //     if (userExists) {
-    //         throw new HttpException('User already exists', HttpStatus.CONFLICT);
-    //     } else {
-    //         try {
-    //             const user = await this.userService.createOne(
-    //                 {
-    //                     ...createUserDto,
-    //                     password: hashedPassword
-    //                 },
-    //                 role
-    //             );
-    //             user.password = undefined;
+    async register(createUserDto: CreateUserDto, role: Role): Promise<InsertResult> {
+        const user = await this.userService.findOne({ where: { email: createUserDto.email } });
+        if (user) {
+            throw new HttpException('User already exists', HttpStatus.CONFLICT);
+        }
 
-    //             return user;
-    //         } catch (error) {
-    //             throw new HttpException(`Server error!`, HttpStatus.INTERNAL_SERVER_ERROR);
-    //         }
-    //     }
-    // }
+        try {
+            const hashedPassword = await bcrypt.hash(createUserDto.password, hashRounds);
+            const user = await this.userService.createOne(
+                {
+                    ...createUserDto,
+                    password: hashedPassword
+                },
+                role
+            );
+
+            return user;
+        } catch (error) {
+            throw new Error(`auth.service | register error: ${error.message}`);
+        }
+    }
 
     /* public async getRefreshToken(userId: string): Promise<string> {
         const userDataToUpdate = {

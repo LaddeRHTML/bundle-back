@@ -8,6 +8,7 @@ import { Role } from 'api/users/enum';
 import { UsersService } from 'api/users/users.service';
 import { Request } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
+import { InsertResult } from 'typeorm';
 
 import { AccessToken } from './interface/auth.interface';
 
@@ -18,27 +19,23 @@ export class AuthController {
     constructor(private authService: AuthService, private usersService: UsersService) {}
 
     @UseGuards(LocalAuthGuard)
-    @Post('login')
+    @Post('/login')
     async login(@Req() req: Request): Promise<AccessToken> {
         return await this.authService.login(req.user as User);
     }
 
-    // @UseGuards(JwtAuthGuard)
-    // @Get('check')
-    // async check(@Req() req: Request): Promise<User> {
-    //     const userId = req.user['userId'] as string;
+    @UseGuards(JwtAuthGuard)
+    @Get('/check')
+    async check(@Req() req: Request): Promise<User> {
+        const userId = req.user['userId'] as string;
 
-    //     const user = await this.usersService.findOneById(userId);
+        return await this.usersService.findOne({ where: { id: userId } });
+    }
 
-    //     user.password = undefined;
-
-    //     return user;
-    // }
-
-    // @Post('register')
-    // async register(@Req() req: Request, @Query('role') role: Role): Promise<CreateUserDto> {
-    //     return this.authService.register(req.body, role);
-    // }
+    @Post('/register')
+    async register(@Req() req: Request, @Query('role') role: Role): Promise<InsertResult> {
+        return this.authService.register(req.body, role);
+    }
 
     /* @UseGuards(RefreshAuthGuard)
     @Get('refresh-tokens')

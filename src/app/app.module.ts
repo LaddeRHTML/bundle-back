@@ -30,8 +30,8 @@ import { DatabaseModule } from 'src/database/database.module';
         //         return options;
         //     }
         // }),
-        UsersModule
-        // AuthModule,
+        UsersModule,
+        AuthModule
         // ProductsModule,
         // ApplicationsModule,
         // FilesModule,
