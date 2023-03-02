@@ -29,7 +29,7 @@ export class UsersService {
             createUserDto.age = calcRelToCurrentDate(createUserDto.birthday, true);
             createUserDto.role = role;
 
-            return this.usersRepository.insert(createUserDto);
+            return await this.usersRepository.insert(createUserDto);
         } catch (error) {
             throw new Error(`users.service | createOne error: ${error.message}`);
         }

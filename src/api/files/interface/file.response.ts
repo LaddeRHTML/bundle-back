@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongoose';
 
-import { FileInfo } from '../entities/file.info.entity';
+import { File } from '../entitiy/file.entity';
 
 export interface FilesId {
     filesId: string[];
@@ -8,12 +8,11 @@ export interface FilesId {
 
 export interface FilesResponse {
     message: string;
-    files: FileInfo[] | [];
+    files: File[] | [];
 }
 
 export interface FileResponse {
     message: string;
-    file: FileInfo;
 }
 
 export interface UploadFileResponse {

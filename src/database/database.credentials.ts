@@ -1,3 +1,5 @@
+import { File } from 'api/files/entitiy/file.entity';
+import { Product } from 'api/products/entity/product.entity';
 import { User } from 'api/users/entity/user.entity';
 import { DataSourceOptions } from 'typeorm';
 
@@ -8,7 +10,7 @@ export const DatabaseCredentials: DataSourceOptions = {
     username: 'rnlsfpmv',
     password: 'k_ZSFlTHxDRLcDKQbkT5UJiX29D9A0PL',
     database: 'rnlsfpmv',
-    entities: [User],
+    entities: [User, Product, File],
     synchronize: true,
     extra: {
         connectionLimit: 5

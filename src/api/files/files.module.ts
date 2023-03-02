@@ -1,17 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MulterModule } from '@nestjs/platform-express';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { File } from './entitiy/file.entity';
 import { FilesController } from './files.controller';
-import { FilesService } from './service/files.service';
-import { GridFsMulterConfigService } from './service/multer-service.service';
+import { FilesService } from './files.service';
 
 @Module({
-    imports: [
-        MulterModule.registerAsync({
-            useClass: GridFsMulterConfigService
-        })
-    ],
+    imports: [TypeOrmModule.forFeature([File])],
     controllers: [FilesController],
-    providers: [GridFsMulterConfigService, FilesService]
+    providers: [FilesService]
 })
 export class FilesModule {}

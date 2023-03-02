@@ -1,3 +1,3 @@
-import { Product } from '../schema/products.schema';
+import { Product } from '../entity/product.entity';
 
 export class CreateProductDto extends Product {}

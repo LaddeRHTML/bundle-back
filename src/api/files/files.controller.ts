@@ -3,12 +3,14 @@ import {
     Controller,
     Delete,
     Get,
-    HttpException,
     HttpStatus,
+    NotFoundException,
     Param,
     ParseFilePipeBuilder,
     Post,
+    Req,
     Res,
+    StreamableFile,
     UploadedFile,
     UploadedFiles,
     UseGuards,
@@ -17,15 +19,15 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
-import { MulterFile } from 'api/files/interface/multer.interface';
 import { Role } from 'api/users/enum';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { apiVersion } from 'src/common/constants/api-const';
 import { MAX_FILE_SIZE_IN_B } from 'src/common/constants/file-size';
+import { Readable } from 'stream';
+import { DeleteResult } from 'typeorm';
 
-import { FileInfo } from './entities/file.info.entity';
-import { FileResponse, FilesResponse, UploadFileResponse } from './interface/file.response';
-import { FilesService } from './service/files.service';
+import { File } from './entitiy/file.entity';
+import { FilesService } from './files.service';
 
 @Controller(`${apiVersion}/files`)
 export class FilesController {
@@ -33,8 +35,8 @@ export class FilesController {
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Post()
     @UseInterceptors(FileInterceptor('image'))
+    @Post()
     async uploadFile(
         @UploadedFile(
             new ParseFilePipeBuilder()
@@ -45,150 +47,75 @@ export class FilesController {
                     errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
                 })
         )
-        file: MulterFile
-    ): Promise<UploadFileResponse> {
-        const response = {
-            originalname: file.originalname,
-            encoding: file.encoding,
-            mimetype: file.mimetype,
-            id: file.id,
-            filename: file.filename,
-            metadata: file.metadata,
-            bucketName: file.bucketName,
-            chunk_size: file.chunk_size,
-            size: file.size,
-            md5: file.md5,
-            upload_date: file.upload_date,
-            content_type: file.content_type
-        };
-
-        return response;
+        file: Express.Multer.File,
+        @Req() req: Request
+    ): Promise<File> {
+        const userId = req.user['userId'];
+        return await this.filesService.uploadFile(file, userId);
     }
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Post('/many')
     @UseInterceptors(FilesInterceptor('images'))
+    @Post('/many')
     async uploadFiles(
         @UploadedFiles()
-        files: MulterFile[]
-    ): Promise<UploadFileResponse[]> {
-        const UploadedFilesResponse = files.map((f) => ({
-            originalname: f.originalname,
-            encoding: f.encoding,
-            mimetype: f.mimetype,
-            id: f.id,
-            filename: f.filename,
-            metadata: f.metadata,
-            bucketName: f.bucketName,
-            chunk_size: f.chunk_size,
-            size: f.size,
-            md5: f.md5,
-            upload_date: f.upload_date,
-            content_type: f.content_type
-        }));
-
-        return UploadedFilesResponse;
-    }
-
-    @HasRoles(Role.User, Role.Manager, Role.Admin)
-    @UseGuards(RoleGuard)
-    @Get('info/:id')
-    async getFileInfo(@Param('id') id: string): Promise<FileResponse> {
-        const file = await this.filesService.findInfo(id);
-        const filestream = await this.filesService.readStream(id);
-        if (!filestream) {
-            throw new HttpException(
-                'An error occurred while retrieving file info',
-                HttpStatus.EXPECTATION_FAILED
-            );
-        }
-        return {
-            message: 'File has been detected',
-            file: file
-        };
+        files: Express.Multer.File[],
+        @Req() req: Request
+    ): Promise<File[]> {
+        const userId = req.user['userId'];
+        return await this.filesService.uploadFiles(files, userId, true);
     }
 
     @Get(':id')
-    async getFile(@Param('id') id: string, @Res() res: Response): Promise<any> {
-        const file = await this.filesService.findInfo(id);
-        const filestream = await this.filesService.readStream(id);
-        if (!filestream) {
-            throw new HttpException(
-                'An error occurred while retrieving file',
-                HttpStatus.EXPECTATION_FAILED
-            );
-        }
-        res.header('Content-Type', file.content_type);
-        return filestream.pipe(res);
-    }
+    async getFile(
+        @Param('id') id: string,
+        @Res({ passthrough: true }) response: Response
+    ): Promise<StreamableFile> {
+        const file = await this.filesService.getFileById(id);
+        const stream = Readable.from(file.data);
 
-    @HasRoles(Role.User, Role.Manager, Role.Admin)
-    @UseGuards(RoleGuard)
-    @Get('download/:id')
-    async downloadFile(@Param('id') id: string, @Res() res): Promise<any> {
-        const file = await this.filesService.findInfo(id);
-        const filestream = await this.filesService.readStream(id);
-        if (!filestream) {
-            throw new HttpException(
-                'An error occurred while retrieving file',
-                HttpStatus.EXPECTATION_FAILED
-            );
-        }
-        res.header('Content-Type', file.content_type);
-        res.header('Content-Disposition', 'attachment; filename=' + file.filename);
-        return filestream.pipe(res);
+        response.set({
+            'Content-Disposition': `inline; filename="${file.file_name}"`,
+            'Content-Type': 'image'
+        });
+
+        return new StreamableFile(stream);
     }
 
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('delete/:id')
-    async deleteFile(@Param('id') id: string): Promise<FileResponse> {
-        const file = await this.filesService.findInfo(id);
-        const filestream = await this.filesService.deleteFile(id);
-        if (!filestream) {
-            throw new HttpException(
-                'An error occurred during file deletion',
-                HttpStatus.EXPECTATION_FAILED
-            );
+    async deleteFile(@Param('id') id: string): Promise<DeleteResult> {
+        const isFileExists = await this.filesService.isFileExists({ id });
+
+        if (!isFileExists) {
+            throw new NotFoundException();
         }
-        return {
-            message: 'File has been deleted',
-            file: file
-        };
+
+        return await this.filesService.deleteFile(id);
     }
 
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('delete-many/')
-    async deleteFiles(@Body() filesId: string[]): Promise<FilesResponse> {
-        let files: FileInfo[] = [];
+    async deleteFiles(@Body() filesId: string[]): Promise<string[]> {
+        let affectedImages = [];
 
         for (const id of filesId) {
-            const file = await this.filesService.findInfo(id);
-            if (!file) {
-                throw new HttpException(
-                    'An error occurred during file searching',
-                    HttpStatus.EXPECTATION_FAILED
-                );
+            const isExists = await this.filesService.isFileExists({ id });
+
+            if (!isExists) {
+                continue;
             }
-            const filestream = await this.filesService.deleteFile(id);
-            if (!filestream) {
-                throw new HttpException(
-                    'An error occurred during file deletion',
-                    HttpStatus.EXPECTATION_FAILED
-                );
+
+            const result = await this.filesService.deleteFile(id);
+
+            if (result.affected !== 0) {
+                affectedImages.push(id);
             }
-            files.push({ ...file, id });
         }
 
-        if (files.length === 0) {
-            throw new HttpException('0 files deleted!', HttpStatus.EXPECTATION_FAILED);
-        }
-
-        return {
-            message: 'Files has been deleted',
-            files
-        };
+        return affectedImages;
     }
 }

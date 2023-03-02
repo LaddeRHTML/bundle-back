@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { MulterFile } from 'api/files/interface/multer.interface';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Order, OrderDocument } from 'api/orders/schema/orders.schema';
 import { DeleteResult } from 'interfaces/delete.result';
-import { UpdateResult } from 'interfaces/update.ruslt';
 import * as moment from 'moment';
 import {
     FilterQuery,
@@ -14,17 +13,31 @@ import {
     UpdateWithAggregationPipeline
 } from 'mongoose';
 import { Pagination } from 'src/common/interfaces/utils.interface';
+import { PageMetaDto } from 'src/common/pagination/dtos/page-meta.dto';
+import { PageOptionsDto } from 'src/common/pagination/dtos/page-options.dto';
+import { PageDto } from 'src/common/pagination/dtos/page.dto';
+import {
+    Brackets,
+    FindManyOptions,
+    FindOneOptions,
+    In,
+    InsertResult,
+    ObjectLiteral,
+    Repository,
+    UpdateResult
+} from 'typeorm';
+import getSQLSearch from 'utils/array/getSQLSearch';
 import { SortExcelSheets } from 'utils/excel.sort';
 import * as XLSX from 'xlsx';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entity/product.entity';
 import {
     FilterProductsResponse,
     ProductsFilter,
     UpsertedProduct
 } from './interfaces/products.filter.interface';
-import { Product, ProductsDocument } from './schema/products.schema';
 import { ExcelClearSheetProduct } from './types/excel.dealers.types';
 import getCategories from './utils/getCategories';
 import getMaker from './utils/getMaker';
@@ -37,264 +50,256 @@ const orderRef = 'orders';
 
 @Injectable()
 export class ProductsService {
-    constructor(
-        @InjectModel(Product.name) private readonly productModel: Model<ProductsDocument>,
-        @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>
-    ) {}
+    constructor(@InjectRepository(Product) private productRepository: Repository<Product>) {}
 
-    async createOne(createProductDto: CreateProductDto): Promise<Product> {
-        return await this.productModel.create(createProductDto);
-    }
-
-    async findAllBy(
-        filter?: FilterQuery<ProductsDocument>,
-        projection?: ProjectionType<ProductsDocument>
-    ): Promise<Product[]> {
-        return await this.productModel.find(filter, projection);
-    }
-
-    async findAllWithOutPopulating(
-        filter?: FilterQuery<ProductsDocument>,
-        projection?: ProjectionType<ProductsDocument>
-    ): Promise<Product[]> {
-        return await this.productModel.find(filter, projection);
-    }
-
-    async findAllByNames(names: string[]): Promise<Product[]> {
-        return await this.productModel.find({ name: { $in: names } });
-    }
-
-    async findByFilters(
-        parameter: string,
-        page: number,
-        limit: number,
-        filters: CreateProductDto
-    ): Promise<Pagination<Product[]>> {
-        let options = {
-            ...(filters && filters),
-            ...(filters.price?.[0] &&
-                filters.price?.[1] && {
-                    price: { $gte: filters.price[0], $lte: filters.price[1] }
-                }),
-
-            ...(filters.supplier_price?.[0] &&
-                filters.supplier_price?.[1] && {
-                    supplier_price: {
-                        $gte: filters.supplier_price[0],
-                        $lte: filters.supplier_price[1]
-                    }
-                }),
-            ...(filters.market_price?.[0] &&
-                filters.market_price?.[1] && {
-                    market_price: {
-                        $gte: filters.market_price[0],
-                        $lte: filters.market_price[1]
-                    }
-                }),
-            ...(typeof filters.warranty_days === 'number' && {
-                warranty_days: filters.warranty_days
-            })
-        } as FilterQuery<ProductsDocument>;
-
-        if (parameter) {
-            options = {
-                ...options,
-                $or: [
-                    {
-                        name: new RegExp(parameter, 'i')
-                    },
-                    {
-                        maker: new RegExp(parameter, 'i')
-                    },
-                    {
-                        model: new RegExp(parameter, 'i')
-                    },
-                    {
-                        vendor_code: new RegExp(parameter, 'i')
-                    }
-                ]
-            };
-        }
-
-        const total = await this.productModel.count(options).exec();
-        const lastPage = Math.ceil(total / limit);
-        const data = await this.productModel
-            .find(options)
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .exec();
-
-        return {
-            data,
-            total,
-            page,
-            lastPage
-        };
-    }
-
-    async getMinMaxValues(): Promise<FilterProductsResponse> {
-        const minMaxValues = await this.productModel.aggregate([
-            {
-                $facet: {
-                    min: [{ $sort: { price: 1 } }, { $limit: 1 }],
-                    max: [{ $sort: { price: -1 } }, { $limit: 1 }]
-                }
-            },
-            {
-                $project: {
-                    price: [{ $first: '$min.price' }, { $first: '$max.price' }],
-                    market_price: [
-                        { $first: '$min.market_price' },
-                        { $first: '$max.market_price' }
-                    ],
-                    supplier_price: [
-                        { $first: '$min.supplier_price' },
-                        { $first: '$max.supplier_price' }
-                    ]
-                }
-            }
-        ]);
-
-        const warrantyVariations = await this.productModel.distinct('warranty_days');
-
-        return {
-            minMaxValues: minMaxValues?.[0],
-            warrantyVariations
-        };
-    }
-
-    async findOneById(_id: string): Promise<Product> {
-        return await this.productModel.findOne({ _id });
-    }
-
-    async updateById(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-        return await this.productModel.findOneAndUpdate(
-            { _id: id },
-            { ...updateProductDto },
-            { new: true }
-        );
-    }
-
-    async updateMany(
-        filter: FilterQuery<ProductsDocument>,
-        parameter: UpdateWithAggregationPipeline | UpdateQuery<ProductsDocument>,
-        settings?: QueryOptions
-    ): Promise<UpdateResult> {
-        return (await this.productModel.updateMany(filter, parameter, {
-            ...settings,
-            new: true
-        })) as unknown as UpdateResult;
-    }
-
-    async removeOne(id: string): Promise<Product> {
-        const updatedOrders = await this.orderModel.updateMany(
-            { products: { $in: id } },
-            { $pull: { products: { $in: id } } },
-            { new: false }
-        );
-
-        if (!updatedOrders.acknowledged) {
-            throw new HttpException(
-                'An error occurred while after updating orders!',
-                HttpStatus.NOT_ACCEPTABLE
-            );
-        }
-
-        return await this.productModel.findOneAndRemove({ _id: id });
-    }
-
-    async removeImported(): Promise<DeleteResult> {
-        return await this.productModel.deleteMany({ is_imported: true });
-    }
-
-    async updateVisiblityOfImportedProducts(is_hidden: boolean): Promise<UpdateResult> {
+    async createOne(createProductDto: CreateProductDto, userId: string): Promise<InsertResult> {
         try {
-            return await this.updateMany(
-                { is_imported: { $in: true } },
-                { $set: { is_hidden } },
-                { new: false }
-            );
+            createProductDto.last_changed_by = userId;
+            createProductDto.created_by = userId;
+            createProductDto.create_date = new Date();
+            createProductDto.last_change_date = new Date();
+
+            return await this.productRepository.insert(createProductDto);
         } catch (error) {
-            throw new HttpException('', HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new Error(`product.service | createOne error: ${error.message}`);
         }
     }
 
-    getDataFromExcel(file: MulterFile) {
-        const wb: XLSX.WorkBook = XLSX.read(file.buffer);
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const data: ExcelClearSheetProduct[] = XLSX.utils.sheet_to_json(ws, { header: 1 });
+    async findAll(): Promise<Product[]> {
+        try {
+            return await this.productRepository.find();
+        } catch (error) {
+            throw new Error(`product.service | findAll error: ${error.message}`);
+        }
+    }
 
-        const products = SortExcelSheets(data).map((i) => {
-            const productsFromExcel = i?.products.map((p) => {
-                const productDto = new CreateProductDto();
-                const warranty_days = (p?.[5] as unknown as number) || 0;
-                const vendor_code = p?.[0] || 0;
-                const product_name = p?.[1] || '';
-                const market_price = p?.[2] || 0;
-                const price = p?.[3] || 0;
-                const supplier_price = p?.[4] || 0;
+    async findOne(parameter: FindOneOptions<Product>): Promise<Product> {
+        try {
+            return await this.productRepository.findOne(parameter);
+        } catch (error) {
+            throw new Error(`product.service | findOne error: ${error.message}`);
+        }
+    }
 
-                const productModel = getName(product_name);
-                const countedWarranty = getWarranty(warranty_days);
-                const maker = getMaker(productModel);
+    async findAllBy(options: FindManyOptions<Product>): Promise<Product[]> {
+        return await this.productRepository.find(options);
+    }
 
-                productDto.vendor_code = vendor_code.toString();
-                productDto.categories = getCategories(product_name, i?.category);
-                productDto.name = product_name;
-                productDto.model = productModel;
-                productDto.market_price = market_price;
-                productDto.price = getPrice(price);
-                productDto.supplier_price = supplier_price;
-                productDto.warranty_days = countedWarranty;
-                productDto.maker = maker;
-                productDto.count = 1;
-                productDto.is_imported = true;
-                productDto.template = getTemplate(productDto.categories);
+    async findSome(
+        pageOptionsDto: PageOptionsDto,
+        filters: CreateProductDto
+    ): Promise<PageDto<Product>> {
+        try {
+            const includedInSearchFields = ['name', 'maker', 'model', 'vendor_code'];
 
-                return productDto;
+            //     const options = {
+            //     ...(filters && filters),
+            //     ...(filters.price?.[0] &&
+            //         filters.price?.[1] && {
+            //             price: { $gte: filters.price[0], $lte: filters.price[1] }
+            //         }),
+
+            //     ...(filters.supplier_price?.[0] &&
+            //         filters.supplier_price?.[1] && {
+            //             supplier_price: {
+            //                 $gte: filters.supplier_price[0],
+            //                 $lte: filters.supplier_price[1]
+            //             }
+            //         }),
+            //     ...(filters.market_price?.[0] &&
+            //         filters.market_price?.[1] && {
+            //             market_price: {
+            //                 $gte: filters.market_price[0],
+            //                 $lte: filters.market_price[1]
+            //             }
+            //         }),
+            //     ...(typeof filters.warranty_days === 'number' && {
+            //         warranty_days: filters.warranty_days
+            //     })
+            // } as Brackets;
+
+            const queryBuilder = this.productRepository.createQueryBuilder(
+                Product.name.toLowerCase()
+            );
+
+            if (pageOptionsDto.searchBy) {
+                queryBuilder.where(
+                    getSQLSearch(includedInSearchFields, Product.name.toLowerCase()),
+                    {
+                        s: `%${pageOptionsDto.searchBy}%`
+                    }
+                );
+            }
+
+            if (filters) {
+                queryBuilder.where({ filters });
+            }
+
+            queryBuilder
+                .orderBy('user.registration_date', pageOptionsDto.order)
+                .skip(pageOptionsDto.skip)
+                .take(pageOptionsDto.limit);
+
+            const total = await queryBuilder.getCount();
+            const { entities } = await queryBuilder.getRawAndEntities();
+
+            const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
+
+            return new PageDto(entities, pageMetaDto);
+        } catch (error) {
+            throw new Error(`product.service | findSome error: ${error.message}`);
+        }
+    }
+
+    async updateOne(
+        id: string,
+        updateProductDto: UpdateProductDto,
+        userId: string
+    ): Promise<Product> {
+        try {
+            updateProductDto.last_change_date = new Date();
+            updateProductDto.last_changed_by = userId;
+
+            return await this.productRepository.save({ id, ...updateProductDto });
+        } catch (error) {
+            throw new Error(`product.service | updateOne error: ${error.message}`);
+        }
+    }
+
+    async updateMany(where: Brackets | ObjectLiteral, updateProductDto: UpdateProductDto) {
+        try {
+            console.log(where);
+            // return await this.productRepository
+            //     .createQueryBuilder()
+            //     .update(Product)
+            //     .where(where)
+            //     .set({ ...updateProductDto, update_date: new Date() })
+            //     .execute();
+            return this.productRepository.save({
+                ...updateProductDto,
+                last_change_date: new Date()
             });
-
-            return productsFromExcel;
-        });
-
-        return products.flat(2);
+        } catch (error) {
+            throw new Error(`users.service | updateMany error: ${error.message}`);
+        }
     }
 
-    async manipulateMultipleItems(products: CreateProductDto[]) {
-        return await new Promise(async (resolve, reject) => {
-            const affectedProductsIds = [];
+    /* Вернуться после обновления заказов */
+    // async removeOne(id: string): Promise<Product> {
+    //     const updatedOrders = await this.orderModel.updateMany(
+    //         { products: { $in: id } },
+    //         { $pull: { products: { $in: id } } },
+    //         { new: false }
+    //     );
 
-            for (const p of products) {
-                await this.productModel
-                    .findOneAndUpdate({ name: p.name }, p, {
-                        upsert: true,
-                        new: true
-                    })
-                    .then((p) => {
-                        if (p._id) {
-                            affectedProductsIds.push(p._id.toString());
-                        }
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
-            }
-            const allProducts = await this.findAllBy();
+    //     if (!updatedOrders.acknowledged) {
+    //         throw new HttpException(
+    //             'An error occurred while after updating orders!',
+    //             HttpStatus.NOT_ACCEPTABLE
+    //         );
+    //     }
 
-            const notAffectedProducts =
-                affectedProductsIds.length !== 0 &&
-                allProducts.filter((p) => !affectedProductsIds.includes(p['_id'].toString()));
+    //     return await this.productModel.findOneAndRemove({ _id: id });
+    // }
 
-            if (notAffectedProducts.length !== 0) {
-                for (const p of notAffectedProducts) {
-                    await this.productModel
-                        .updateOne({ name: p.name }, { count: 0 })
-                        .catch((error) => {
-                            reject(error);
-                        });
-                }
-            }
-            resolve({ affectedProductsIds, notAffectedProducts, allProducts });
-        });
+    // async removeImported(): Promise<DeleteResult> {
+    //     return await this.productModel.deleteMany({ is_imported: true });
+    // }
+
+    async updateVisiblityOfImportedProducts(is_hidden: boolean) {
+        try {
+            return await this.updateMany({ is_imported: true }, { is_hidden });
+        } catch (error) {
+            throw new Error(
+                `prodct.service | updateVisiblityOfImportedProducts error: ${error.message}`
+            );
+        }
     }
+
+    // getDataFromExcel(file: MulterFile) {
+    //     const wb: XLSX.WorkBook = XLSX.read(file.buffer);
+    //     const ws = wb.Sheets[wb.SheetNames[0]];
+    //     const data: ExcelClearSheetProduct[] = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+    //     const products = SortExcelSheets(data).map((i) => {
+    //         const productsFromExcel = i?.products.map((p) => {
+    //             const productDto = new CreateProductDto();
+    //             const warranty_days = (p?.[5] as unknown as number) || 0;
+    //             const vendor_code = p?.[0] || 0;
+    //             const product_name = p?.[1] || '';
+    //             const market_price = p?.[2] || 0;
+    //             const price = p?.[3] || 0;
+    //             const supplier_price = p?.[4] || 0;
+
+    //             const productModel = getName(product_name);
+    //             const countedWarranty = getWarranty(warranty_days);
+    //             const maker = getMaker(productModel);
+
+    //             productDto.vendor_code = vendor_code.toString();
+    //             productDto.categories = getCategories(product_name, i?.category);
+    //             productDto.name = product_name;
+    //             productDto.model = productModel;
+    //             productDto.market_price = market_price;
+    //             productDto.price = getPrice(price);
+    //             productDto.supplier_price = supplier_price;
+    //             productDto.warranty_days = countedWarranty;
+    //             productDto.maker = maker;
+    //             productDto.count = 1;
+    //             productDto.is_imported = true;
+    //             // productDto.template = getTemplate(productDto.categories);
+
+    //             return productDto;
+    //         });
+
+    //         return productsFromExcel;
+    //     });
+
+    //     return products.flat(2);
+    // }
+
+    // async manipulateMultipleItems(products: CreateProductDto[]) {
+
+    //     try {
+
+    //         return await new Promise(async (resolve, reject) => {
+    //             const affectedProductsIds = [];
+
+    //             for (const p of products) {
+    //                 await this.productModel
+    //                     .findOneAndUpdate({ name: p.name }, p, {
+    //                         upsert: true,
+    //                         new: true
+    //                     })
+    //                     .then((p) => {
+    //                         if (p._id) {
+    //                             affectedProductsIds.push(p._id.toString());
+    //                         }
+    //                     })
+    //                     .catch((error) => {
+    //                         reject(error);
+    //                     });
+    //             }
+    //             const allProducts = await this.findAllBy();
+
+    //             const notAffectedProducts =
+    //                 affectedProductsIds.length !== 0 &&
+    //                 allProducts.filter((p) => !affectedProductsIds.includes(p['_id'].toString()));
+
+    //             if (notAffectedProducts.length !== 0) {
+    //                 for (const p of notAffectedProducts) {
+    //                     await this.productModel
+    //                         .updateOne({ name: p.name }, { count: 0 })
+    //                         .catch((error) => {
+    //                             reject(error);
+    //                         });
+    //                 }
+    //             }
+    //             resolve({ affectedProductsIds, notAffectedProducts, allProducts });
+    //         });
+    //     } catch (error) {
+    //         throw new Error(`prodct.service | manipulateMultipleItems error: ${error.message}`);
+
+    //     }
+
+    // }
 }
