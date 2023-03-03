@@ -26,16 +26,14 @@ import { Request as ExpressRequest } from 'express';
 import { DeleteResult } from 'interfaces/delete.result';
 import { apiVersion } from 'src/common/constants/api-const';
 import { Pagination } from 'src/common/interfaces/utils.interface';
+import { PageOptionsDto } from 'src/common/pagination/dtos/page-options.dto';
+import { PageDto } from 'src/common/pagination/dtos/page.dto';
 import { InsertResult, UpdateResult } from 'typeorm';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entity/product.entity';
-import {
-    FilterProductsResponse,
-    MinMaxProductValues,
-    ProductsFilter
-} from './interfaces/products.filter.interface';
+import { getPricesResponse } from './interfaces/products.interface';
 import { ProductsService } from './products.service';
 
 const controllerName = `${apiVersion}/products`;
@@ -69,38 +67,22 @@ export class ProductsController {
         return await this.productsService.findAll();
     }
 
-    // @HasRoles(Role.User, Role.Manager, Role.Admin)
-    // @UseGuards(RoleGuard)
-    // @Post('/search?')
-    // async findSortedItems(
-    //     @Query('search-by') parameter: string,
-    //     @Query('page')
-    //     page: number,
-    //     @Query('limit') limit: number,
-    //     @Body() filters: CreateProductDto
-    // ): Promise<Pagination<Product[]>> {
-    //     return await this.productsService.findByFilters(parameter, page, limit, filters);
-    // }
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Post('/search?')
+    async findSome(
+        @Query() pageOptionsDto: PageOptionsDto,
+        @Body() filters: CreateProductDto
+    ): Promise<PageDto<Product>> {
+        return await this.productsService.findSome(pageOptionsDto, filters);
+    }
 
-    // @HasRoles(Role.User, Role.Manager, Role.Admin)
-    // @UseGuards(RoleGuard)
-    // @Get('/min-max')
-    // async getMinMaxValues(): Promise<FilterProductsResponse> {
-    //     return await this.productsService.getMinMaxValues();
-    // }
-
-    // @HasRoles(Role.Admin)
-    // @UseGuards(RoleGuard)
-    // @UseInterceptors(FileInterceptor('excel-dealer-file'))
-    // @Post('/excel')
-    // async createMultipleItems(@UploadedFile() file: MulterFile) {
-    //     if (file.originalname !== 'WW_dealers.xlsx') {
-    //         throw new HttpException('Bad file provided', HttpStatus.CONFLICT);
-    //     }
-
-    //     const products = this.productsService.getDataFromExcel(file);
-    //     return await this.productsService.manipulateMultipleItems(products);
-    // }
+    @HasRoles(Role.User, Role.Manager, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Get('/min-max')
+    async getPrices(): Promise<getPricesResponse> {
+        return await this.productsService.getPrices();
+    }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
@@ -124,20 +106,6 @@ export class ProductsController {
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Patch('/hide/many?')
-    async updateVisiblityOfImportedProducts(
-        @Query('is_hidden', {
-            transform(value) {
-                return value === 'true';
-            }
-        })
-        is_hidden: boolean
-    ) {
-        return await this.productsService.updateVisiblityOfImportedProducts(is_hidden);
-    }
-
-    @HasRoles(Role.Manager, Role.Admin)
-    @UseGuards(RoleGuard)
     @UseInterceptors(FilesInterceptor('images'))
     @Patch('/pictures/upload/:id')
     async uploadPictures(
@@ -149,8 +117,6 @@ export class ProductsController {
         const userId = req.user['userId'];
         const uploadedPictures = await this.filesService.uploadFiles(files, userId);
 
-        console.log(uploadedPictures);
-
         return this.productsService.updateOne(
             id,
             {
@@ -160,13 +126,6 @@ export class ProductsController {
             userId
         );
     }
-
-    // @HasRoles(Role.Admin)
-    // @UseGuards(RoleGuard)
-    // @Delete('/remove/imported')
-    // async removeImported(): Promise<DeleteResult> {
-    //     return await this.productsService.removeImported();
-    // }
 
     // @HasRoles(Role.Admin)
     // @UseGuards(RoleGuard)

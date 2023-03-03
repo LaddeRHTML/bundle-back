@@ -65,7 +65,7 @@ export class UsersController {
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/filter?')
-    async findSortedItems(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
+    async findSome(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
         return await this.usersService.findSome(pageOptionsDto);
     }
 

@@ -64,7 +64,7 @@ export class UsersService {
             }
 
             queryBuilder
-                .orderBy('user.registration_date', pageOptionsDto.order)
+                .orderBy(`${User.name.toLowerCase()}.registration_date`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 

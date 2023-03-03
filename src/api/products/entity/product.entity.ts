@@ -1,7 +1,7 @@
 import { File } from 'api/files/entitiy/file.entity';
 import { IsArray } from 'class-validator';
 import { BaseEntity } from 'src/common/base_entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, OneToOne, Unique } from 'typeorm';
 
 @Entity()
 @Unique(['name', 'model', 'maker'])
@@ -33,7 +33,8 @@ export class Product extends BaseEntity {
     @Column({ default: '' })
     model: string;
 
-    @Column({ default: '' })
+    @Index({ unique: true })
+    @Column()
     name: string;
 
     @JoinColumn({ name: 'preview_picture' })
@@ -67,6 +68,6 @@ export class Product extends BaseEntity {
     @Column({ default: '' })
     vendor_code: string;
 
-    @Column({ default: '', unique: true })
+    @Column({ default: '' })
     weight: string;
 }
