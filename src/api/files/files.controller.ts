@@ -17,17 +17,20 @@ import {
     UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { HasRoles } from 'api/auth/decorators/roles-decorator';
-import RoleGuard from 'api/auth/guards/role-auth.guard';
-import { Role } from 'api/users/enum';
-import { Request, Response } from 'express';
-import { apiVersion } from 'src/common/constants/api-const';
-import { MAX_FILE_SIZE_IN_B } from 'src/common/constants/file-size';
+import { Response } from 'express';
 import { Readable } from 'stream';
 import { DeleteResult } from 'typeorm';
 
+import { HasRoles } from 'api/auth/decorators/roles-decorator';
+import RoleGuard from 'api/auth/guards/role-auth.guard';
+import { Role } from 'api/users/enum';
+import { apiVersion } from 'common/constants/api-const';
+import { MAX_FILE_SIZE_IN_B } from 'common/constants/file-size';
+
 import { File } from './entitiy/file.entity';
 import { FilesService } from './files.service';
+import { RequestWithUser } from 'api/auth/interface/auth.interface';
+import { MulterFile } from './interface/file.interface';
 
 @Controller(`${apiVersion}/files`)
 export class FilesController {
@@ -47,9 +50,9 @@ export class FilesController {
                     errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
                 })
         )
-        file: Express.Multer.File,
-        @Req() req: Request
-    ): Promise<File> {
+        file: MulterFile,
+        @Req() req: RequestWithUser
+    ): Promise<Partial<File>> {
         const userId = req.user['userId'];
         return await this.filesService.uploadFile(file, userId);
     }
@@ -60,9 +63,9 @@ export class FilesController {
     @Post('/many')
     async uploadFiles(
         @UploadedFiles()
-        files: Express.Multer.File[],
-        @Req() req: Request
-    ): Promise<File[]> {
+        files: MulterFile[],
+        @Req() req: RequestWithUser
+    ): Promise<Partial<File>[]> {
         const userId = req.user['userId'];
         return await this.filesService.uploadFiles(files, userId, true);
     }
@@ -100,7 +103,7 @@ export class FilesController {
     @UseGuards(RoleGuard)
     @Delete('delete-many/')
     async deleteFiles(@Body() filesId: string[]): Promise<string[]> {
-        let affectedImages = [];
+        const affectedImages = [];
 
         for (const id of filesId) {
             const isExists = await this.filesService.isFileExists({ id });

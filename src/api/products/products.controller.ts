@@ -1,46 +1,37 @@
 import {
     Body,
     Controller,
-    Delete,
     Get,
-    HttpException,
-    HttpStatus,
     Param,
     Patch,
     Post,
     Query,
     Req,
     Request,
-    UploadedFile,
     UploadedFiles,
     UseGuards,
     UseInterceptors
 } from '@nestjs/common';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { InsertResult } from 'typeorm';
+
 import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
-import { Payload } from 'api/auth/strategies/jwt-auth.strategy';
+import { RequestWithUser } from 'api/auth/interface/auth.interface';
 import { FilesService } from 'api/files/files.service';
 import { Role } from 'api/users/enum';
-import { Request as ExpressRequest } from 'express';
-import { DeleteResult } from 'interfaces/delete.result';
-import { apiVersion } from 'src/common/constants/api-const';
-import { Pagination } from 'src/common/interfaces/utils.interface';
-import { PageOptionsDto } from 'src/common/pagination/dtos/page-options.dto';
-import { PageDto } from 'src/common/pagination/dtos/page.dto';
-import { InsertResult, UpdateResult } from 'typeorm';
+import { apiVersion } from 'common/constants/api-const';
+import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
+import { PageDto } from 'common/pagination/dtos/page.dto';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entity/product.entity';
 import { getPricesResponse } from './interfaces/products.interface';
 import { ProductsService } from './products.service';
+import { MulterFile } from 'api/files/interface/file.interface';
 
 const controllerName = `${apiVersion}/products`;
-
-interface RequestWithUser extends ExpressRequest {
-    user: Payload;
-}
 
 @Controller(controllerName)
 export class ProductsController {
@@ -87,7 +78,7 @@ export class ProductsController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
-    findOne(@Param('id') id: string): Promise<Product> {
+    findOne(@Param('id') id: string): Promise<Product | null> {
         return this.productsService.findOne({ where: { id } });
     }
 
@@ -110,10 +101,10 @@ export class ProductsController {
     @Patch('/pictures/upload/:id')
     async uploadPictures(
         @UploadedFiles()
-        files: Express.Multer.File[],
+        files: MulterFile[],
         @Param('id') id: string,
         @Request() req: RequestWithUser
-    ) {
+    ): Promise<Product> {
         const userId = req.user['userId'];
         const uploadedPictures = await this.filesService.uploadFiles(files, userId);
 

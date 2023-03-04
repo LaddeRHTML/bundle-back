@@ -1,7 +1,8 @@
+import { DataSourceOptions } from 'typeorm';
+
 import { File } from 'api/files/entitiy/file.entity';
 import { Product } from 'api/products/entity/product.entity';
 import { User } from 'api/users/entity/user.entity';
-import { DataSourceOptions } from 'typeorm';
 
 export const DatabaseCredentials: DataSourceOptions = {
     type: 'postgres',

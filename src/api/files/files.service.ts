@@ -2,7 +2,11 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOptionsSelect, FindOptionsWhere, In, Repository } from 'typeorm';
 
+import getErrorMessage from 'common/utils/errors/getErrorMessage';
+import deleteObjectProperty from 'common/utils/object/deleteObjectProperty';
+
 import { File } from './entitiy/file.entity';
+import { MulterFile } from './interface/file.interface';
 
 @Injectable()
 export class FilesService {
@@ -44,15 +48,14 @@ export class FilesService {
                 created_by: userId,
                 last_changed_by: userId
             });
-            const { data, ...lightFile } = newFile;
-            return lightFile as unknown as File;
+            return deleteObjectProperty(newFile, 'data');
         } catch (error) {
-            throw new Error(`files.service | uploadFile error: ${error.message}`);
+            throw new Error(`files.service | uploadFile error: ${getErrorMessage(error)}`);
         }
     }
 
     async uploadFiles(
-        files: Express.Multer.File[],
+        files: MulterFile[],
         userId: string,
         skipUpdateIfNoValuesChanged?: boolean
     ): Promise<File[]> {
@@ -82,11 +85,10 @@ export class FilesService {
             if (result.raw.length === 0) return [];
 
             return filesEntities.map((f) => {
-                const { data, ...lightFile } = f;
-                return lightFile;
-            }) as unknown as File[];
+                return deleteObjectProperty(f, 'data');
+            });
         } catch (error) {
-            throw new Error(`files.service | uploadFiles error: ${error.message}`);
+            throw new Error(`files.service | uploadFiles error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -99,7 +101,7 @@ export class FilesService {
 
             return file;
         } catch (error) {
-            throw new Error(`files.service | uploadFile error: ${error.message}`);
+            throw new Error(`files.service | uploadFile error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -117,7 +119,7 @@ export class FilesService {
 
             return file;
         } catch (error) {
-            throw new Error(`files.service | getFile error: ${error.message}`);
+            throw new Error(`files.service | getFile error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -131,7 +133,7 @@ export class FilesService {
 
             return await this.fileRepository.delete({ id });
         } catch (error) {
-            throw new Error(`files.service | deleteFile error: ${error.message}`);
+            throw new Error(`files.service | deleteFile error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -139,7 +141,7 @@ export class FilesService {
         try {
             return await this.fileRepository.delete({ id: In(files) });
         } catch (error) {
-            throw new Error(`files.service | deleteFiles error: ${error.message}`);
+            throw new Error(`files.service | deleteFiles error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -147,7 +149,7 @@ export class FilesService {
         try {
             return await this.fileRepository.exist({ where: fileProperty });
         } catch (error) {
-            throw new Error(`files.service | isFileExists error: ${error.message}`);
+            throw new Error(`files.service | isFileExists error: ${getErrorMessage(error)}`);
         }
     }
 }

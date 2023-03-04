@@ -29,3 +29,7 @@ export interface UploadFileResponse {
     upload_date: Date;
     content_type: string;
 }
+
+export interface MulterFile extends Express.Multer.File {
+    id?: string;
+}

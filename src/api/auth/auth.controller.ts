@@ -1,16 +1,16 @@
 import { Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { InsertResult } from 'typeorm';
+import { Request } from 'express';
+
 import { AuthService } from 'api/auth/auth.service';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from 'api/auth/guards/local-auth.guard';
-import { CreateUserDto } from 'api/users/dto/create-user.dto';
 import { User } from 'api/users/entity/user.entity';
 import { Role } from 'api/users/enum';
 import { UsersService } from 'api/users/users.service';
-import { Request } from 'express';
-import { apiVersion } from 'src/common/constants/api-const';
-import { InsertResult } from 'typeorm';
+import { apiVersion } from 'common/constants/api-const';
 
-import { AccessToken } from './interface/auth.interface';
+import { AccessToken, RequestWithUser } from './interface/auth.interface';
 
 const controllerName = `${apiVersion}/auth/`;
 
@@ -26,8 +26,8 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get('/check')
-    async check(@Req() req: Request): Promise<User> {
-        const userId = req.user['userId'] as string;
+    async check(@Req() req: RequestWithUser): Promise<User | null> {
+        const userId = req.user['userId'];
 
         return await this.usersService.findOne({ where: { id: userId } });
     }

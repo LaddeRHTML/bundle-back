@@ -16,7 +16,7 @@ export class PageOptionsDto {
     @IsInt()
     @Min(1)
     @IsOptional()
-    readonly page?: number = 1;
+    readonly page: number = 1;
 
     @ApiPropertyOptional({
         minimum: 1,
@@ -27,7 +27,7 @@ export class PageOptionsDto {
     @Min(1)
     @Max(50)
     @IsOptional()
-    readonly limit?: number = 10;
+    readonly limit: number = 10;
 
     @IsOptional()
     readonly searchBy?: string;

@@ -13,17 +13,16 @@ import {
     UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { InsertResult } from 'typeorm';
+
 import { HasRoles } from 'api/auth/decorators/roles-decorator';
 import { JwtAuthGuard } from 'api/auth/guards/jwt-auth.guard';
 import RoleGuard from 'api/auth/guards/role-auth.guard';
-import { Payload } from 'api/auth/strategies/jwt-auth.strategy';
 import { File } from 'api/files/entitiy/file.entity';
 import { UserPasswords } from 'api/users/interface/passwords.interface';
-import { Request as ExpressRequest } from 'express';
-import { apiVersion } from 'src/common/constants/api-const';
-import { PageOptionsDto } from 'src/common/pagination/dtos/page-options.dto';
-import { PageDto } from 'src/common/pagination/dtos/page.dto';
-import { InsertResult } from 'typeorm';
+import { apiVersion } from 'common/constants/api-const';
+import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
+import { PageDto } from 'common/pagination/dtos/page.dto';
 
 import { FilesService } from './../files/files.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -31,13 +30,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entity/user.entity';
 import { Role } from './enum';
 import { UsersService } from './users.service';
+import { RequestWithUser } from 'api/auth/interface/auth.interface';
 
 const controllerName = `${apiVersion}/users`;
-
-interface RequestWithUser extends ExpressRequest {
-    user: Payload;
-}
-
 @Controller(controllerName)
 export class UsersController {
     constructor(
@@ -72,14 +67,14 @@ export class UsersController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get(':id')
-    findOne(@Param('id') id: string): Promise<User> {
+    findOne(@Param('id') id: string): Promise<User | null> {
         return this.usersService.findOne({ where: { id } });
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/email/:email')
-    async findOneByEmail(@Param('email') email: string): Promise<User> {
+    async findOneByEmail(@Param('email') email: string): Promise<User | null> {
         return await this.usersService.findOne({ where: { email } });
     }
 
@@ -121,7 +116,10 @@ export class UsersController {
     @Patch('/avatar/remove')
     async removeAvatar(@Request() req: RequestWithUser): Promise<User> {
         const userId = req.user['userId'];
-        return await this.usersService.updateOne(userId, { avatar: null, avatar_id: null });
+        return await this.usersService.updateOne(userId, {
+            avatar: undefined,
+            avatar_id: undefined
+        });
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)

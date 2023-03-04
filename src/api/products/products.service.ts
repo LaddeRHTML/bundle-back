@@ -1,43 +1,24 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order, OrderDocument } from 'api/orders/schema/orders.schema';
-import { DeleteResult } from 'interfaces/delete.result';
-import * as moment from 'moment';
 import {
-    FilterQuery,
-    Model,
-    ProjectionType,
-    QueryOptions,
-    UpdateQuery,
-    UpdateWithAggregationPipeline
-} from 'mongoose';
-import { Pagination } from 'src/common/interfaces/utils.interface';
-import { PageMetaDto } from 'src/common/pagination/dtos/page-meta.dto';
-import { PageOptionsDto } from 'src/common/pagination/dtos/page-options.dto';
-import { PageDto } from 'src/common/pagination/dtos/page.dto';
-import {
-    Brackets,
     FindManyOptions,
     FindOneOptions,
     FindOptionsWhere,
-    In,
     InsertResult,
-    LessThanOrEqual,
-    MoreThanOrEqual,
-    ObjectLiteral,
     Repository,
     UpdateResult
 } from 'typeorm';
-import getSQLSearch from 'utils/array/getSQLSearch';
-import * as XLSX from 'xlsx';
+
+import getSQLSearch from 'common/utils/array/getSQLSearch';
+import getErrorMessage from 'common/utils/errors/getErrorMessage';
+import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
+import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
+import { PageDto } from 'common/pagination/dtos/page.dto';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entity/product.entity';
 import { getPricesResponse } from './interfaces/products.interface';
-
-const orderRef = 'orders';
 
 @Injectable()
 export class ProductsService {
@@ -55,7 +36,7 @@ export class ProductsService {
                 skipUpdateIfNoValuesChanged: true
             });
         } catch (error) {
-            throw new Error(`product.service | createOne error: ${error.message}`);
+            throw new Error(`product.service | createOne error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -63,15 +44,15 @@ export class ProductsService {
         try {
             return await this.productRepository.find();
         } catch (error) {
-            throw new Error(`product.service | findAll error: ${error.message}`);
+            throw new Error(`product.service | findAll error: ${getErrorMessage(error)}`);
         }
     }
 
-    async findOne(parameter: FindOneOptions<Product>): Promise<Product> {
+    async findOne(parameter: FindOneOptions<Product>): Promise<Product | null> {
         try {
             return await this.productRepository.findOne(parameter);
         } catch (error) {
-            throw new Error(`product.service | findOne error: ${error.message}`);
+            throw new Error(`product.service | findOne error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -87,32 +68,32 @@ export class ProductsService {
             const includedInSearchFields = ['name', 'maker', 'model', 'vendor_code'];
 
             const options = {
-                ...(filters && filters),
-                ...(filters.price?.[0] &&
-                    filters.price?.[1] && {
-                        price: (
-                            LessThanOrEqual(filters.price[0]) && MoreThanOrEqual(filters.price[1])
-                        ).value
-                    }),
+                ...(filters && filters)
+                // ...(filters.price?.[0] &&
+                //     filters.price?.[1] && {
+                //         price: (
+                //             LessThanOrEqual(filters.price[0]) && MoreThanOrEqual(filters.price[1])
+                //         ).value
+                //     }),
 
-                ...(filters.supplier_price?.[0] &&
-                    filters.supplier_price?.[1] && {
-                        supplier_price: {
-                            price: (
-                                LessThanOrEqual(filters.supplier_price[0]) &&
-                                MoreThanOrEqual(filters.supplier_price[1])
-                            ).value
-                        }
-                    }),
-                ...(filters.market_price?.[0] &&
-                    filters.market_price?.[1] && {
-                        market_price: {
-                            price: (
-                                LessThanOrEqual(filters.market_price[0]) &&
-                                MoreThanOrEqual(filters.market_price[1])
-                            ).value
-                        }
-                    })
+                // ...(filters.supplier_price?.[0] &&
+                //     filters.supplier_price?.[1] && {
+                //         supplier_price: {
+                //             price: (
+                //                 LessThanOrEqual(filters.supplier_price[0]) &&
+                //                 MoreThanOrEqual(filters.supplier_price[1])
+                //             ).value
+                //         }
+                //     }),
+                // ...(filters.market_price?.[0] &&
+                //     filters.market_price?.[1] && {
+                //         market_price: {
+                //             price: (
+                //                 LessThanOrEqual(filters.market_price[0]) &&
+                //                 MoreThanOrEqual(filters.market_price[1])
+                //             ).value
+                //         }
+                //     })
             };
 
             const queryBuilder = this.productRepository.createQueryBuilder(
@@ -142,7 +123,7 @@ export class ProductsService {
 
             return new PageDto(entities, pageMetaDto);
         } catch (error) {
-            throw new Error(`product.service | findSome error: ${error.message}`);
+            throw new Error(`product.service | findSome error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -157,7 +138,7 @@ export class ProductsService {
 
             return await this.productRepository.save({ id, ...updateProductDto });
         } catch (error) {
-            throw new Error(`product.service | updateOne error: ${error.message}`);
+            throw new Error(`product.service | updateOne error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -165,14 +146,14 @@ export class ProductsService {
         where: FindOptionsWhere<Product>,
         updateProductDto: UpdateProductDto,
         userId: string
-    ) {
+    ): Promise<UpdateResult> {
         try {
             updateProductDto.last_change_date = new Date();
             updateProductDto.last_changed_by = userId;
 
             return this.productRepository.update(where, updateProductDto);
         } catch (error) {
-            throw new Error(`users.service | updateMany error: ${error.message}`);
+            throw new Error(`users.service | updateMany error: ${getErrorMessage(error)}`);
         }
     }
 

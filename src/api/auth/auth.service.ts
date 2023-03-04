@@ -1,16 +1,17 @@
-import { HttpException, HttpStatus, Injectable, Req, Res } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InsertResult } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
+
 import { CreateUserDto } from 'api/users/dto/create-user.dto';
 import { User } from 'api/users/entity/user.entity';
 import { Role } from 'api/users/enum';
 import { UsersService } from 'api/users/users.service';
-import * as bcrypt from 'bcryptjs';
-import { ConfigurationService } from 'config/configuration.service';
-import { hashRounds } from 'src/common/constants/bcrypt';
-import { InsertResult } from 'typeorm';
+import { ConfigurationService } from 'common/config/configuration.service';
+import { hashRounds } from 'common/constants/bcrypt';
+import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
-import { AccessToken } from './interface/auth.interface';
-import { UserPayload } from './interface/userId.interface';
+import { AccessToken, UserPayload } from './interface/auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -20,27 +21,25 @@ export class AuthService {
         private readonly configService: ConfigurationService
     ) {}
 
-    async validateUser(email: string, password: string): Promise<CreateUserDto> {
+    async validateUser(email: string, password: string): Promise<Partial<User>> {
         try {
             const user = await this.userService.findOne({
                 where: { email },
                 select: ['id', 'role', 'password']
             });
 
-            if (user) {
-                const compareResult = await bcrypt.compare(password, user.password);
-
-                if (compareResult) {
-                    user.password = undefined;
-
-                    return user;
-                } else {
-                    throw new HttpException('Unauthorized!', HttpStatus.UNAUTHORIZED);
-                }
+            if (!user) {
+                throw new NotFoundException('User not found!');
             }
-            return null;
+            const compareResult = await bcrypt.compare(password, user.password);
+
+            if (compareResult) {
+                return { id: user.id, role: user.role };
+            } else {
+                throw new HttpException('Unauthorized!', HttpStatus.UNAUTHORIZED);
+            }
         } catch (error) {
-            throw new Error(`auth.service | validateUser error: ${error.message}`);
+            throw new Error(`auth.service | validateUser error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -79,7 +78,7 @@ export class AuthService {
 
             return user;
         } catch (error) {
-            throw new Error(`auth.service | register error: ${error.message}`);
+            throw new Error(`auth.service | register error: ${getErrorMessage(error)}`);
         }
     }
 

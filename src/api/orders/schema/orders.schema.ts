@@ -1,10 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Product } from 'api/products/schema/products.schema';
-import { Document } from 'mongoose';
-
 import type { OrderStatus } from '../types/order-status.types';
 import { payment_methodType } from '../types/payment-method.types';
 import { SourceType } from '../types/source.types';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Product } from 'api/products/schema/products.schema';
+import { Document } from 'mongoose';
 
 export type OrderDocument = Order & Document;
 

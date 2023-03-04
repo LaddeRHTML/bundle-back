@@ -1,17 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Payload } from 'api/auth/strategies/jwt-auth.strategy';
+import { DeleteResult, FindOneOptions, FindOptionsWhere, InsertResult, Repository } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
+
 import { Role } from 'api/users/enum';
 import { UserPasswords } from 'api/users/interface/passwords.interface';
-import * as bcrypt from 'bcryptjs';
-import { hashRounds } from 'src/common/constants/bcrypt';
-import { SAME_PASSWORD_EXCEPTION } from 'src/common/constants/passwords';
-import { PageMetaDto } from 'src/common/pagination/dtos/page-meta.dto';
-import { PageOptionsDto } from 'src/common/pagination/dtos/page-options.dto';
-import { PageDto } from 'src/common/pagination/dtos/page.dto';
-import { calcRelToCurrentDate } from 'src/common/utils/index';
-import { FindOneOptions, InsertResult, Repository } from 'typeorm';
-import getSQLSearch from 'utils/array/getSQLSearch';
+import { Payload } from 'api/auth/interface/auth.interface';
+import { hashRounds } from 'common/constants/bcrypt';
+import { SAME_PASSWORD_EXCEPTION } from 'common/constants/passwords';
+import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
+import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
+import { PageDto } from 'common/pagination/dtos/page.dto';
+import getSQLSearch from 'common/utils/array/getSQLSearch';
+import getErrorMessage from 'common/utils/errors/getErrorMessage';
+import { calcRelToCurrentDate } from 'common/utils/date/index';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -31,7 +33,7 @@ export class UsersService {
 
             return await this.usersRepository.insert(createUserDto);
         } catch (error) {
-            throw new Error(`users.service | createOne error: ${error.message}`);
+            throw new Error(`users.service | createOne error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -39,7 +41,7 @@ export class UsersService {
         try {
             return await this.usersRepository.find();
         } catch (error) {
-            throw new Error(`users.service | findAll error: ${error.message}`);
+            throw new Error(`users.service | findAll error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -75,15 +77,15 @@ export class UsersService {
 
             return new PageDto(entities, pageMetaDto);
         } catch (error) {
-            throw new Error(`users.service | findSome error: ${error.message}`);
+            throw new Error(`users.service | findSome error: ${getErrorMessage(error)}`);
         }
     }
 
-    async findOne(parameter: FindOneOptions<User>): Promise<User> {
+    async findOne(parameter: FindOneOptions<User>): Promise<User | null> {
         try {
             return await this.usersRepository.findOne(parameter);
         } catch (error) {
-            throw new Error(`users.service | findOne error: ${error.message}`);
+            throw new Error(`users.service | findOne error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -97,7 +99,7 @@ export class UsersService {
 
             return await this.usersRepository.save({ id, ...updateUserDto });
         } catch (error) {
-            throw new Error(`users.service | updateOne error: ${error.message}`);
+            throw new Error(`users.service | updateOne error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -133,7 +135,7 @@ export class UsersService {
 
             return true;
         } catch (error) {
-            throw new Error(`users.service | updatePassword error: ${error.message}`);
+            throw new Error(`users.service | updatePassword error: ${getErrorMessage(error)}`);
         }
     }
 
@@ -146,16 +148,29 @@ export class UsersService {
                 .whereInIds(userIds)
                 .execute();
         } catch (error) {
-            throw new Error(`users.service | updateMany error: ${error.message}`);
+            throw new Error(`users.service | updateMany error: ${getErrorMessage(error)}`);
         }
     }
 
-    async removeOneById(id: string) {
+    async removeOneById(id: string): Promise<DeleteResult> {
         try {
-            const user = await this.findOne({ where: { id } });
-            return this.usersRepository.remove(user);
+            const isExists = await this.isUserExists({ id });
+
+            if (!isExists) {
+                throw new NotFoundException('User not found!');
+            }
+
+            return await this.usersRepository.delete({ id });
         } catch (error) {
-            throw new Error(`users.service | removeOneById error: ${error.message}`);
+            throw new Error(`users.service | removeOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
+    async isUserExists(userProperty: FindOptionsWhere<User>): Promise<boolean> {
+        try {
+            return await this.usersRepository.exist({ where: userProperty });
+        } catch (error) {
+            throw new Error(`files.service | isFileExists error: ${getErrorMessage(error)}`);
         }
     }
 }

@@ -1,6 +1,7 @@
-import { File } from 'api/files/entitiy/file.entity';
 import { IsArray, IsDate, IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+
+import { File } from 'api/files/entitiy/file.entity';
 
 import { Gender, Role } from '../enum';
 
@@ -36,7 +37,8 @@ export class User {
 
     @JoinColumn({ name: 'avatar_id' })
     @OneToOne(() => File, {
-        nullable: true
+        nullable: true,
+        cascade: true
     })
     public avatar?: File;
 

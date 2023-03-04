@@ -1,31 +1,21 @@
 {
     "compilerOptions": {
+        "module": "commonjs",
         "baseUrl": "./",
         "paths": {
-            "api/*": ["src/api/*"],
-            "auth/*": ["src/api/auth/*"],
-            "config/*": ["src/common/config/*"],
-            "types/*": ["src/common/types/*"],
-            "utils/*": ["src/common/utils/*"],
-            "interfaces/*": ["src/common/interfaces/*"]
+            "*": ["./src/*"]
         },
-        "module": "commonjs",
+        "outDir": "./dist",
         "declaration": true,
         "removeComments": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
+        "strictPropertyInitialization": false,
         "target": "es2017",
-        "sourceMap": true,
-        "outDir": "./dist",
-        "incremental": true,
-        "skipLibCheck": true,
-        "strictNullChecks": false,
-        "noImplicitAny": false,
-        "strictBindCallApply": false,
-        "forceConsistentCasingInFileNames": false,
-        "noFallthroughCasesInSwitch": false,
-        "esModuleInterop": true,
-        "moduleResolution": "node"
-    }
+        "strict": true,
+        "skipLibCheck": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist"]
 }

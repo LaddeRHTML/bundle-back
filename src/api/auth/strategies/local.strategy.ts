@@ -1,7 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { User } from 'api/users/entity/user.entity';
 import { Strategy } from 'passport-local';
+
+import { User } from 'api/users/entity/user.entity';
 
 import { AuthService } from '../auth.service';
 
@@ -11,7 +12,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         super({ usernameField: 'email' });
     }
 
-    async validate(email: string, password: string): Promise<User> {
+    async validate(email: string, password: string): Promise<Partial<User>> {
         const user = await this.authservice.validateUser(email, password);
 
         if (!user) {

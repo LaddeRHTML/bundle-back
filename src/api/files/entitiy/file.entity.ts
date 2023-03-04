@@ -1,5 +1,6 @@
-import { BaseEntity } from 'src/common/base_entity';
-import { Column, Entity, Index, Unique } from 'typeorm';
+import { Column, Entity, Unique } from 'typeorm';
+
+import { BaseEntity } from 'common/base_entity';
 
 @Entity()
 @Unique(['size_in_bytes', 'original_name', 'mime_type'])

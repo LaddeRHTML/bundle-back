@@ -1,6 +1,6 @@
 import { File } from 'api/files/entitiy/file.entity';
 import { IsArray } from 'class-validator';
-import { BaseEntity } from 'src/common/base_entity';
+import { BaseEntity } from 'common/base_entity';
 import { Column, Entity, Index, JoinColumn, OneToOne, Unique } from 'typeorm';
 
 @Entity()
@@ -39,7 +39,8 @@ export class Product extends BaseEntity {
 
     @JoinColumn({ name: 'preview_picture' })
     @OneToOne(() => File, {
-        nullable: true
+        nullable: true,
+        cascade: true
     })
     public preview_picture?: File;
 

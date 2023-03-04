@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { User } from 'api/users/entity/user.entity';
+import { File } from 'api/files/entitiy/file.entity';
+import { Product } from 'api/products/entity/product.entity';
+
 import { DatabaseCredentials } from './database.credentials';
 import { AppDataSource } from './database.datasource';
-import { DatabaseProvider } from './database.provider';
 
 @Module({
     imports: [
@@ -12,7 +15,8 @@ import { DatabaseProvider } from './database.provider';
             dataSourceFactory: async () => {
                 return await AppDataSource.initialize();
             }
-        })
+        }),
+        TypeOrmModule.forFeature([User, File, Product])
     ]
 })
 export class DatabaseModule {}
