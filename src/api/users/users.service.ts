@@ -170,7 +170,7 @@ export class UsersService {
         try {
             return await this.usersRepository.exist({ where: userProperty });
         } catch (error) {
-            throw new Error(`files.service | isFileExists error: ${getErrorMessage(error)}`);
+            throw new Error(`users.service | isUserExists error: ${getErrorMessage(error)}`);
         }
     }
 }

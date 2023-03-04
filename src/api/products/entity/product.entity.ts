@@ -1,7 +1,17 @@
 import { File } from 'api/files/entitiy/file.entity';
+import { Order } from 'api/orders/entity/order.entity';
 import { IsArray } from 'class-validator';
 import { BaseEntity } from 'common/base_entity';
-import { Column, Entity, Index, JoinColumn, OneToOne, Unique } from 'typeorm';
+import {
+    Column,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToMany,
+    ManyToOne,
+    OneToOne,
+    Unique
+} from 'typeorm';
 
 @Entity()
 @Unique(['name', 'model', 'maker'])
@@ -9,46 +19,56 @@ export class Product extends BaseEntity {
     @IsArray()
     categories: string[];
 
-    @Column({ default: 1 })
+    @Column({ type: 'smallint', default: 1 })
     count: number;
 
-    @Column({ default: '' })
+    @Column({ type: 'varchar', default: '' })
     description: string;
 
-    @Column({ default: 0 })
+    @Column({ type: 'money', default: 0 })
     discount_price: number;
 
-    @Column({ default: false })
+    @Column({ type: 'boolean', default: false })
     is_hidden: boolean;
 
-    @Column({ default: false })
+    @Column({ type: 'boolean', default: false })
     is_imported: boolean;
 
-    @Column({ default: '' })
+    @Column({ type: 'varchar', default: '' })
     maker: string;
 
-    @Column({ default: 0 })
+    @Column({ type: 'money', default: 0 })
     market_price: number;
 
-    @Column({ default: '' })
+    @Column({ type: 'varchar', default: '' })
     model: string;
 
     @Index({ unique: true })
-    @Column()
+    @Column({ type: 'varchar' })
     name: string;
 
-    @JoinColumn({ name: 'preview_picture' })
-    @OneToOne(() => File, {
-        nullable: true,
-        cascade: true
-    })
-    public preview_picture?: File;
-
-    @Column({ nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     public preview_picture_id: string;
 
+    @Column({ type: 'money', default: 0 })
+    price: number;
+
+    @Column({ type: 'money', default: 0 })
+    supplier_price: number;
+
+    @Column({ type: 'smallint', nullable: true })
+    warranty_days: number;
+
+    @Column({ type: 'varchar', default: '' })
+    vendor_code: string;
+
+    @Column({ type: 'varchar', default: '' })
+    weight: string;
+
     @JoinColumn({ name: 'pictures' })
-    @OneToOne(() => File, {
+    @ManyToOne(() => File, {
+        eager: true,
+        cascade: true,
         nullable: true
     })
     public pictures?: File[];
@@ -57,18 +77,16 @@ export class Product extends BaseEntity {
     @IsArray()
     public pictures_id: string[];
 
-    @Column({ default: 0 })
-    price: number;
+    @ManyToMany(() => Order, (o: Order) => o.products, {
+        nullable: true
+    })
+    public orders: Order[];
 
-    @Column({ default: 0 })
-    supplier_price: number;
-
-    @Column({ nullable: true })
-    warranty_days: number;
-
-    @Column({ default: '' })
-    vendor_code: string;
-
-    @Column({ default: '' })
-    weight: string;
+    @JoinColumn({ name: 'preview_picture' })
+    @OneToOne(() => File, {
+        eager: true,
+        cascade: true,
+        nullable: true
+    })
+    public preview_picture?: File;
 }

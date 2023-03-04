@@ -1,265 +1,131 @@
-// import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-// import { InjectModel } from '@nestjs/mongoose';
-// import { UserPayload } from 'api/auth/interface/userId.interface';
-// import { ProductsService } from 'api/products/products.service';
-// import { Role } from 'api/users/enum';
-// import { User, UserDocument } from 'api/users/schema/user.schema';
-// import { UsersService } from 'api/users/users.service';
-// import mongoose, {
-//     FilterQuery,
-//     Model,
-//     ProjectionType,
-//     QueryOptions,
-//     UpdateQuery,
-//     UpdateWithAggregationPipeline
-// } from 'mongoose';
-// import { Pagination } from 'src/common/interfaces/utils.interface';
-// import sumAllFields from 'utils/sumAllFields';
+import { Injectable } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common/exceptions';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, FindOneOptions, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
 
-// import { calcRelToAnyDate } from '../../common/utils/index';
-// import { Product, ProductsDocument } from './../products/schema/products.schema';
-// import { CreateOrderDto } from './dto/create-order.dto';
-// import { UpdateOrderDto } from './dto/update-order.dto';
-// import { Order, OrderDocument } from './schema/orders.schema';
-// import { OrderStatus } from './types/order-status.types';
+import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
+import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
+import { PageDto } from 'common/pagination/dtos/page.dto';
+import getSQLSearch from 'common/utils/array/getSQLSearch';
+import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
-// const clientRef = 'client';
-// const productRef = 'products';
-// const creatorRef = 'creator';
-// const last_editorRef = 'last_editor';
-// const current_managerRef = 'current_manager';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
+import { Order } from './entity/order.entity';
+import { Status } from './enums/order.enums';
 
-// @Injectable()
-// export class OrdersService {
-//     constructor(
-//         @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
-//         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-//         @InjectModel(Product.name) private readonly productModel: Model<ProductsDocument>,
-//         private readonly userService: UsersService,
-//         private readonly productService: ProductsService
-//     ) {}
+@Injectable()
+export class OrdersService {
+    constructor(@InjectRepository(Order) private orderRepository: Repository<Order>) {}
 
-//     async createOne(createOrderDto: CreateOrderDto, userPayload: UserPayload): Promise<Order> {
-//         try {
-//             createOrderDto.creator = userPayload.userId;
-//             if (userPayload.role !== Role.User) {
-//                 createOrderDto.current_manager = userPayload.userId;
-//             }
+    async createOne(createOrderDto: CreateOrderDto, userId: string): Promise<Order> {
+        try {
+            createOrderDto.last_changed_by = userId;
+            createOrderDto.created_by = userId;
 
-//             const client = await this.userModel.findOne({ _id: userPayload.userId });
+            return await this.orderRepository.save(createOrderDto);
+        } catch (error) {
+            throw new Error(`order.service | createOne error: ${getErrorMessage(error)}`);
+        }
+    }
 
-//             if (!client) {
-//                 throw new HttpException(
-//                     'An error occurred while creating order! client',
-//                     HttpStatus.NOT_ACCEPTABLE
-//                 );
-//             }
-//             createOrderDto.client = userPayload.userId;
+    async findSome(pageOptionsDto: PageOptionsDto): Promise<PageDto<Order>> {
+        try {
+            const includedInSearchFields = [
+                'address',
+                'name',
+                'family_name',
+                'patronymic',
+                'iin',
+                'phone_number',
+                'email'
+            ];
 
-//             const products = await this.productService.findAllWithOutPopulating({
-//                 _id: {
-//                     $in: createOrderDto.products.map((id) => new mongoose.Types.ObjectId(id))
-//                 }
-//             });
+            const queryBuilder = this.orderRepository.createQueryBuilder(Order.name.toLowerCase());
 
-//             if (!products || products?.length === 0) {
-//                 throw new HttpException(
-//                     'An error occurred while creating order! product',
-//                     HttpStatus.NOT_ACCEPTABLE
-//                 );
-//             }
+            if (pageOptionsDto.searchBy) {
+                queryBuilder.where(getSQLSearch(includedInSearchFields, Order.name.toLowerCase()), {
+                    s: `%${pageOptionsDto.searchBy}%`
+                });
+            }
 
-//             const order = await this.orderModel.create(createOrderDto);
+            queryBuilder
+                .orderBy(`${Order.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .skip(pageOptionsDto.skip)
+                .take(pageOptionsDto.limit);
 
-//             const orderId = order._id;
+            const total = await queryBuilder.getCount();
+            const { entities } = await queryBuilder.getRawAndEntities();
 
-//             const clientUpdated = await this.userService.updateOne(userPayload.userId, {
-//                 orders: client.orders.concat(orderId)
-//             });
+            const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
 
-//             if (!clientUpdated) {
-//                 throw new HttpException(
-//                     'An error occurred while creating order! order',
-//                     HttpStatus.NOT_ACCEPTABLE
-//                 );
-//             }
+            return new PageDto(entities, pageMetaDto);
+        } catch (error) {
+            throw new Error(`orders.service | findSome error: ${getErrorMessage(error)}`);
+        }
+    }
 
-//             return order;
-//         } catch (error) {
-//             throw new HttpException(
-//                 'An error occurred while creating order!',
-//                 HttpStatus.NOT_ACCEPTABLE
-//             );
-//         }
-//     }
+    async findOne(parameter: FindOneOptions<Order>): Promise<Order | null> {
+        try {
+            return await this.orderRepository.findOne(parameter);
+        } catch (error) {
+            throw new Error(`orders.service | findOne error: ${getErrorMessage(error)}`);
+        }
+    }
 
-//     async getAllPrices() {
-//         const orders = await this.findAllBy();
+    async updateOne(
+        id: string,
+        updateOrderDto: UpdateOrderDto,
+        userId: string
+    ): Promise<UpdateResult> {
+        try {
+            console.log(updateOrderDto.products);
 
-//         const products = [];
+            updateOrderDto.last_change_date = new Date();
+            updateOrderDto.last_changed_by = userId;
 
-//         orders.forEach((o: Order) => {
-//             o.products.forEach((s) => {
-//                 products.push(s);
-//             });
-//         });
+            return await this.orderRepository.update(id, updateOrderDto);
+        } catch (error) {
+            throw new Error(`orders.service | updateOne error: ${getErrorMessage(error)}`);
+        }
+    }
 
-//         const prices = sumAllFields<Product>(products, 'price');
-//         const market_prices = sumAllFields<Product>(products, 'market_price');
-//         const supplier_prices = sumAllFields<Product>(products, 'supplier_price');
-//         return {
-//             prices,
-//             market_prices,
-//             supplier_prices
-//         };
-//     }
+    async updateStatus(id: string, status: Status, userId: string): Promise<UpdateResult> {
+        return this.updateOne(id, { status }, userId);
+    }
 
-//     async findSortedItems(
-//         page: number,
-//         limit: number,
-//         status: OrderStatus,
-//         userId: string,
-//         createOrderDto: CreateOrderDto
-//     ): Promise<Pagination<Order[]>> {
-//         let options = {
-//             ...(status && {
-//                 status
-//             }),
-//             ...(userId && {
-//                 current_manager: userId
-//             }),
-//             ...(createOrderDto && {
-//                 ...createOrderDto
-//             })
-//         };
+    async updateMany(orderIds: string[], updateOrderDto: UpdateOrderDto, userId: string) {
+        try {
+            return await this.orderRepository
+                .createQueryBuilder()
+                .update(Order)
+                .set({ ...updateOrderDto, last_change_date: new Date(), last_changed_by: userId })
+                .whereInIds(orderIds)
+                .execute();
+        } catch (error) {
+            throw new Error(`users.service | updateMany error: ${getErrorMessage(error)}`);
+        }
+    }
 
-//         const total = await this.orderModel.count(options).exec();
-//         const lastPage = Math.ceil(total / limit);
-//         const data = await this.orderModel
-//             .find(options)
-//             .populate(clientRef, '-password', this.userModel)
-//             .populate({ path: productRef, model: this.productModel })
-//             .populate(creatorRef, 'name email', this.userModel)
-//             .populate(last_editorRef, 'name email', this.userModel)
-//             .populate(current_managerRef, 'name email', this.userModel)
-//             .skip((page - 1) * limit)
-//             .limit(limit)
-//             .exec();
+    async removeOneById(id: string): Promise<DeleteResult> {
+        try {
+            const isExists = await this.isOrderExists({ id });
 
-//         const sortedData = {
-//             data,
-//             total,
-//             page,
-//             lastPage
-//         };
+            if (!isExists) {
+                throw new NotFoundException('Order not found!');
+            }
 
-//         return sortedData;
-//     }
+            return await this.orderRepository.delete({ id });
+        } catch (error) {
+            throw new Error(`orders.service | removeOneById error: ${getErrorMessage(error)}`);
+        }
+    }
 
-//     async findAllBy(filter?: FilterQuery<OrderDocument>): Promise<Order[]> {
-//         return await this.orderModel
-//             .find(filter)
-//             .populate(clientRef, '-password', this.userModel)
-//             .populate({ path: productRef, model: this.productModel })
-//             .populate(creatorRef, 'name email', this.userModel)
-//             .populate(last_editorRef, 'name email', this.userModel)
-//             .populate(current_managerRef, 'name email', this.userModel);
-//     }
-
-//     async findOne(_id: string): Promise<Order> {
-//         return await this.orderModel
-//             .findOne({ _id })
-//             .populate(clientRef, '-password', this.userModel)
-//             .populate({ path: productRef, model: this.productModel })
-//             .populate(creatorRef, 'name email', this.userModel)
-//             .populate(last_editorRef, 'name email', this.userModel)
-//             .populate(current_managerRef, 'name email', this.userModel);
-//     }
-
-//     async updateOne(
-//         id: string,
-//         updateOrderDto: UpdateOrderDto,
-//         userPayload: UserPayload
-//     ): Promise<Order> {
-//         try {
-//             const order = await this.findOne(id);
-
-//             updateOrderDto.last_editor = userPayload.userId;
-//             updateOrderDto.update_date = new Date();
-
-//             if (updateOrderDto.status !== 'open') {
-//                 updateOrderDto.close_interval = calcRelToAnyDate(
-//                     order.create_date,
-//                     updateOrderDto.update_date,
-//                     false
-//                 );
-//             }
-
-//             return await this.orderModel
-//                 .findOneAndUpdate({ _id: id }, { ...updateOrderDto }, { new: true })
-//                 .populate(clientRef, '-password', this.userModel)
-//                 .populate({ path: productRef, model: this.productModel })
-//                 .populate(creatorRef, 'name email', this.userModel)
-//                 .populate(last_editorRef, 'name email', this.userModel)
-//                 .populate(current_managerRef, 'name email', this.userModel);
-//         } catch (error) {
-//             throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
-//         }
-//     }
-
-//     async updateStatus(id: string, status: OrderStatus, userPayload: UserPayload) {
-//         return this.updateOne(id, { status }, userPayload);
-//     }
-
-//     /* async updateMany(
-//         filter?: FilterQuery<OrderDocument>,
-//         parameter?: UpdateWithAggregationPipeline | UpdateQuery<OrderDocument>,
-//         settings?: QueryOptions
-//     ) {
-//         return await this.orderModel
-//             .updateMany(filter, parameter, {
-//                 ...settings,
-//                 new: true
-//             })
-//             .populate(clientRef, '-password', this.userModel)
-//             .populate({ path: productRef, model: this.productModel });
-//     } */
-
-//     async removeOneById(id: string) {
-//         const ObjectId = new mongoose.Types.ObjectId(id);
-
-//         const updatedClients = await this.userModel.updateMany(
-//             { orders: { $in: ObjectId } },
-//             {
-//                 $pull: {
-//                     orders: { $in: ObjectId }
-//                 }
-//             }
-//         );
-
-//         if (!updatedClients.acknowledged) {
-//             throw new HttpException(
-//                 'An error occurred while creating order!',
-//                 HttpStatus.NOT_ACCEPTABLE
-//             );
-//         }
-
-//         const updatedProducts = await this.productService.updateMany(
-//             { includedInOrders: { $in: ObjectId } },
-//             {
-//                 $pull: {
-//                     includedInOrders: { $in: ObjectId }
-//                 }
-//             }
-//         );
-
-//         if (!updatedProducts.acknowledged) {
-//             throw new HttpException(
-//                 'An error occurred while creating order!',
-//                 HttpStatus.NOT_ACCEPTABLE
-//             );
-//         }
-
-//         return await this.orderModel.findOneAndRemove({ _id: ObjectId });
-//     }
-// }
+    async isOrderExists(orderProperty: FindOptionsWhere<Order>): Promise<boolean> {
+        try {
+            return await this.orderRepository.exist({ where: orderProperty });
+        } catch (error) {
+            throw new Error(`orders.service | isOrderExists error: ${getErrorMessage(error)}`);
+        }
+    }
+}

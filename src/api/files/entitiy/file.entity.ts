@@ -5,10 +5,10 @@ import { BaseEntity } from 'common/base_entity';
 @Entity()
 @Unique(['size_in_bytes', 'original_name', 'mime_type'])
 export class File extends BaseEntity {
-    @Column()
+    @Column({ type: 'int' })
     public size_in_bytes: number;
 
-    @Column()
+    @Column({ type: 'varchar' })
     public file_name: string;
 
     @Column({
@@ -16,12 +16,12 @@ export class File extends BaseEntity {
     })
     public data: Uint8Array;
 
-    @Column()
+    @Column({ type: 'varchar' })
     public encoding: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     public original_name: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     public mime_type: string;
 }

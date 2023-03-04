@@ -42,12 +42,12 @@ export class ProductsController {
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Post('')
+    @Post('/create')
     async createOne(
         @Body() createProductDto: CreateProductDto,
-        @Req() req: RequestWithUser
+        @Req() { user }: RequestWithUser
     ): Promise<InsertResult> {
-        const userId = req.user['userId'];
+        const userId = user['userId'];
         return await this.productsService.createOne(createProductDto, userId);
     }
 
@@ -87,11 +87,10 @@ export class ProductsController {
     @Patch('/:id')
     async updateById(
         @Param('id') id: string,
-
-        @Req() req: RequestWithUser,
+        @Req() { user }: RequestWithUser,
         @Body() updateProductDto: UpdateProductDto
     ): Promise<Product> {
-        const userId = req.user['userId'];
+        const userId = user['userId'];
         return await this.productsService.updateOne(id, updateProductDto, userId);
     }
 
@@ -103,9 +102,9 @@ export class ProductsController {
         @UploadedFiles()
         files: MulterFile[],
         @Param('id') id: string,
-        @Request() req: RequestWithUser
+        @Request() { user }: RequestWithUser
     ): Promise<Product> {
-        const userId = req.user['userId'];
+        const userId = user['userId'];
         const uploadedPictures = await this.filesService.uploadFiles(files, userId);
 
         return this.productsService.updateOne(

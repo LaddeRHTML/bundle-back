@@ -26,8 +26,8 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get('/check')
-    async check(@Req() req: RequestWithUser): Promise<User | null> {
-        const userId = req.user['userId'];
+    async check(@Req() { user }: RequestWithUser): Promise<User | null> {
+        const userId = user['userId'];
 
         return await this.usersService.findOne({ where: { id: userId } });
     }
