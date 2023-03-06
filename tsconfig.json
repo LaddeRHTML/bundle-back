@@ -3,7 +3,17 @@
         "module": "commonjs",
         "baseUrl": "./",
         "paths": {
-            "*": ["./src/*"]
+            "app/*": ["./src/main/app/*"],
+            "auth/*": ["./src/main/auth/*"],
+            "common/*": ["./src/main/common/*"],
+            "config/*": ["./src/main/config/*"],
+            "controller/*": ["./src/main/controller/*"],
+            "dto/*": ["./src/main/dto/*"],
+            "model/*": ["./src/main/model/*"],
+            "module/*": ["./src/main/module/*"],
+            "service/*": ["./src/main/service/*"],
+            "database/*": ["./src/resources/database/*"],
+            "filter/*": ["./src/resources/filter/*"]
         },
         "outDir": "./dist",
         "declaration": true,

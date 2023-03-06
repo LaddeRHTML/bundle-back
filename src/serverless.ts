@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import serverlessExpress from '@vendia/serverless-express';
 import { Callback, Context, Handler } from 'aws-lambda';
 
-import { AppModule } from './app/app.module';
+import { AppModule } from 'app/app.module';
 
 let server: Handler;
 
