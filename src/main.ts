@@ -28,6 +28,6 @@ async function bootstrap() {
 
     app.useGlobalFilters(new AllExceptionsFilter());
 
-    await app.listen(parseInt(`${process.env.PORT}`) || 5000, '0.0.0.0');
+    await app.listen(parseInt(`${process.env.PORT}`) || 5000);
 }
 bootstrap();
