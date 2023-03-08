@@ -32,25 +32,37 @@ export class Order extends BaseEntity {
     @Column({ type: 'enum', enum: Status, default: Status.open })
     public status: Status;
 
-    @JoinColumn({ name: 'client' })
     @ManyToOne(() => User, (u) => u.orders, {
-        cascade: true
+        cascade: true,
+        eager: true
     })
     public client: User;
 
     @JoinColumn({ name: 'current_manager' })
     @OneToOne(() => User, {
         eager: true,
-        cascade: true
+        cascade: true,
+        nullable: true
     })
-    public current_manager: string;
+    public current_manager: User;
 
     @ManyToMany(() => Product, (p: Product) => p.orders, {
         eager: true,
-        cascade: true
+        cascade: true,
+        nullable: true
     })
-    @JoinTable()
-    public products: Product[];
+    @JoinTable({
+        name: 'ordered_products',
+        joinColumn: {
+            name: 'order_id',
+            referencedColumnName: 'id'
+        },
+        inverseJoinColumn: {
+            name: 'product_id',
+            referencedColumnName: 'id'
+        }
+    })
+    public products?: Product[];
 
     @JoinColumn({ name: 'delivered_by' })
     @OneToOne(() => User, {

@@ -1,4 +1,10 @@
-import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from 'typeorm';
 
 export abstract class BaseEntity {
     @PrimaryGeneratedColumn('uuid')
@@ -15,6 +21,9 @@ export abstract class BaseEntity {
 
     @Column({ type: 'varchar', length: 300 })
     created_by: string;
+
+    @DeleteDateColumn({ type: 'timestamptz' })
+    delete_date: Date;
 
     @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     last_change_date: Date;

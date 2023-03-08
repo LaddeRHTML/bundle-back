@@ -1,17 +1,17 @@
 import {
     Body,
     Controller,
+    DefaultValuePipe,
     Delete,
     Get,
     Param,
+    ParseArrayPipe,
     Patch,
     Post,
     Query,
     Req,
     UseGuards
 } from '@nestjs/common';
-import { UpdateResult } from 'typeorm';
-
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
 
@@ -26,7 +26,9 @@ import { Status } from 'model/order/OrderEnums';
 import { Role } from 'model/user/UserEnums';
 
 import { RequestWithUser } from 'service/AuthService';
-import { OrdersService } from 'service/OrderService';
+import { OrdersService, SearchByChild } from 'service/OrderService';
+
+export type AllowedOrderRelations = ['client', 'delivered_by', 'current_manager', 'products'];
 
 @Controller('/orders')
 export class OrdersController {
@@ -45,8 +47,21 @@ export class OrdersController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
-    async findSome(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<Order>> {
-        return await this.orderService.findSome(pageOptionsDto);
+    async findSome(
+        @Query() pageOptionsDto: PageOptionsDto,
+        @Query() searchByChild: SearchByChild,
+        @Query(
+            'relations',
+            new DefaultValuePipe([]),
+            new ParseArrayPipe({
+                items: String,
+                separator: ',',
+                optional: true
+            })
+        )
+        relations: AllowedOrderRelations
+    ): Promise<PageDto<Order>> {
+        return await this.orderService.findSome(pageOptionsDto, relations, searchByChild);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -54,12 +69,7 @@ export class OrdersController {
     @Get(':id')
     async findOne(@Param('id') id: string): Promise<Order | null> {
         return await this.orderService.findOne({
-            where: { id },
-            relations: {
-                client: true,
-                products: true,
-                delivered_by: true
-            }
+            where: { id }
         });
     }
 
@@ -70,12 +80,8 @@ export class OrdersController {
         @Param('id') id: string,
         @Body() updateOrderDto: UpdateOrderDto,
         @Req() { user: { id: userId } }: RequestWithUser
-    ): Promise<UpdateResult> {
-        return await this.orderService.updateOne(
-            id,
-            { ...updateOrderDto, current_manager: userId },
-            userId
-        );
+    ): Promise<Order> {
+        return await this.orderService.updateOne(id, { ...updateOrderDto }, userId);
     }
 
     @HasRoles(Role.Manager, Role.Admin)
@@ -85,7 +91,7 @@ export class OrdersController {
         @Param('id') id: string,
         @Body() updateOrderDto: UpdateOrderDto,
         @Req() { user: { id: userId } }: RequestWithUser
-    ): Promise<UpdateResult> {
+    ): Promise<Order> {
         return await this.orderService.updateOne(id, updateOrderDto, userId);
     }
 
@@ -96,7 +102,7 @@ export class OrdersController {
         @Param('id') id: string,
         @Body() status: Status,
         @Req() { user: { id: userId } }: RequestWithUser
-    ): Promise<UpdateResult> {
+    ): Promise<Order> {
         return await this.orderService.updateStatus(id, status, userId);
     }
 

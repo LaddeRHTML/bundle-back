@@ -99,7 +99,7 @@ export class FilesService {
         try {
             const file = await this.fileRepository.findOne({ where: { id: fileId } });
             if (!file) {
-                throw new NotFoundException();
+                throw new NotFoundException('File not found!');
             }
 
             return file;
@@ -116,7 +116,7 @@ export class FilesService {
             const file = await this.fileRepository.findOne({ where: fileProperty, select });
 
             if (!file) {
-                throw new NotFoundException();
+                throw new NotFoundException('File not found!');
             }
 
             return file;

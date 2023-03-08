@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common/exceptions';
 import {
     FindManyOptions,
     FindOneOptions,
@@ -19,6 +20,7 @@ import { CreateProductDto } from 'dto/Product/CreateProductDto';
 import { UpdateProductDto } from 'dto/Product/UpdateProductDto';
 
 import { Product } from 'model/product/Product';
+import { AllowedProductRelations } from 'controller/ProductController';
 
 interface Price {
     max: number;
@@ -59,9 +61,15 @@ export class ProductsService {
         }
     }
 
-    async findOne(parameter: FindOneOptions<Product>): Promise<Product | null> {
+    async findOne(parameter: FindOneOptions<Product>): Promise<Product> {
         try {
-            return await this.productRepository.findOne(parameter);
+            const product = await this.productRepository.findOne(parameter);
+
+            if (!product) {
+                throw new NotFoundException('Product not found!');
+            }
+
+            return product;
         } catch (error) {
             throw new Error(`product.service | findOne error: ${getErrorMessage(error)}`);
         }
@@ -71,7 +79,11 @@ export class ProductsService {
         return await this.productRepository.find(options);
     }
 
-    async findSome(pageOptionsDto: PageOptionsDto, filters: Product): Promise<PageDto<Product>> {
+    async findSome(
+        pageOptionsDto: PageOptionsDto,
+        filters: Product,
+        relations: AllowedProductRelations
+    ): Promise<PageDto<Product>> {
         try {
             const includedInSearchFields = ['name', 'maker', 'model', 'vendor_code'];
 
@@ -123,6 +135,15 @@ export class ProductsService {
                 .orderBy(`${Product.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
+
+            if (relations.length > 0) {
+                relations.forEach((relation) => {
+                    queryBuilder.leftJoinAndSelect(
+                        `${Product.name.toLowerCase()}.${relation}`,
+                        relation
+                    );
+                });
+            }
 
             const total = await queryBuilder.getCount();
             const { entities } = await queryBuilder.getRawAndEntities();
@@ -188,21 +209,25 @@ export class ProductsService {
         };
     }
 
-    /* Вернуться после обновления заказов */
-    // async removeOne(id: string): Promise<Product> {
-    //     const updatedOrders = await this.orderModel.updateMany(
-    //         { products: { $in: id } },
-    //         { $pull: { products: { $in: id } } },
-    //         { new: false }
-    //     );
+    async removeOneById(id: string): Promise<Product> {
+        try {
+            const product = await this.findOne({ where: { id }, relations: [] });
 
-    //     if (!updatedOrders.acknowledged) {
-    //         throw new HttpException(
-    //             'An error occurred while after updating orders!',
-    //             HttpStatus.NOT_ACCEPTABLE
-    //         );
-    //     }
+            if (!product) {
+                throw new NotFoundException('Product not found!');
+            }
 
-    //     return await this.productModel.findOneAndRemove({ _id: id });
-    // }
+            return await this.productRepository.softRemove(product);
+        } catch (error) {
+            throw new Error(`products.service | removeOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
+    async isProductExists(productProperty: FindOptionsWhere<Product>): Promise<boolean> {
+        try {
+            return await this.productRepository.exist({ where: productProperty });
+        } catch (error) {
+            throw new Error(`products.service | isProductExists error: ${getErrorMessage(error)}`);
+        }
+    }
 }

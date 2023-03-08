@@ -1,9 +1,11 @@
 import {
     Body,
     Controller,
+    DefaultValuePipe,
     Delete,
     Get,
     Param,
+    ParseArrayPipe,
     Patch,
     Post,
     Query,
@@ -34,6 +36,8 @@ import { FilesService, MulterFile } from 'service/FileService';
 import { ChangePassword, UsersService } from 'service/UserService';
 import { File } from 'model/file/File';
 
+export type AllowedUserRelations = ['orders'];
+
 @Controller('/users')
 export class UsersController {
     constructor(
@@ -61,15 +65,39 @@ export class UsersController {
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/filter?')
-    async findSome(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
-        return await this.usersService.findSome(pageOptionsDto);
+    async findSome(
+        @Query() pageOptionsDto: PageOptionsDto,
+        @Query(
+            'relations',
+            new DefaultValuePipe([]),
+            new ParseArrayPipe({
+                items: String,
+                separator: ',',
+                optional: true
+            })
+        )
+        relations: AllowedUserRelations
+    ): Promise<PageDto<User>> {
+        return await this.usersService.findSome(pageOptionsDto, relations);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get(':id')
-    findOne(@Param('id') id: string): Promise<User | null> {
-        return this.usersService.findOne({ where: { id } });
+    findOne(
+        @Param('id') id: string,
+        @Query(
+            'relations',
+            new DefaultValuePipe([]),
+            new ParseArrayPipe({
+                items: String,
+                separator: ',',
+                optional: true
+            })
+        )
+        relations: AllowedUserRelations
+    ): Promise<User | null> {
+        return this.usersService.findOne({ where: { id }, relations });
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -115,7 +143,6 @@ export class UsersController {
     @UseGuards(RoleGuard)
     @Patch('/avatar/remove')
     async removeAvatar(@Request() { user: { id } }: RequestWithUser): Promise<User> {
-        console.log(id);
         return await this.usersService.updateOne(id, {
             avatar: null,
             avatar_id: null

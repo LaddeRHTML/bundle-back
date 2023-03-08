@@ -18,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(payload: UserPayload): Promise<UserPayload> {
         if (payload === null) {
-            throw new NotFoundException();
+            throw new NotFoundException('User not found!');
         }
 
         return payload;

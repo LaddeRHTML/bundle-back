@@ -16,6 +16,7 @@ import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import { PASSWORD_HASH_ROUNDS, SAME_PASSWORD_EXCEPTION } from 'common/constants';
+import { AllowedUserRelations } from 'controller/UserController';
 
 export interface ChangePassword {
     oldPassword: string;
@@ -51,7 +52,10 @@ export class UsersService {
         }
     }
 
-    async findSome(pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
+    async findSome(
+        pageOptionsDto: PageOptionsDto,
+        relations: AllowedUserRelations
+    ): Promise<PageDto<User>> {
         try {
             const includedInSearchFields = [
                 'address',
@@ -75,6 +79,15 @@ export class UsersService {
                 .orderBy(`${User.name.toLowerCase()}.registration_date`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
+
+            if (relations.length > 0) {
+                relations.forEach((relation) => {
+                    queryBuilder.leftJoinAndSelect(
+                        `${User.name.toLowerCase()}.${relation}`,
+                        relation
+                    );
+                });
+            }
 
             const total = await queryBuilder.getCount();
             const { entities } = await queryBuilder.getRawAndEntities();

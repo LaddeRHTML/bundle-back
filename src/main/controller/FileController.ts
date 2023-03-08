@@ -91,7 +91,7 @@ export class FilesController {
         const isFileExists = await this.filesService.isFileExists({ id });
 
         if (!isFileExists) {
-            throw new NotFoundException();
+            throw new NotFoundException('File not found!');
         }
 
         return await this.filesService.deleteFile(id);

@@ -1,12 +1,15 @@
 import {
     Body,
     Controller,
+    DefaultValuePipe,
     Get,
     Param,
+    ParseArrayPipe,
     Patch,
     Post,
     Query,
     Req,
+    Delete,
     UploadedFiles,
     UseGuards,
     UseInterceptors
@@ -29,6 +32,8 @@ import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { FilesService, MulterFile } from 'service/FileService';
 import { GetPricesResponse, ProductsService } from 'service/ProductService';
+
+export type AllowedProductRelations = ['orders'];
 
 @Controller('/products')
 export class ProductsController {
@@ -59,9 +64,20 @@ export class ProductsController {
     @Post('/search?')
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
-        @Body() filters: CreateProductDto
+        @Body() filters: CreateProductDto,
+
+        @Query(
+            'relations',
+            new DefaultValuePipe([]),
+            new ParseArrayPipe({
+                items: String,
+                separator: ',',
+                optional: true
+            })
+        )
+        relations: AllowedProductRelations
     ): Promise<PageDto<Product>> {
-        return await this.productsService.findSome(pageOptionsDto, filters);
+        return await this.productsService.findSome(pageOptionsDto, filters, relations);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -74,8 +90,20 @@ export class ProductsController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
-    findOne(@Param('id') id: string): Promise<Product | null> {
-        return this.productsService.findOne({ where: { id } });
+    findOne(
+        @Param('id') id: string,
+        @Query(
+            'relations',
+            new DefaultValuePipe([]),
+            new ParseArrayPipe({
+                items: String,
+                separator: ',',
+                optional: true
+            })
+        )
+        relations: AllowedProductRelations
+    ): Promise<Product | null> {
+        return this.productsService.findOne({ where: { id }, relations });
     }
 
     @HasRoles(Role.Manager, Role.Admin)
@@ -111,10 +139,10 @@ export class ProductsController {
         );
     }
 
-    // @HasRoles(Role.Admin)
-    // @UseGuards(RoleGuard)
-    // @Delete('/:id')
-    // async removeOne(@Param('id') id: string): Promise<Product> {
-    //     return await this.productsService.removeOne(id);
-    // }
+    @HasRoles(Role.Admin)
+    @UseGuards(RoleGuard)
+    @Delete('/:id')
+    async removeOneById(@Param('id') id: string): Promise<Product> {
+        return await this.productsService.removeOneById(id);
+    }
 }
