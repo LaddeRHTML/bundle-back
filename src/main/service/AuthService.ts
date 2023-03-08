@@ -39,10 +39,10 @@ export class AuthService {
         private readonly configService: ConfigurationService
     ) {}
 
-    async validateUser(email: string, password: string): Promise<Partial<User>> {
+    async validateUser(phone_number: string, password: string): Promise<Partial<User>> {
         try {
             const user = await this.userService.findOne({
-                where: { email },
+                where: { phone_number },
                 select: ['id', 'role', 'password']
             });
 
@@ -77,7 +77,10 @@ export class AuthService {
     }
 
     async register(userDto: CreateUserDto, role: Role): Promise<InsertResult> {
-        const isExists = await this.userService.isUserExists({ email: userDto.email });
+        const isExists = await this.userService.isUserExists({
+            phone_number: userDto.phone_number
+        });
+
         if (isExists) {
             throw new HttpException('User already exists', HttpStatus.CONFLICT);
         }
