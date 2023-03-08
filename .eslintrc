@@ -1,15 +1,14 @@
 {
     "root": true,
-    "extends": [
-        "plugin:@typescript-eslint/recommended",
-        "prettier/@typescript-eslint",
-        "plugin:prettier/recommended",
-        "plugin:yaml/recommended"
-    ],
-    "plugins": ["@typescript-eslint", "prettier", "yaml"],
-    "ignorePatterns": [".generated/**/*", "**/*.d.ts", "**/*.js"],
+    "plugins": ["@typescript-eslint", "import", "prettier"],
+    "extends": ["prettier", "plugin:@typescript-eslint/recommended", "plugin:import/typescript"],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "./tsconfig.build.json"
+    },
     "rules": {
-        "@typescript-eslint/no-unused-vars": "error",
-        "@typescript-eslint/no-explicit-any": "error"
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "@typescript-eslint/no-explicit-any": ["error"]
     }
 }
