@@ -129,7 +129,7 @@ export class UsersService {
                 throw new Error(SAME_PASSWORD_EXCEPTION);
             }
 
-            const user = await this.findOne({ where: { id: userId } });
+            const user = await this.findOne({ where: { id: userId }, select: ['password'] });
 
             if (!user) {
                 throw new HttpException('User not found!', HttpStatus.CONFLICT);
