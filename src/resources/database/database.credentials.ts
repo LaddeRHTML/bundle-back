@@ -7,11 +7,12 @@ import { File } from 'model/file/File';
 
 export const DatabaseCredentials: DataSourceOptions = {
     type: 'postgres',
-    host: 'mouse.db.elephantsql.com',
-    port: 5432,
-    username: 'rnlsfpmv',
-    password: 'k_ZSFlTHxDRLcDKQbkT5UJiX29D9A0PL',
-    database: 'rnlsfpmv',
+    // host: `${process.env.DATABASE_CONNECTION_HOST}`,
+    // port: parseInt(`${process.env.DATABASE_CONNECTION_PORT}`),
+    // username: `${process.env.DATABASE_CONNECTION_USERNAME}`,
+    // password: `${process.env.DATABASE_CONNECTION_PASSWORD}`,
+    // database: `${process.env.DATABASE_CONNECTION_MAINTENANCE}`,
+    url: `${process.env.DATABASE_CONNECTION_URL}`,
     entities: [User, Product, File, Order],
     synchronize: true,
     extra: {
