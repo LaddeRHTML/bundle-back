@@ -5,13 +5,14 @@ import { DatabaseModule } from 'database/database.module';
 
 import { AuthModule } from 'module/AuthModule';
 import { CPUModule } from 'module/CPUModule';
+import { CoolerModule } from 'module/CoolerModule';
 import { FilesModule } from 'module/FileModule';
-import { MotherboardModule } from 'module/MotherboardModule';
 import { HDDModule } from 'module/HDDModule';
+import { MotherboardModule } from 'module/MotherboardModule';
 import { OrdersModule } from 'module/OrderModule';
 import { ProductsModule } from 'module/ProductModule';
-import { UsersModule } from 'module/UserModule';
 import { RAMModule } from 'module/RAMModule';
+import { UsersModule } from 'module/UserModule';
 
 @Module({
     imports: [
@@ -25,7 +26,8 @@ import { RAMModule } from 'module/RAMModule';
         CPUModule,
         MotherboardModule,
         RAMModule,
-        HDDModule
+        HDDModule,
+        CoolerModule
     ],
     controllers: [],
     providers: []
