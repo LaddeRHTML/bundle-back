@@ -16,27 +16,27 @@ import RoleGuard from 'auth/guards/role-auth.guard';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 
-import { CreateCPUDto } from 'dto/CPU/CreateCPUDto';
-import { UpdateCPUDto } from 'dto/CPU/UpdateCPUDto';
+import { CreateCoolerDto } from 'dto/Cooler/CreateCoolerDto';
+import { UpdateCoolerDto } from 'dto/Cooler/UpdateCoolerDto';
 
-import { CPU } from 'model/accessories/CPU/CPU';
+import { Cooler } from 'model/accessories/Cooler/Cooler';
 import { Role } from 'model/user/UserEnums';
 
 import { RequestWithUser } from 'service/AuthService';
-import { CPUService } from 'service/CPUService';
+import { CoolerService } from 'service/CoolerService';
 
-@Controller('/cpu')
-export class CPUController {
-    constructor(private readonly cpuService: CPUService) {}
+@Controller('/cooler')
+export class CoolerController {
+    constructor(private readonly coolerService: CoolerService) {}
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
     async createOne(
-        @Body() createProductDto: CreateCPUDto,
+        @Body() createCoolerDto: CreateCoolerDto,
         @Req() { user: { id } }: RequestWithUser
-    ): Promise<CPU> {
-        return await this.cpuService.createOne(createProductDto, id);
+    ): Promise<Cooler> {
+        return await this.coolerService.createOne(createCoolerDto, id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -54,8 +54,8 @@ export class CPUController {
             })
         )
         relations: AllowedProductRelations */
-    ): Promise<CPU | null> {
-        return this.cpuService.findOne({ where: { id } });
+    ): Promise<Cooler | null> {
+        return this.coolerService.findOne({ where: { id } });
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -63,8 +63,7 @@ export class CPUController {
     @Post('/search?')
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
-        @Body() filters: CPU
-
+        @Body() filters: Cooler
         // @Query(
         //     'relations',
         //     new DefaultValuePipe([]),
@@ -75,8 +74,8 @@ export class CPUController {
         //     })
         // )
         // relations: AllowedProductRelations
-    ): Promise<PageDto<CPU>> {
-        return await this.cpuService.findSome(pageOptionsDto, filters);
+    ): Promise<PageDto<Cooler>> {
+        return await this.coolerService.findSome(pageOptionsDto, filters);
     }
 
     @HasRoles(Role.Manager, Role.Admin)
@@ -85,15 +84,15 @@ export class CPUController {
     async updateById(
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
-        @Body() updateCPUDto: UpdateCPUDto
-    ): Promise<CPU> {
-        return await this.cpuService.updateOne(id, updateCPUDto, userId);
+        @Body() updateCoolerDto: UpdateCoolerDto
+    ): Promise<Cooler> {
+        return await this.coolerService.updateOne(id, updateCoolerDto, userId);
     }
 
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')
-    async removeOneById(@Param('id') id: string): Promise<CPU> {
-        return await this.cpuService.removeOneById(id);
+    async removedOneById(@Param('id') id: string): Promise<Cooler> {
+        return await this.coolerService.removeOneById(id);
     }
 }
