@@ -13,31 +13,30 @@ import {
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
-import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 
-import { CreateCPUDto } from 'dto/CPU/CreateCPUDto';
-import { UpdateCPUDto } from 'dto/CPU/UpdateCPUDto';
+import { CreateRAMDto } from 'dto/RAM/CreateRAMDto';
+import { UpdateRAMDto } from 'dto/RAM/UpdateRAMDto';
 
-import { CPU } from 'model/accessories/CPU/CPU';
+import { RAM } from 'model/accessories/RAM/RAM';
 import { Role } from 'model/user/UserEnums';
 
 import { RequestWithUser } from 'service/AuthService';
-import { CPUService } from 'service/CPUService';
+import { RAMService } from 'service/RAMService';
 
-@Controller('/cpu')
-export class CPUController {
-    constructor(private readonly cpuService: CPUService) {}
+@Controller('/ram')
+export class RAMController {
+    constructor(private readonly ramService: RAMService) {}
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
     async createOne(
-        @Body() createCPUDto: CreateCPUDto,
+        @Body() createRAMDto: CreateRAMDto,
         @Req() { user: { id } }: RequestWithUser
-    ): Promise<CPU> {
-        return await this.cpuService.createOne(createCPUDto, id);
+    ): Promise<RAM> {
+        return await this.ramService.createOne(createRAMDto, id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -55,8 +54,8 @@ export class CPUController {
             })
         )
         relations: AllowedProductRelations */
-    ): Promise<CPU | null> {
-        return this.cpuService.findOne({ where: { id } });
+    ): Promise<RAM | null> {
+        return this.ramService.findOne({ where: { id } });
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -64,7 +63,7 @@ export class CPUController {
     @Post('/search?')
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
-        @Body() filters: CPU
+        @Body() filters: RAM
 
         // @Query(
         //     'relations',
@@ -76,8 +75,8 @@ export class CPUController {
         //     })
         // )
         // relations: AllowedProductRelations
-    ): Promise<PageDto<CPU>> {
-        return await this.cpuService.findSome(pageOptionsDto, filters);
+    ): Promise<PageDto<RAM>> {
+        return await this.ramService.findSome(pageOptionsDto, filters);
     }
 
     @HasRoles(Role.Manager, Role.Admin)
@@ -86,15 +85,15 @@ export class CPUController {
     async updateById(
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
-        @Body() updateCPUDto: UpdateCPUDto
-    ): Promise<SuccessfullyUpdatedEntityResponse<CPU>> {
-        return await this.cpuService.updateOne(id, updateCPUDto, userId);
+        @Body() updateRAMDto: UpdateRAMDto
+    ): Promise<RAM> {
+        return await this.ramService.updateOne(id, updateRAMDto, userId);
     }
 
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')
-    async removeOneById(@Param('id') id: string): Promise<CPU> {
-        return await this.cpuService.removeOneById(id);
+    async removeOneById(@Param('id') id: string): Promise<RAM> {
+        return await this.ramService.removeOneById(id);
     }
 }
