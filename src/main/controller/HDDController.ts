@@ -13,31 +13,30 @@ import {
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
-import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 
-import { CreateCPUDto } from 'dto/CPU/CreateCPUDto';
-import { UpdateCPUDto } from 'dto/CPU/UpdateCPUDto';
+import { CreateHDDDto } from 'dto/HDD/CreateHDDDto';
+import { UpdateHDDDto } from 'dto/HDD/UpdateHDDDto';
 
-import { CPU } from 'model/accessories/CPU/CPU';
+import { HDD } from 'model/accessories/HDD/HDD';
 import { Role } from 'model/user/UserEnums';
 
 import { RequestWithUser } from 'service/AuthService';
-import { CPUService } from 'service/CPUService';
+import { HDDService } from 'service/HDDService';
 
-@Controller('/cpu')
-export class CPUController {
-    constructor(private readonly cpuService: CPUService) {}
+@Controller('/hdd')
+export class HDDController {
+    constructor(private readonly hddService: HDDService) {}
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
     async createOne(
-        @Body() createCPUDto: CreateCPUDto,
+        @Body() createHDDDto: CreateHDDDto,
         @Req() { user: { id } }: RequestWithUser
-    ): Promise<CPU> {
-        return await this.cpuService.createOne(createCPUDto, id);
+    ): Promise<HDD> {
+        return await this.hddService.createOne(createHDDDto, id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -55,8 +54,8 @@ export class CPUController {
             })
         )
         relations: AllowedProductRelations */
-    ): Promise<CPU | null> {
-        return this.cpuService.findOne({ where: { id } });
+    ): Promise<HDD | null> {
+        return this.hddService.findOne({ where: { id } });
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -64,7 +63,7 @@ export class CPUController {
     @Post('/search?')
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
-        @Body() filters: CPU
+        @Body() filters: HDD
 
         // @Query(
         //     'relations',
@@ -76,8 +75,8 @@ export class CPUController {
         //     })
         // )
         // relations: AllowedProductRelations
-    ): Promise<PageDto<CPU>> {
-        return await this.cpuService.findSome(pageOptionsDto, filters);
+    ): Promise<PageDto<HDD>> {
+        return await this.hddService.findSome(pageOptionsDto, filters);
     }
 
     @HasRoles(Role.Manager, Role.Admin)
@@ -86,15 +85,15 @@ export class CPUController {
     async updateById(
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
-        @Body() updateCPUDto: UpdateCPUDto
-    ): Promise<SuccessfullyUpdatedEntityResponse<CPU>> {
-        return await this.cpuService.updateOne(id, updateCPUDto, userId);
+        @Body() updateHDDDto: UpdateHDDDto
+    ): Promise<HDD> {
+        return await this.hddService.updateOne(id, updateHDDDto, userId);
     }
 
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')
-    async removeOneById(@Param('id') id: string): Promise<CPU> {
-        return await this.cpuService.removeOneById(id);
+    async removeOneById(@Param('id') id: string): Promise<HDD> {
+        return await this.hddService.removeOneById(id);
     }
 }
