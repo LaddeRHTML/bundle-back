@@ -9,6 +9,7 @@ import { FilesModule } from 'module/FileModule';
 import { OrdersModule } from 'module/OrderModule';
 import { ProductsModule } from 'module/ProductModule';
 import { UsersModule } from 'module/UserModule';
+import { WaterCoolingModule } from 'module/WaterCooling';
 
 @Module({
     imports: [
@@ -19,7 +20,8 @@ import { UsersModule } from 'module/UserModule';
         ProductsModule,
         FilesModule,
         OrdersModule,
-        CPUModule
+        CPUModule,
+        WaterCoolingModule
     ],
     controllers: [],
     providers: []
