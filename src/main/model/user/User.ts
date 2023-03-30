@@ -48,10 +48,10 @@ export class User {
     @Column({ type: 'varchar' })
     public family_name: string;
 
-    @Column({ type: 'varchar' })
+    @Column({ type: 'varchar', nullable: true })
     public patronymic: string;
 
-    @Column({})
+    @Column({ type: 'timestamptz' })
     @IsDate()
     public birthday: Date;
 
