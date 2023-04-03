@@ -21,9 +21,9 @@ jobs:
             - run: mkdir "$HOME/.ssh"
             - run: echo "${{ secrets.private_ssh_key }}" > "$HOME/.ssh/key"
             - run: chmod 600 "$HOME/.ssh/key"
-            - run: ssh user@bundle-backend.kz "cd /var/www/bundle-backend.kz/html/ && git checkout release && git pull && exit"
+            - run: ssh user@bundle-backend.kz "cd /var/www/bundle-backend.kz/html/bundle-back && git checkout release && git pull && npm i && npm run start:local && exit"
             # Build
-            - run: npm ci
-            - run: npm run start:local
+            # - run: npm ci
+            # - run: npm run start:local
             # # Deploy
             # - run: cd dist && rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete . user@bundle-backend.kz:/var/www/bundle-backend.kz/html/
