@@ -21,7 +21,10 @@ jobs:
             - run: mkdir "$HOME/.ssh"
             - run: echo "${{ secrets.private_ssh_key }}" > "$HOME/.ssh/key"
             - run: chmod 600 "$HOME/.ssh/key"
-            - run: ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no "cd /var/www/bundle-backend.kz/html/bundle-back && git checkout release && git pull && npm i && npm run start:local && exit"
+            - run: ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no "cd /var/www/bundle-backend.kz/html/bundle-back && git checkout release && git pull"
+            - run: npm i
+            - run: npm run start:local
+            - run: exit
             # Build
             # - run: npm ci
             # - run: npm run start:local
