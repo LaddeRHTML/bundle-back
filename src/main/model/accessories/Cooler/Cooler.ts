@@ -4,11 +4,6 @@ import { Entity, Column } from 'typeorm';
 import { BaseAccessory } from '../BaseAccessory';
 import { CoolerMaker, Package } from './CoolerEnums';
 
-// interface Socket{
-//     name: 'Intel' | 'AMD';
-//     socket_generation: string[]
-// }
-
 @Entity()
 export class Cooler extends BaseAccessory {
     constructor(maker: string, model: string) {
@@ -143,7 +138,7 @@ export class Cooler extends BaseAccessory {
     @Max(400000)
     @Min(1)
     @IsNotEmpty()
-    MTBF: number;
+    MTBF_hours: number;
 
     @Column({
         name: 'supply_voltage',
@@ -160,6 +155,34 @@ export class Cooler extends BaseAccessory {
     })
     @IsNotEmpty()
     backlight: boolean;
+
+    @Column({
+        name: 'backlight_color',
+        type: 'text',
+        nullable: false
+    })
+    @IsNotEmpty()
+    backlight_color: string;
+
+    @Column({
+        name: 'length_tubes_mm',
+        type: 'smallint',
+        nullable: false
+    })
+    @Max(500)
+    @Min(1)
+    @IsNotEmpty()
+    length_tubes_mm: number;
+
+    @Column({
+        name: 'radiator_size_mm',
+        type: 'smallint',
+        nullable: false
+    })
+    @Max(500)
+    @Min(1)
+    @IsNotEmpty()
+    radiator_size_mm: number;
 
     @Column({
         name: 'bearing_type',
@@ -197,7 +220,7 @@ export class Cooler extends BaseAccessory {
     more: string;
 
     @Column({
-        name: 'dimensions_W_x_H_x_D_cm',
+        name: 'pump_size_cm',
         type: 'double precision',
         array: true,
         default: [],
@@ -206,7 +229,41 @@ export class Cooler extends BaseAccessory {
     @Max(30)
     @Min(0)
     @IsNotEmpty()
-    dimensions_W_x_H_x_D_cm: number[];
+    pump_size_cm: number;
+
+    @Column({
+        name: 'size_radiator_cm',
+        type: 'double precision',
+        array: true,
+        default: [],
+        nullable: false
+    })
+    @Max(40)
+    @Min(0)
+    @IsNotEmpty()
+    size_radiator_cm: number;
+
+    @Column({
+        name: 'weight',
+        type: 'double precision',
+        nullable: false
+    })
+    @Max(6)
+    @Min(0)
+    @IsNotEmpty()
+    weight_Kg: number;
+
+    @Column({
+        name: 'size',
+        type: 'double precision',
+        array: true,
+        default: [],
+        nullable: false
+    })
+    @Max(30)
+    @Min(0)
+    @IsNotEmpty()
+    size_cm: number;
 
     @Column({ type: 'enum', enum: Package, default: Package.RTL })
     @IsNotEmpty()
