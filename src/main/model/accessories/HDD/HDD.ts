@@ -48,6 +48,34 @@ export class HDD extends BaseAccessory {
     disk_capacity_Gb: number;
 
     @Column({
+        name: 'reading_speed_up_to_MB/s',
+        type: 'smallint',
+        nullable: false
+    })
+    @Max(15000)
+    @Min(100)
+    @IsNotEmpty()
+    reading_speed_up_to_MB: number;
+
+    @Column({
+        name: 'write_speed_up_to_MB/s',
+        type: 'smallint',
+        nullable: false
+    })
+    @Max(15000)
+    @Min(100)
+    @IsNotEmpty()
+    write_speed_up_to_MB: number;
+
+    @Column({
+        name: 'memory_chip_layout',
+        type: 'text',
+        nullable: false
+    })
+    @IsNotEmpty()
+    memory_chip_layout: string;
+
+    @Column({
         name: 'total_data_volume_TBW',
         type: 'smallint',
         nullable: false
@@ -153,14 +181,12 @@ export class HDD extends BaseAccessory {
     more: string;
 
     @Column({
-        name: 'dimensions_W_x_H_x_D_cm',
+        name: 'size',
         type: 'double precision',
-        array: true,
-        default: [],
         nullable: false
     })
     @Max(30)
     @Min(0)
     @IsNotEmpty()
-    dimensions_W_x_H_x_D_cm: number[];
+    size: number;
 }
