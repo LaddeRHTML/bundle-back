@@ -16,7 +16,7 @@ import RoleGuard from 'auth/guards/role-auth.guard';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 
-import { CreateCPUDto } from 'dto/CPU/CreateCPUdto';
+import { CreateCPUDto } from 'dto/CPU/CreateCPUDto';
 import { UpdateCPUDto } from 'dto/CPU/UpdateCPUDto';
 
 import { CPU } from 'model/accessories/CPU/CPU';

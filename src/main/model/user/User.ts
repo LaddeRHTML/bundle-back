@@ -51,7 +51,7 @@ export class User {
     @Column({ type: 'varchar', nullable: true })
     public patronymic: string;
 
-    @Column({ type: 'timestamptz' })
+    @Column({ type: 'timestamptz', default: new Date() })
     @IsDate()
     public birthday: Date;
 

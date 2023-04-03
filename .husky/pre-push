@@ -1,0 +1,16 @@
+#!/bin/bash
+
+echo -e "===\n>> Pre-push Hook: Checking branch name / Проверяем ветку..."
+
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+PROTECTED_BRANCHES="^(master|release)"
+
+if [[ "$BRANCH" =~ $PROTECTED_BRANCHES ]]
+then
+  echo -e "\n🚫 Cannot push to remote $BRANCH branch, please create your own branch and use PR."
+  echo -e "🚫 Невозможно запушить изменения в $BRANCH, Пожалуйста создайте свою ветку по нашим договоренностям и запушьте измнения туда.\n" && exit 1
+fi
+
+echo -e ">> Finish checking branch name / Закончил проверку изменений в ветке.\n==="
+
+exit 0

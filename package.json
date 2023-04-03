@@ -17,6 +17,7 @@
     "scripts": {
         "deploy": "sls deploy",
         "prebuild": "rimraf dist",
+        "test": "editorconfig-checker",
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
         "start": "nest start",
@@ -27,6 +28,12 @@
         "start:local": "set NODE_ENV=local && nest build --webpack --webpackPath webpack-hmr.config.js --watch",
         "up": "docker-compose up -d",
         "down": "docker-compose down"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "./commands/pre-commit",
+            "pre-push": "./commands/pre-push $HUSKY_GIT_STDIN"
+        }
     },
     "dependencies": {
         "@nestjs/common": "^9.3.9",
@@ -49,6 +56,7 @@
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "express": "^4.18.2",
+        "husky": "^8.0.3",
         "mailgun-js": "^0.22.0",
         "moment": "^2.29.4",
         "multer-gridfs-storage": "^5.0.2",
@@ -84,6 +92,7 @@
         "@types/supertest": "^2.0.12",
         "@typescript-eslint/eslint-plugin": "^5.54.0",
         "@typescript-eslint/parser": "^5.54.0",
+        "editorconfig-checker": "^5.0.1",
         "eslint": "^8.35.0",
         "eslint-config-airbnb-typescript": "^17.0.0",
         "eslint-config-prettier": "^8.6.0",

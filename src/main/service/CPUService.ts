@@ -5,7 +5,7 @@ import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
-import { CreateCPUDto } from 'dto/CPU/CreateCPUdto';
+import { CreateCPUDto } from 'dto/CPU/CreateCPUDto';
 
 import { CPU } from 'model/accessories/CPU/CPU';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
