@@ -24,5 +24,4 @@ jobs:
             - run: rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete . user@bundle-backend.kz:/var/www/bundle-backend.kz/html/bundle-back/
             - run: git checkout release
             - run: git pull
-            - run: npm i
             - run: exit
