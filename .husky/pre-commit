@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Protect master from accidental commits.
+echo -e "===\n>> Pre-commit Hook:: Checking branch name / Проверяем ветку..."
+branchName=$(git branch | grep '*' | sed 's/* //')
+
+if [ $branchName == 'release' ]
+then
+  echo -e "\n🚫 Commit directly to master branch is not allowed! / Пуши напрямую в релиз - запрещены!\n" && exit 1
+fi
+
+echo -e ">> Finish checking branch name / Заканчиваю проверять ветку.\n==="
+
+exit 0npm test~
