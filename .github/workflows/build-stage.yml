@@ -25,6 +25,4 @@ jobs:
             - run: git checkout release
             - run: git pull
             - run: npm i
-            - run: npm run build
-            - run: node dist/main
             - run: exit
