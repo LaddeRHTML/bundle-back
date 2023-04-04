@@ -1,7 +1,7 @@
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity } from 'typeorm';
 
-import { CPUMaker, Package } from './CPUEnums';
+import { CPUMaker, CPUSocket, Package } from './CPUEnums';
 import { BaseAccessory } from '../BaseAccessory';
 
 interface Ram {
@@ -31,13 +31,11 @@ export class CPU extends BaseAccessory {
 
     @Column({
         name: 'socket',
-        type: 'text',
+        type: 'enum',
         nullable: false
     })
-    @MaxLength(10)
-    @MinLength(1)
     @IsNotEmpty()
-    socket: string;
+    socket: CPUSocket;
 
     @Column({
         name: 'core_count',
