@@ -16,6 +16,7 @@ import { File } from 'model/file/File';
 import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
 import sumArray from 'common/utils/array/sumArray';
 import { CPU } from 'model/accessories/CPU/CPU';
+import { RAM } from 'model/accessories/RAM/RAM';
 
 @Entity()
 @Unique(['name'])
@@ -25,14 +26,14 @@ export class Product extends BaseEntity {
         this.price = sumArray(prices);
     }
 
-    @Column({ type: 'integer', default: 0 })
+    @Column({ name: 'discount_price', type: 'integer', default: 0 })
     public discount_price: number;
 
     @Index({ unique: true })
-    @Column({ type: 'varchar' })
+    @Column({ name: 'name', type: 'varchar' })
     public name: string;
 
-    @Column({ type: 'varchar', nullable: true })
+    @Column({ name: 'preview_picture_id', type: 'varchar', nullable: true })
     public preview_picture_id: string;
 
     @Column({
@@ -47,11 +48,17 @@ export class Product extends BaseEntity {
     @Min(300000)
     public price: number;
 
-    @Column({ type: 'smallint', nullable: true })
+    @Column({ name: 'warranty_days', type: 'smallint', nullable: true })
     public warranty_days: number;
 
-    @Column({ type: 'varchar', default: '', nullable: true })
+    @Column({ name: 'weight', type: 'varchar', default: '', nullable: true })
     public weight: string;
+
+    @ManyToOne(() => CPU, (c: CPU) => c, {
+        cascade: true,
+        eager: true
+    })
+    public CPU: CPU;
 
     @ManyToOne(() => Motherboard, (m: Motherboard) => m, {
         cascade: true,
@@ -59,11 +66,11 @@ export class Product extends BaseEntity {
     })
     public motherboard: Motherboard;
 
-    @ManyToOne(() => CPU, (c: CPU) => c, {
+    @ManyToOne(() => RAM, (r: RAM) => r, {
         cascade: true,
         eager: true
     })
-    public CPU: CPU;
+    public RAM: RAM;
 
     @JoinColumn({ name: 'pictures' })
     @ManyToOne(() => File, {

@@ -1,10 +1,11 @@
 import { DataSourceOptions } from 'typeorm';
 
+import { CPU } from 'model/accessories/CPU/CPU';
+import { RAM } from 'model/accessories/RAM/RAM';
+import { File } from 'model/file/File';
 import { Order } from 'model/order/Order';
 import { Product } from 'model/product/Product';
 import { User } from 'model/user/User';
-import { File } from 'model/file/File';
-import { CPU } from 'model/accessories/CPU/CPU';
 import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
 
 export const DatabaseCredentials: DataSourceOptions = {
@@ -14,7 +15,7 @@ export const DatabaseCredentials: DataSourceOptions = {
     username: `${process.env.DATABASE_CONNECTION_USERNAME}`,
     password: `${process.env.DATABASE_CONNECTION_PASSWORD}`,
     database: `${process.env.DATABASE_CONNECTION_MAINTENANCE}`,
-    entities: [User, Product, File, Order, CPU, Motherboard],
+    entities: [User, Product, File, Order, CPU, Motherboard, RAM],
     synchronize: true,
     extra: {
         connectionLimit: 5

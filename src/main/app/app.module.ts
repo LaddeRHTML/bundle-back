@@ -10,6 +10,7 @@ import { MotherboardModule } from 'module/MotherboardModule';
 import { OrdersModule } from 'module/OrderModule';
 import { ProductsModule } from 'module/ProductModule';
 import { UsersModule } from 'module/UserModule';
+import { RAMModule } from 'module/RAMModule';
 
 @Module({
     imports: [
@@ -21,7 +22,8 @@ import { UsersModule } from 'module/UserModule';
         FilesModule,
         OrdersModule,
         CPUModule,
-        MotherboardModule
+        MotherboardModule,
+        RAMModule
     ],
     controllers: [],
     providers: []

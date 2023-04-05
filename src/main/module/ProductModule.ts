@@ -9,12 +9,13 @@ import { Product } from 'model/product/Product';
 import { User } from 'model/user/User';
 import { CPU } from 'model/accessories/CPU/CPU';
 import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
+import { RAM } from 'model/accessories/RAM/RAM';
 
 import { FilesService } from 'service/FileService';
 import { ProductsService } from 'service/ProductService';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Product, File, Order, User, CPU, Motherboard])],
+    imports: [TypeOrmModule.forFeature([Product, File, Order, User, CPU, Motherboard, RAM])],
     controllers: [ProductsController],
     providers: [ProductsService, FilesService],
     exports: [ProductsService]
