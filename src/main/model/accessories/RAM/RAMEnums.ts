@@ -1,4 +1,4 @@
-export enum RamPackage {
+export enum Package {
     OEM = 'OEM',
     BOX = 'BOX'
 }
@@ -8,7 +8,7 @@ export enum MemoryType {
     DDR5 = 'DDR5'
 }
 
-export enum ramMaker {
+export enum RAMMaker {
     ADATA = 'ADATA',
     AMD = 'AMD',
     Apacer = 'Apacer',

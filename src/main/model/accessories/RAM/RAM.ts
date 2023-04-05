@@ -1,8 +1,9 @@
 import { IsNotEmpty, Max, Min } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
-import { MemoryType, RamPackage, ramMaker } from './RAMEnums';
+import { MemoryType, Package, RAMMaker } from './RAMEnums';
 import { BaseAccessory } from '../BaseAccessory';
+import { Product } from 'model/product/Product';
 
 @Entity()
 export class RAM extends BaseAccessory {
@@ -11,11 +12,11 @@ export class RAM extends BaseAccessory {
         this.name = `${maker} ${model} ${memory_type} ${memory_Gb}`;
     }
 
-    @Column({ type: 'enum', enum: ramMaker })
-    maker: ramMaker;
+    @Column({ name: 'maker', type: 'enum', enum: RAMMaker })
+    public maker: RAMMaker;
 
-    @Column({ type: 'enum', enum: MemoryType })
-    memory_type: MemoryType;
+    @Column({ name: 'memory_type', type: 'enum', enum: MemoryType })
+    public memory_type: MemoryType;
 
     @Column({
         name: 'memory_Gb',
@@ -25,7 +26,7 @@ export class RAM extends BaseAccessory {
     @Max(512)
     @Min(1)
     @IsNotEmpty()
-    memory_Gb: number;
+    public memory_Gb: number;
 
     @Column({
         name: 'memory_clock_MHz',
@@ -35,7 +36,7 @@ export class RAM extends BaseAccessory {
     @Max(10000)
     @Min(1)
     @IsNotEmpty()
-    memory_clock_MHz: number;
+    public memory_clock_MHz: number;
 
     @Column({
         name: 'number_transactions',
@@ -45,7 +46,7 @@ export class RAM extends BaseAccessory {
     @Max(10000)
     @Min(1)
     @IsNotEmpty()
-    number_transactions: number;
+    public number_transactions: number;
 
     @Column({
         name: 'supply_voltage',
@@ -55,7 +56,7 @@ export class RAM extends BaseAccessory {
     @Max(10)
     @Min(0.5)
     @IsNotEmpty()
-    supply_voltage: number;
+    public supply_voltage: number;
 
     @Column({
         name: 'timings',
@@ -67,7 +68,7 @@ export class RAM extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    timings: number[];
+    public timings: number[];
 
     @Column({
         name: 'peculiarities',
@@ -75,18 +76,18 @@ export class RAM extends BaseAccessory {
         nullable: true
     })
     @IsNotEmpty()
-    peculiarities: string;
+    public peculiarities: string;
 
     @Column({
         name: 'more',
         type: 'text',
         nullable: true
     })
-    more: string;
+    public more: string;
 
-    @Column({ type: 'enum', enum: RamPackage, default: RamPackage.BOX })
+    @Column({ type: 'enum', enum: Package, default: Package.BOX })
     @IsNotEmpty()
-    package: RamPackage;
+    public package: Package;
 
     @Column({
         name: 'ram_height_cm',
@@ -96,5 +97,24 @@ export class RAM extends BaseAccessory {
     @Max(15)
     @Min(1)
     @IsNotEmpty()
-    ram_height_cm: number;
+    public ram_height_cm: number;
+
+    @Column({
+        name: 'price',
+        type: 'numeric',
+        precision: 10,
+        scale: 2,
+        nullable: false,
+        default: 6000
+    })
+    @Max(1000000)
+    @Min(10000)
+    @IsNotEmpty()
+    public price: number;
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.RAM, {
+        nullable: true
+    })
+    public products: Product[];
 }
