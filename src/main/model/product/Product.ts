@@ -19,6 +19,7 @@ import { RAM } from 'model/accessories/RAM/RAM';
 import { HDD } from 'model/accessories/HDD/HDD';
 import { Cooler } from 'model/accessories/Cooler/Cooler';
 import sumArray from 'common/utils/array/sumArray';
+import { PowerUnit } from 'model/accessories/PowerUnit/PowerUnit';
 
 @Entity()
 @Unique(['name'])
@@ -85,6 +86,12 @@ export class Product extends BaseEntity {
         eager: true
     })
     public cooler: Cooler;
+
+    @ManyToOne(() => PowerUnit, (p: PowerUnit) => p, {
+        cascade: true,
+        eager: true
+    })
+    public power_unit: PowerUnit;
 
     @JoinColumn({ name: 'pictures' })
     @ManyToOne(() => File, {

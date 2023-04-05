@@ -10,6 +10,7 @@ import { FilesModule } from 'module/FileModule';
 import { HDDModule } from 'module/HDDModule';
 import { MotherboardModule } from 'module/MotherboardModule';
 import { OrdersModule } from 'module/OrderModule';
+import { PowerUnitModule } from 'module/PowerUnitModule';
 import { ProductsModule } from 'module/ProductModule';
 import { RAMModule } from 'module/RAMModule';
 import { UsersModule } from 'module/UserModule';
@@ -27,7 +28,8 @@ import { UsersModule } from 'module/UserModule';
         MotherboardModule,
         RAMModule,
         HDDModule,
-        CoolerModule
+        CoolerModule,
+        PowerUnitModule
     ],
     controllers: [],
     providers: []

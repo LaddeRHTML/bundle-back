@@ -1,4 +1,4 @@
-import { IsNotEmpty, Max, Min } from 'class-validator';
+import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Entity, Column, JoinColumn, OneToMany } from 'typeorm';
 
 import { BaseAccessory } from '../BaseAccessory';
@@ -118,6 +118,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         nullable: false
     })
+    @MaxLength(255)
+    @MinLength(6)
     @IsNotEmpty()
     public connector: string;
 
@@ -146,6 +148,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         nullable: false
     })
+    @MaxLength(255)
+    @MinLength(6)
     @IsNotEmpty()
     public supply_voltage_w: string;
 
@@ -162,6 +166,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(100)
+    @MinLength(6)
     public backlight_color: string;
 
     @Column({
@@ -213,6 +219,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(455)
+    @MinLength(6)
     public more: string;
 
     @Column({
@@ -248,6 +256,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(100)
+    @MinLength(6)
     public size_volume_cm: string;
 
     @Column({
