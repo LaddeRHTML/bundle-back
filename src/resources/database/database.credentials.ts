@@ -5,6 +5,7 @@ import { Product } from 'model/product/Product';
 import { User } from 'model/user/User';
 import { File } from 'model/file/File';
 import { CPU } from 'model/accessories/CPU/CPU';
+import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
 
 export const DatabaseCredentials: DataSourceOptions = {
     type: 'postgres',
@@ -13,8 +14,7 @@ export const DatabaseCredentials: DataSourceOptions = {
     username: `${process.env.DATABASE_CONNECTION_USERNAME}`,
     password: `${process.env.DATABASE_CONNECTION_PASSWORD}`,
     database: `${process.env.DATABASE_CONNECTION_MAINTENANCE}`,
-    // url: `${process.env.DATABASE_CONNECTION_URL}`,
-    entities: [User, Product, File, Order, CPU],
+    entities: [User, Product, File, Order, CPU, Motherboard],
     synchronize: true,
     extra: {
         connectionLimit: 5

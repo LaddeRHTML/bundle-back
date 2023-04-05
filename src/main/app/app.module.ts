@@ -6,6 +6,7 @@ import { DatabaseModule } from 'database/database.module';
 import { AuthModule } from 'module/AuthModule';
 import { CPUModule } from 'module/CPUModule';
 import { FilesModule } from 'module/FileModule';
+import { MotherboardModule } from 'module/MotherboardModule';
 import { OrdersModule } from 'module/OrderModule';
 import { ProductsModule } from 'module/ProductModule';
 import { UsersModule } from 'module/UserModule';
@@ -19,7 +20,8 @@ import { UsersModule } from 'module/UserModule';
         ProductsModule,
         FilesModule,
         OrdersModule,
-        CPUModule
+        CPUModule,
+        MotherboardModule
     ],
     controllers: [],
     providers: []

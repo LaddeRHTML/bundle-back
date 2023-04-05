@@ -1,8 +1,9 @@
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
-import { CPUMaker, Package } from './CPUEnums';
+import { CPUMaker, CPUSocket, Package } from './CPUEnums';
 import { BaseAccessory } from '../BaseAccessory';
+import { Product } from 'model/product/Product';
 
 interface Ram {
     name: 'ddr4' | 'ddr5';
@@ -11,13 +12,13 @@ interface Ram {
 
 @Entity()
 export class CPU extends BaseAccessory {
-    constructor(maker: string, type: string, model: string, socket: string) {
+    constructor(maker: string, type: string, model: string, socket: CPUSocket) {
         super();
         this.name = `${maker} ${type} ${model} ${socket}`;
     }
 
-    @Column({ type: 'enum', enum: CPUMaker })
-    maker: CPUMaker;
+    @Column({ name: 'maker', type: 'enum', enum: CPUMaker })
+    public maker: CPUMaker;
 
     @Column({
         name: 'type',
@@ -27,17 +28,16 @@ export class CPU extends BaseAccessory {
     @MaxLength(10)
     @MinLength(1)
     @IsNotEmpty()
-    type: string;
+    public type: string;
 
     @Column({
         name: 'socket',
-        type: 'text',
+        enum: CPUSocket,
+        type: 'enum',
         nullable: false
     })
-    @MaxLength(10)
-    @MinLength(1)
     @IsNotEmpty()
-    socket: string;
+    public socket: CPUSocket;
 
     @Column({
         name: 'core_count',
@@ -47,7 +47,7 @@ export class CPU extends BaseAccessory {
     @Max(256)
     @Min(2)
     @IsNotEmpty()
-    core_count: number;
+    public core_count: number;
 
     @Column({
         name: 'thread_count',
@@ -56,7 +56,7 @@ export class CPU extends BaseAccessory {
     })
     @Min(1)
     @IsNotEmpty()
-    thread_count: number;
+    public thread_count: number;
 
     @Column({
         name: 'clock_frequency_max_ghz',
@@ -66,7 +66,7 @@ export class CPU extends BaseAccessory {
     @Max(7)
     @Min(1.8)
     @IsNotEmpty()
-    clock_frequency_max_ghz: number;
+    public clock_frequency_max_ghz: number;
 
     @Column({
         name: 'clock_frequency_min_ghz',
@@ -76,7 +76,7 @@ export class CPU extends BaseAccessory {
     @Max(7)
     @Min(1.8)
     @IsNotEmpty()
-    clock_frequency_min_ghz: number;
+    public clock_frequency_min_ghz: number;
 
     @Column({
         name: 'microarchitecture',
@@ -84,7 +84,7 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    microarchitecture: string;
+    public microarchitecture: string;
 
     @Column({
         name: 'cache_size_l2',
@@ -92,7 +92,7 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    cache_size_l2: number;
+    public cache_size_l2: number;
 
     @Column({
         name: 'cache_size_l3',
@@ -100,7 +100,7 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    cache_size_l3: number;
+    public cache_size_l3: number;
 
     @Column({
         name: 'support_ram',
@@ -108,7 +108,7 @@ export class CPU extends BaseAccessory {
         default: () => "'[]'"
     })
     @IsNotEmpty()
-    support_ram: Ram[];
+    public support_ram: Ram[];
 
     @Column({
         name: 'max_ram_gb',
@@ -118,7 +118,7 @@ export class CPU extends BaseAccessory {
     @Max(256)
     @Min(1)
     @IsNotEmpty()
-    max_ram_gb: number;
+    public max_ram_gb: number;
 
     @Column({
         name: 'support_ess',
@@ -126,7 +126,7 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    support_ess: boolean;
+    public support_ess: boolean;
 
     @Column({
         name: 'integrated_graphics_system',
@@ -136,7 +136,7 @@ export class CPU extends BaseAccessory {
     @MaxLength(40)
     @MinLength(4)
     @IsNotEmpty()
-    integrated_graphics_system: string;
+    public integrated_graphics_system: string;
 
     @Column({
         name: 'techproc_nm',
@@ -146,7 +146,7 @@ export class CPU extends BaseAccessory {
     @Max(256)
     @Min(1)
     @IsNotEmpty()
-    techproccess_nm: number;
+    public techproccess_nm: number;
 
     @Column({
         name: 'TDP',
@@ -156,7 +156,7 @@ export class CPU extends BaseAccessory {
     @Max(1000)
     @Min(1)
     @IsNotEmpty()
-    TDP_wt: number;
+    public TDP_wt: number;
 
     @Column({
         name: 'max_TDP_wt',
@@ -166,17 +166,16 @@ export class CPU extends BaseAccessory {
     @Max(1000)
     @Min(1)
     @IsNotEmpty()
-    max_TDP_wt: number;
+    public max_TDP_wt: number;
 
     @Column({
         name: 'instruction_set',
         type: 'text',
         array: true,
         default: [],
-        nullable: false
+        nullable: true
     })
-    @IsNotEmpty()
-    instruction_set: string[];
+    public instruction_set: string[];
 
     @Column({
         name: 'support_hyper_threading',
@@ -184,7 +183,7 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    support_hyper_threading: boolean;
+    public support_hyper_threading: boolean;
 
     @Column({
         name: 'support_64_b',
@@ -192,11 +191,11 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    support_64_b: boolean;
+    public support_64_b: boolean;
 
-    @Column({ type: 'enum', enum: Package, default: Package.OEM })
+    @Column({ type: 'enum', enum: Package, default: Package.OEM, nullable: false })
     @IsNotEmpty()
-    package: Package;
+    public package: Package;
 
     @Column({
         name: 'critical_temperature_c',
@@ -204,12 +203,31 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    critical_temperature_c: number;
+    public critical_temperature_c: number;
 
     @Column({
         name: 'more',
         type: 'text',
         nullable: true
     })
-    more: string;
+    public more: string;
+
+    @Column({
+        name: 'price',
+        type: 'numeric',
+        precision: 10,
+        scale: 2,
+        nullable: false,
+        default: 6000
+    })
+    @Max(1000000)
+    @Min(6000)
+    @IsNotEmpty()
+    public price: number;
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.CPU, {
+        nullable: true
+    })
+    public products: Product[];
 }

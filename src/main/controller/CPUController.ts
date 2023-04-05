@@ -13,6 +13,7 @@ import {
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 
@@ -86,7 +87,7 @@ export class CPUController {
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
         @Body() updateCPUDto: UpdateCPUDto
-    ): Promise<CPU> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<CPU>> {
         return await this.cpuService.updateOne(id, updateCPUDto, userId);
     }
 

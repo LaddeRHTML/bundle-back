@@ -27,7 +27,7 @@ export abstract class BaseAccessory extends BaseEntity {
         nullable: false,
         unique: true
     })
-    @MaxLength(15)
+    @MaxLength(35)
     @MinLength(2)
     @IsNotEmpty()
     model: string;
