@@ -14,10 +14,11 @@ import { BaseEntity } from 'model/base';
 import { Order } from 'model/order/Order';
 import { File } from 'model/file/File';
 import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
-import sumArray from 'common/utils/array/sumArray';
 import { CPU } from 'model/accessories/CPU/CPU';
 import { RAM } from 'model/accessories/RAM/RAM';
 import { HDD } from 'model/accessories/HDD/HDD';
+import { Cooler } from 'model/accessories/Cooler/Cooler';
+import sumArray from 'common/utils/array/sumArray';
 
 @Entity()
 @Unique(['name'])
@@ -78,6 +79,12 @@ export class Product extends BaseEntity {
         eager: true
     })
     public HDD: HDD;
+
+    @ManyToOne(() => Cooler, (c: Cooler) => c, {
+        cascade: true,
+        eager: true
+    })
+    public cooler: Cooler;
 
     @JoinColumn({ name: 'pictures' })
     @ManyToOne(() => File, {

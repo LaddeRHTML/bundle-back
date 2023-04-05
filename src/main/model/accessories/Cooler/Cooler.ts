@@ -1,14 +1,16 @@
 import { IsNotEmpty, Max, Min } from 'class-validator';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, JoinColumn, OneToMany } from 'typeorm';
 
 import { BaseAccessory } from '../BaseAccessory';
 import { CoolerMaker, Package } from './CoolerEnums';
+import { Product } from 'model/product/Product';
+import { CPUSocket } from '../CPU/CPUEnums';
 
 @Entity()
 export class Cooler extends BaseAccessory {
     constructor(maker: string, model: string) {
         super();
-        this.name = `${maker} ${model} `;
+        this.name = `${maker} ${model}`;
     }
 
     @Column({ type: 'enum', enum: CoolerMaker })
@@ -16,13 +18,14 @@ export class Cooler extends BaseAccessory {
 
     @Column({
         name: 'socket',
-        type: 'text',
+        type: 'enum',
+        enum: CPUSocket,
         array: true,
         default: [],
         nullable: false
     })
     @IsNotEmpty()
-    public socket: string[];
+    public socket: CPUSocket[];
 
     @Column({
         name: 'max_TDP_wt',
@@ -129,7 +132,7 @@ export class Cooler extends BaseAccessory {
     public air_flow_CFM: number;
 
     @Column({
-        name: 'MTBF',
+        name: 'MTBF_hours',
         type: 'int',
         nullable: false
     })
@@ -231,14 +234,14 @@ export class Cooler extends BaseAccessory {
     public radiator_size_cm: number;
 
     @Column({
-        name: 'weight',
+        name: 'weight_kg',
         type: 'double precision',
         nullable: false
     })
     @Max(6)
     @Min(0)
     @IsNotEmpty()
-    public weight_Kg: number;
+    public weight_kg: number;
 
     @Column({
         name: 'size_volume_cm',
@@ -255,4 +258,23 @@ export class Cooler extends BaseAccessory {
     })
     @IsNotEmpty()
     public package: Package;
+
+    @Column({
+        name: 'price',
+        type: 'numeric',
+        precision: 10,
+        scale: 2,
+        nullable: false,
+        default: 1000
+    })
+    @Max(500000)
+    @Min(1000)
+    @IsNotEmpty()
+    public price: number;
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.cooler, {
+        nullable: true
+    })
+    public products: Product[];
 }
