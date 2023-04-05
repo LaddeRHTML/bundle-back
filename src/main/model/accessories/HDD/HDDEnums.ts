@@ -18,7 +18,7 @@ export enum HDDMaker {
     Hikvision = 'Hikvision ',
     Kingston = 'Kingston ',
     Lexar = 'Lexar ',
-    LITE_ON = 'LITE_ON ',
+    LITE_ON = 'LITE-ON ',
     Micron = 'Micron ',
     MSI = 'MSI',
     Netac = 'Netac ',
@@ -28,9 +28,9 @@ export enum HDDMaker {
     Pioneer = 'Pioneer ',
     Samsung = 'Samsung',
     Seagate = 'Seagate',
-    TeamGroup = 'TeamGroup ',
+    Team_Group = 'Team Group ',
     Toshiba = 'Toshiba',
-    WesternDigital = 'Western Digital',
+    Western_Digital = 'Western Digital',
     Transcend = 'Transcend ',
     Dahua = 'Dahua'
 }

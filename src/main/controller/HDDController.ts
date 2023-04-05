@@ -42,19 +42,7 @@ export class HDDController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
-    findOne(
-        @Param('id') id: string
-        /* @Query(
-            'relations',
-            new DefaultValuePipe([]),
-            new ParseArrayPipe({
-                items: String,
-                separator: ',',
-                optional: true
-            })
-        )
-        relations: AllowedProductRelations */
-    ): Promise<HDD | null> {
+    findOne(@Param('id') id: string): Promise<HDD | null> {
         return this.hddService.findOne({ where: { id } });
     }
 
@@ -64,17 +52,6 @@ export class HDDController {
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
         @Body() filters: HDD
-
-        // @Query(
-        //     'relations',
-        //     new DefaultValuePipe([]),
-        //     new ParseArrayPipe({
-        //         items: String,
-        //         separator: ',',
-        //         optional: true
-        //     })
-        // )
-        // relations: AllowedProductRelations
     ): Promise<PageDto<HDD>> {
         return await this.hddService.findSome(pageOptionsDto, filters);
     }

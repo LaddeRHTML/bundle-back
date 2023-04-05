@@ -10,14 +10,28 @@ export class HDD extends BaseAccessory {
         this.name = `${maker} ${disk_capacity_Gb} ${model} ${form_factor} `;
     }
 
-    @Column({ type: 'enum', enum: HDDMaker })
+    @Column({ name: 'maker', type: 'enum', enum: HDDMaker })
     maker: HDDMaker;
 
-    // line:
-
-    @Column({ type: 'enum', enum: FormFactor, default: FormFactor.FormFactor_3 })
+    @Column({
+        name: 'price',
+        type: 'integer',
+        nullable: false,
+        default: 0
+    })
+    @Max(600000)
+    @Min(10000)
     @IsNotEmpty()
-    form_factor: FormFactor;
+    public price: number;
+
+    @Column({
+        name: 'form_factor',
+        type: 'enum',
+        enum: FormFactor,
+        default: FormFactor.FormFactor_3
+    })
+    @IsNotEmpty()
+    public form_factor: FormFactor;
 
     @Column({
         name: 'interface',
@@ -25,17 +39,17 @@ export class HDD extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    interface: string;
+    public interface: string;
 
     @Column({
-        name: 'interface_baud_rate',
+        name: 'interface_baud_rate_Gbps',
         type: 'smallint',
         nullable: false
     })
     @Max(12)
     @Min(1)
     @IsNotEmpty()
-    interface_baud_rate_Gbps: number;
+    public interface_baud_rate_Gbps: number;
 
     @Column({
         name: 'disk_capacity',
@@ -45,65 +59,59 @@ export class HDD extends BaseAccessory {
     @Max(30000)
     @Min(1000)
     @IsNotEmpty()
-    disk_capacity_Gb: number;
+    public disk_capacity_Gb: number;
 
     @Column({
         name: 'reading_speed_up_to_MB/s',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(15000)
     @Min(100)
-    @IsNotEmpty()
-    reading_speed_up_to_MB: number;
+    public reading_speed_up_to_MB: number;
 
     @Column({
         name: 'write_speed_up_to_MB/s',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(15000)
     @Min(100)
-    @IsNotEmpty()
-    write_speed_up_to_MB: number;
+    public write_speed_up_to_MB: number;
 
     @Column({
         name: 'memory_chip_layout',
         type: 'text',
-        nullable: false
+        nullable: true
     })
-    @IsNotEmpty()
-    memory_chip_layout: string;
+    public memory_chip_layout: string;
 
     @Column({
         name: 'total_data_volume_TBW',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(1000)
     @Min(1)
-    @IsNotEmpty()
-    total_data_volume_TBW: number;
+    public total_data_volume_TBW: number;
 
     @Column({
-        name: 'buffer',
+        name: 'buffer_mb',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(1024)
     @Min(1)
-    @IsNotEmpty()
-    buffer_mb: number;
+    public buffer_mb: number;
 
     @Column({
-        name: 'spindle_speed',
+        name: 'spindle_speed_rpm',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(7200)
     @Min(1)
-    @IsNotEmpty()
-    spindle_speed_rpm: number;
+    public spindle_speed_rpm: number;
 
     @Column({
         name: 'noise_level_dB',
@@ -113,7 +121,7 @@ export class HDD extends BaseAccessory {
     @Max(110)
     @Min(1)
     @IsNotEmpty()
-    noise_level_dB: number;
+    public noise_level_dB: number;
 
     @Column({
         name: 'max_overload_during_operation_G',
@@ -123,7 +131,7 @@ export class HDD extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    max_overload_during_operation_G: number;
+    public max_overload_during_operation_G: number;
 
     @Column({
         name: 'max_overloads_in_the_off_state',
@@ -133,7 +141,7 @@ export class HDD extends BaseAccessory {
     @Max(500)
     @Min(1)
     @IsNotEmpty()
-    max_overloads_off_state_G: number;
+    public max_overloads_off_state_G: number;
 
     @Column({
         name: 'power_consumption_active_mode_wt',
@@ -143,7 +151,7 @@ export class HDD extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    power_consumption_active_mode_wt: number;
+    public power_consumption_active_mode_wt: number;
 
     @Column({
         name: 'power_consumption_idle_mode_wt',
@@ -153,7 +161,7 @@ export class HDD extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    power_consumption_idle_mode_wt: number;
+    public power_consumption_idle_mode_wt: number;
 
     @Column({
         name: 'MTBF',
@@ -161,32 +169,26 @@ export class HDD extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    MTBF_hours: number;
+    public MTBF_hours: number;
 
     @Column({
         name: 'additional_technologies',
         type: 'text',
-        array: true,
-        default: [],
-        nullable: false
+        nullable: true
     })
-    @IsNotEmpty()
-    additional_technologies: string[];
+    public additional_technologies: string;
 
     @Column({
         name: 'more',
         type: 'text',
         nullable: true
     })
-    more: string;
+    public more: string;
 
     @Column({
-        name: 'size',
-        type: 'double precision',
-        nullable: false
+        name: 'size_volume_cm',
+        type: 'text',
+        nullable: true
     })
-    @Max(30)
-    @Min(0)
-    @IsNotEmpty()
-    size: number;
+    public size_volume_cm: string;
 }
