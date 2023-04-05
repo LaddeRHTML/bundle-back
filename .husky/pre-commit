@@ -11,4 +11,4 @@ fi
 
 echo -e ">> Finish checking branch name / Заканчиваю проверять ветку.\n==="
 
-exit 0npm test~
+exit 0
