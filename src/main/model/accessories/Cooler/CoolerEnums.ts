@@ -2,6 +2,7 @@ export enum Package {
     OEM = 'OEM',
     RTL = 'RTL'
 }
+
 export enum CoolerMaker {
     Aerocool = 'Aerocool',
     Antec = 'Antec',
