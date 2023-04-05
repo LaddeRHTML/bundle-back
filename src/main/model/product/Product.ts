@@ -8,63 +8,62 @@ import {
     OneToOne,
     Unique
 } from 'typeorm';
-import { IsArray } from 'class-validator';
+import { IsArray, Max, Min } from 'class-validator';
 
 import { BaseEntity } from 'model/base';
 import { Order } from 'model/order/Order';
 import { File } from 'model/file/File';
+import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
+import sumArray from 'common/utils/array/sumArray';
+import { CPU } from 'model/accessories/CPU/CPU';
 
 @Entity()
-@Unique(['name', 'model', 'maker'])
+@Unique(['name'])
 export class Product extends BaseEntity {
-    @IsArray()
-    categories: string[];
+    constructor(prices: number[]) {
+        super();
+        this.price = sumArray(prices);
+    }
 
-    @Column({ type: 'smallint', default: 1 })
-    count: number;
-
-    @Column({ type: 'varchar', default: '' })
-    description: string;
-
-    @Column({ type: 'money', default: 0 })
-    discount_price: number;
-
-    @Column({ type: 'boolean', default: false })
-    is_hidden: boolean;
-
-    @Column({ type: 'boolean', default: false })
-    is_imported: boolean;
-
-    @Column({ type: 'varchar', default: '' })
-    maker: string;
-
-    @Column({ type: 'money', default: 0 })
-    market_price: number;
-
-    @Column({ type: 'varchar', default: '' })
-    model: string;
+    @Column({ type: 'integer', default: 0 })
+    public discount_price: number;
 
     @Index({ unique: true })
     @Column({ type: 'varchar' })
-    name: string;
+    public name: string;
 
     @Column({ type: 'varchar', nullable: true })
     public preview_picture_id: string;
 
-    @Column({ type: 'money', default: 0 })
-    price: number;
-
-    @Column({ type: 'money', default: 0 })
-    supplier_price: number;
+    @Column({
+        name: 'price',
+        type: 'numeric',
+        precision: 10,
+        scale: 2,
+        nullable: false,
+        default: 300000
+    })
+    @Max(10000000)
+    @Min(300000)
+    public price: number;
 
     @Column({ type: 'smallint', nullable: true })
-    warranty_days: number;
+    public warranty_days: number;
 
-    @Column({ type: 'varchar', default: '' })
-    vendor_code: string;
+    @Column({ type: 'varchar', default: '', nullable: true })
+    public weight: string;
 
-    @Column({ type: 'varchar', default: '' })
-    weight: string;
+    @ManyToOne(() => Motherboard, (m: Motherboard) => m, {
+        cascade: true,
+        eager: true
+    })
+    public motherboard: Motherboard;
+
+    @ManyToOne(() => CPU, (c: CPU) => c, {
+        cascade: true,
+        eager: true
+    })
+    public CPU: CPU;
 
     @JoinColumn({ name: 'pictures' })
     @ManyToOne(() => File, {

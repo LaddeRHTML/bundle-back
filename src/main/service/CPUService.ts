@@ -12,6 +12,7 @@ import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 
 @Injectable()
 export class CPUService {
@@ -95,12 +96,21 @@ export class CPUService {
         }
     }
 
-    async updateOne(id: string, updateCPUDto: UpdateCPUDto, userId: string): Promise<CPU> {
+    async updateOne(
+        id: string,
+        updateCPUDto: UpdateCPUDto,
+        userId: string
+    ): Promise<SuccessfullyUpdatedEntityResponse<CPU>> {
         try {
             updateCPUDto.last_change_date = new Date();
             updateCPUDto.last_changed_by = userId;
 
-            return await this.CPUrepository.save({ id, ...updateCPUDto });
+            const result = await this.CPUrepository.save({ id, ...updateCPUDto });
+            return {
+                success: true,
+                message: 'Successfully updated',
+                newFields: result
+            };
         } catch (error) {
             throw new Error(`CPU.service | updateOne error: ${getErrorMessage(error)}`);
         }
