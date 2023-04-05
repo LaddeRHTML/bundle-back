@@ -22,6 +22,10 @@ jobs:
             - run: echo "${{ secrets.private_ssh_key }}" > "$HOME/.ssh/key"
             - run: chmod 600 "$HOME/.ssh/key"
             - run: rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete . user@bundle-backend.kz:/var/www/bundle-backend.kz/html/bundle-back/
+            - run: pm2 stop bundle-back
             - run: git checkout release
             - run: git pull
+            - run: npm i
+            - run: npm run build
+            - run: pm2 start bundle-back ./dist/main
             - run: exit
