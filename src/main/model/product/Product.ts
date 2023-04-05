@@ -17,6 +17,7 @@ import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
 import sumArray from 'common/utils/array/sumArray';
 import { CPU } from 'model/accessories/CPU/CPU';
 import { RAM } from 'model/accessories/RAM/RAM';
+import { HDD } from 'model/accessories/HDD/HDD';
 
 @Entity()
 @Unique(['name'])
@@ -71,6 +72,12 @@ export class Product extends BaseEntity {
         eager: true
     })
     public RAM: RAM;
+
+    @ManyToOne(() => HDD, (h: HDD) => h, {
+        cascade: true,
+        eager: true
+    })
+    public HDD: HDD;
 
     @JoinColumn({ name: 'pictures' })
     @ManyToOne(() => File, {

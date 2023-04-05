@@ -7,6 +7,7 @@ import { AuthModule } from 'module/AuthModule';
 import { CPUModule } from 'module/CPUModule';
 import { FilesModule } from 'module/FileModule';
 import { MotherboardModule } from 'module/MotherboardModule';
+import { HDDModule } from 'module/HDDModule';
 import { OrdersModule } from 'module/OrderModule';
 import { ProductsModule } from 'module/ProductModule';
 import { UsersModule } from 'module/UserModule';
@@ -23,7 +24,8 @@ import { RAMModule } from 'module/RAMModule';
         OrdersModule,
         CPUModule,
         MotherboardModule,
-        RAMModule
+        RAMModule,
+        HDDModule
     ],
     controllers: [],
     providers: []

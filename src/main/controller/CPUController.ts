@@ -1,14 +1,14 @@
 import {
-    Controller,
-    UseGuards,
-    Post,
-    Req,
     Body,
-    Query,
+    Controller,
+    Delete,
     Get,
     Param,
     Patch,
-    Delete
+    Post,
+    Query,
+    Req,
+    UseGuards
 } from '@nestjs/common';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
