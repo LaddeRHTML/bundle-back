@@ -1,7 +1,16 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { BaseAccessory } from '../BaseAccessory';
-import { IsNotEmpty, Max, Min } from 'class-validator';
-import { AvailabilityPFT, FormFactor, PCMF, Package, PowerUnitMaker, SVCS } from './PowerUnitEnum';
+import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
+import {
+    AvailabilityPFT,
+    ComplianceMarking,
+    FormFactor,
+    MPC,
+    Package,
+    PowerUnitMaker,
+    SVCCS
+} from './PowerUnitEnum';
+import { Product } from 'model/product/Product';
 
 @Entity()
 export class PowerUnit extends BaseAccessory {
@@ -10,10 +19,10 @@ export class PowerUnit extends BaseAccessory {
         this.name = `${maker},${model},${form_factor},${power}`;
     }
 
-    @Column({ type: 'enum', enum: PowerUnitMaker })
+    @Column({ name: 'maker', type: 'enum', enum: PowerUnitMaker, nullable: false })
     public maker: PowerUnitMaker;
 
-    @Column({ type: 'enum', enum: FormFactor })
+    @Column({ name: 'form_factor', type: 'enum', enum: FormFactor, nullable: false })
     public form_factor: FormFactor;
 
     @Column({
@@ -34,111 +43,124 @@ export class PowerUnit extends BaseAccessory {
     public PFC: AvailabilityPFT;
 
     @Column({
-        name: 'compliance',
-        type: 'text',
-        nullable: false
+        name: 'compliance_with_standard',
+        type: 'enum',
+        enum: ComplianceMarking,
+        nullable: true
     })
     @IsNotEmpty()
-    public compliance: string;
+    public compliance_with_standard: ComplianceMarking;
 
     @Column({
         name: 'KPD',
-        type: 'smallint',
+        type: 'text',
         nullable: false
     })
+    @MaxLength(200)
+    @MinLength(1)
     @IsNotEmpty()
-    public KPD: number;
+    public KPD: string;
 
     @Column({
-        name: 'power_connectors_matFees',
+        name: 'motherboard_power_connectors',
         type: 'enum',
-        enum: PCMF
+        array: true,
+        default: [],
+        enum: MPC,
+        nullable: false
     })
-    public power_connectors_matFees: PCMF;
+    public motherboard_power_connectors: MPC[];
 
     @Column({
-        name: 'support_video_card_connection_schemes',
+        name: 'support_video_card_connection_schemas',
         type: 'enum',
-        enum: SVCS
+        array: true,
+        default: [],
+        enum: SVCCS,
+        nullable: false
     })
-    public support_video_card_connection_schemes: SVCS;
+    public support_video_card_connection_schemas: SVCCS[];
 
     @Column({
-        name: 'number_PCI_E_connectors_2pin',
+        name: 'count_PCI_E_connectors_2pin',
         type: 'smallint',
         nullable: false
     })
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public number_PCI_E_connectors_2pin: number;
+    public count_PCI_E_connectors_2pin: number;
 
     @Column({
-        name: 'number_PCI_E_connectors_6pin',
+        name: 'count_PCI_E_connectors_6pin',
         type: 'smallint',
         nullable: false
     })
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public number_PCI_E_connectors_6pin: number;
+    public count_PCI_E_connectors_6pin: number;
 
     @Column({
-        name: 'number_PCI_E_connectors_16pin',
+        name: 'count_PCI_E_connectors_16pin',
         type: 'smallint',
         nullable: false
     })
     @Max(2)
     @Min(1)
     @IsNotEmpty()
-    public number_PCI_E_connectors_16pin: number;
+    public count_PCI_E_connectors_16pin: number;
 
     @Column({
-        name: 'number_Molex_connectors_4pin',
+        name: 'count_Molex_connectors_4pin',
         type: 'smallint',
         nullable: false
     })
     @Max(8)
     @Min(1)
     @IsNotEmpty()
-    public number_Molex_connectors_4pin: number;
+    public count_Molex_connectors_4pin: number;
 
     @Column({
-        name: 'number_SATA_connectors',
+        name: 'count_SATA_connectors',
         type: 'smallint',
         nullable: false
     })
     @Max(14)
     @Min(1)
     @IsNotEmpty()
-    public number_SATA_connectors: number;
+    public count_SATA_connectors: number;
 
     @Column({
-        name: 'cable_length_cm',
+        name: 'cables',
         type: 'text',
         nullable: true
     })
-    public cable_length_cm: string;
+    public cables: string;
 
     @Column({
-        name: 'input_voltage_B',
+        name: 'input_voltage_range_w',
         type: 'smallint',
+        array: true,
+        default: [],
         nullable: false
     })
-    @Max(300)
-    @Min(1)
+    @MaxLength(300)
+    @MinLength(1)
     @IsNotEmpty()
-    public input_voltage_B: number;
+    public input_voltage_range_w: number[];
 
     @Column({
-        name: 'input_frequency_Hz',
+        name: 'input_frequency_hz',
         type: 'smallint',
+        array: true,
+        default: [],
         nullable: false
     })
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    public input_frequency_Hz: number;
+    public input_frequency_hz: number[];
 
     @Column({
         name: 'line_output_current_3_3V_A',
@@ -185,21 +207,25 @@ export class PowerUnit extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(255)
+    @MinLength(6)
     public fan_bearing_type: string;
 
     @Column({
-        name: 'included',
+        name: 'complement',
         type: 'text',
         nullable: false
     })
     @IsNotEmpty()
-    public included: string;
+    public complement: string;
 
     @Column({
         name: 'peculiarities',
         type: 'text',
         nullable: true
     })
+    @MaxLength(255)
+    @MinLength(6)
     public peculiarities: string;
 
     @Column({
@@ -215,6 +241,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(455)
+    @MinLength(6)
     public more: string;
 
     @Column({
@@ -222,7 +250,7 @@ export class PowerUnit extends BaseAccessory {
         type: 'double precision',
         nullable: true
     })
-    @Max(30)
+    @Max(250)
     @Min(0)
     public power_unit_length_mm: number;
 
@@ -231,6 +259,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(100)
+    @MinLength(6)
     public size_volume_cm: string;
 
     @Column({
@@ -251,4 +281,21 @@ export class PowerUnit extends BaseAccessory {
     })
     @IsNotEmpty()
     public package: Package;
+
+    @Column({
+        name: 'price',
+        type: 'numeric',
+        nullable: false,
+        default: 10000
+    })
+    @Max(500000)
+    @Min(10000)
+    @IsNotEmpty()
+    public price: number;
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.power_unit, {
+        nullable: true
+    })
+    public products: Product[];
 }

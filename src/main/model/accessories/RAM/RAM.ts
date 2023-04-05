@@ -1,4 +1,4 @@
-import { IsNotEmpty, Max, Min } from 'class-validator';
+import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
 import { MemoryType, Package, RAMMaker } from './RAMEnums';
@@ -83,6 +83,8 @@ export class RAM extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(455)
+    @MinLength(6)
     public more: string;
 
     @Column({ type: 'enum', enum: Package, default: Package.BOX })

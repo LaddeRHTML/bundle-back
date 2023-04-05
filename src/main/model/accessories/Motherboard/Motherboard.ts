@@ -46,6 +46,7 @@ export class Motherboard extends BaseAccessory {
         nullable: false
     })
     @MaxLength(255)
+    @MinLength(6)
     @IsNotEmpty()
     public technologies: string;
 
@@ -266,6 +267,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(455)
+    @MinLength(6)
     public more: string;
 
     @Column({

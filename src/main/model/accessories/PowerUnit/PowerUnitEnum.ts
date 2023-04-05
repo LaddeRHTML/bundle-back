@@ -14,7 +14,7 @@ export enum AvailabilityPFT {
     Passive = 'Passive'
 }
 
-export enum PCMF {
+export enum MPC {
     connector20_4 = '20+4',
     connector20_4_8 = '20+4+8',
     connector24_4 = '24+4',
@@ -23,7 +23,7 @@ export enum PCMF {
     connector24_8_8 = '24+8+8'
 }
 
-export enum SVCS {
+export enum SVCCS {
     connectorPin6 = '6 pin',
     connectorPin8 = '8 pin',
     connectorPin6_6 = '6+6 pin',
@@ -56,4 +56,12 @@ export enum PowerUnitMaker {
     SilverStone = 'SilverStone',
     Zalman = 'Zalman',
     LianLi = 'LianLi'
+}
+
+export enum ComplianceMarking {
+    PLUS = '80 PLUS',
+    PLUS_Bronze = '80 PLUS Bronze',
+    PLUS_Gold = '80 PLUS Gold',
+    PLUSP_latinum = '80 PLUS Platinum',
+    PLUST_itanium = '80 PLUS Titanium'
 }

@@ -210,6 +210,8 @@ export class CPU extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(455)
+    @MinLength(6)
     public more: string;
 
     @Column({

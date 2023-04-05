@@ -37,6 +37,8 @@ export class HDD extends BaseAccessory {
         type: 'text',
         nullable: false
     })
+    @MaxLength(100)
+    @MinLength(6)
     @IsNotEmpty()
     public interface: string;
 
@@ -182,6 +184,8 @@ export class HDD extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(455)
+    @MinLength(6)
     public more: string;
 
     @Column({
@@ -189,6 +193,8 @@ export class HDD extends BaseAccessory {
         type: 'text',
         nullable: true
     })
+    @MaxLength(100)
+    @MinLength(6)
     public size_volume_cm: string;
 
     @Column({
