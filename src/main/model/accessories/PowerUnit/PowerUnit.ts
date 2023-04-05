@@ -11,10 +11,10 @@ export class PowerUnit extends BaseAccessory {
     }
 
     @Column({ type: 'enum', enum: PowerUnitMaker })
-    maker: PowerUnitMaker;
+    public maker: PowerUnitMaker;
 
     @Column({ type: 'enum', enum: FormFactor })
-    form_factor: FormFactor;
+    public form_factor: FormFactor;
 
     @Column({
         name: 'power',
@@ -24,10 +24,14 @@ export class PowerUnit extends BaseAccessory {
     @Max(1600)
     @Min(100)
     @IsNotEmpty()
-    power: number;
+    public power: number;
 
-    @Column({ type: 'enum', enum: AvailabilityPFT })
-    PFC: AvailabilityPFT;
+    @Column({
+        name: 'PFC',
+        type: 'enum',
+        enum: AvailabilityPFT
+    })
+    public PFC: AvailabilityPFT;
 
     @Column({
         name: 'compliance',
@@ -35,7 +39,7 @@ export class PowerUnit extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    compliance: string;
+    public compliance: string;
 
     @Column({
         name: 'KPD',
@@ -43,13 +47,21 @@ export class PowerUnit extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    KPD: number;
+    public KPD: number;
 
-    @Column({ type: 'enum', enum: PCMF })
-    power_connectors_matFees: PCMF;
+    @Column({
+        name: 'power_connectors_matFees',
+        type: 'enum',
+        enum: PCMF
+    })
+    public power_connectors_matFees: PCMF;
 
-    @Column({ type: 'enum', enum: SVCS })
-    support_video_card_connection_schemes: SVCS;
+    @Column({
+        name: 'support_video_card_connection_schemes',
+        type: 'enum',
+        enum: SVCS
+    })
+    public support_video_card_connection_schemes: SVCS;
 
     @Column({
         name: 'number_PCI_E_connectors_2pin',
@@ -59,7 +71,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    number_PCI_E_connectors_2pin: number;
+    public number_PCI_E_connectors_2pin: number;
 
     @Column({
         name: 'number_PCI_E_connectors_6pin',
@@ -69,7 +81,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    number_PCI_E_connectors_6pin: number;
+    public number_PCI_E_connectors_6pin: number;
 
     @Column({
         name: 'number_PCI_E_connectors_16pin',
@@ -79,7 +91,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(2)
     @Min(1)
     @IsNotEmpty()
-    number_PCI_E_connectors_16pin: number;
+    public number_PCI_E_connectors_16pin: number;
 
     @Column({
         name: 'number_Molex_connectors_4pin',
@@ -89,7 +101,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(8)
     @Min(1)
     @IsNotEmpty()
-    number_Molex_connectors_4pin: number;
+    public number_Molex_connectors_4pin: number;
 
     @Column({
         name: 'number_SATA_connectors',
@@ -99,7 +111,14 @@ export class PowerUnit extends BaseAccessory {
     @Max(14)
     @Min(1)
     @IsNotEmpty()
-    number_SATA_connectors: number;
+    public number_SATA_connectors: number;
+
+    @Column({
+        name: 'cable_length_cm',
+        type: 'text',
+        nullable: true
+    })
+    public cable_length_cm: string;
 
     @Column({
         name: 'input_voltage_B',
@@ -109,7 +128,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(300)
     @Min(1)
     @IsNotEmpty()
-    input_voltage_B: number;
+    public input_voltage_B: number;
 
     @Column({
         name: 'input_frequency_Hz',
@@ -119,7 +138,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    input_frequency_Hz: number;
+    public input_frequency_Hz: number;
 
     @Column({
         name: 'line_output_current_3_3V_A',
@@ -129,7 +148,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    line_output_current_3_3V_A: number;
+    public line_output_current_3_3V_A: number;
 
     @Column({
         name: 'line_output_current_5V_A',
@@ -139,7 +158,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    line_output_current_5V_A: number;
+    public line_output_current_5V_A: number;
 
     @Column({
         name: 'line_output_current_12V_A',
@@ -149,25 +168,24 @@ export class PowerUnit extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    line_output_current_12V_A: number;
+    public line_output_current_12V_A: number;
 
     @Column({
-        name: 'fan_size',
+        name: 'fan_size_cm',
         type: 'double precision',
         nullable: false
     })
     @Max(20)
     @Min(1)
     @IsNotEmpty()
-    fan_size_cm: number;
+    public fan_size_cm: number;
 
     @Column({
         name: 'fan_bearing_type',
         type: 'text',
-        nullable: false
+        nullable: true
     })
-    @IsNotEmpty()
-    fan_bearing_type: string;
+    public fan_bearing_type: string;
 
     @Column({
         name: 'included',
@@ -175,15 +193,14 @@ export class PowerUnit extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    included: string;
+    public included: string;
 
     @Column({
         name: 'peculiarities',
         type: 'text',
-        nullable: false
+        nullable: true
     })
-    @IsNotEmpty()
-    peculiarities: string;
+    public peculiarities: string;
 
     @Column({
         name: 'protection_systems',
@@ -191,46 +208,47 @@ export class PowerUnit extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    protection_systems: string;
+    public protection_systems: string;
 
     @Column({
         name: 'more',
         type: 'text',
         nullable: true
     })
-    more: string;
+    public more: string;
 
     @Column({
         name: 'power_unit_length_mm',
         type: 'double precision',
-        nullable: false
+        nullable: true
     })
     @Max(30)
     @Min(0)
-    @IsNotEmpty()
-    power_unit_length_mm: number;
+    public power_unit_length_mm: number;
 
     @Column({
-        name: 'size',
-        type: 'double precision',
-        nullable: false
+        name: 'size_volume_cm',
+        type: 'text',
+        nullable: true
     })
-    @Max(30)
-    @Min(0)
-    @IsNotEmpty()
-    size: number;
+    public size_volume_cm: string;
 
     @Column({
-        name: 'weight',
+        name: 'weight_Kg',
         type: 'double precision',
         nullable: false
     })
     @Max(5)
     @Min(1)
     @IsNotEmpty()
-    weight: number;
+    public weight_Kg: number;
 
-    @Column({ type: 'enum', enum: Package, default: Package.RTL })
+    @Column({
+        name: 'packege',
+        type: 'enum',
+        enum: Package,
+        default: Package.RTL
+    })
     @IsNotEmpty()
-    package: Package;
+    public package: Package;
 }
