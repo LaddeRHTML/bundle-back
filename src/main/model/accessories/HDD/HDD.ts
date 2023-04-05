@@ -1,7 +1,8 @@
-import { Max, Min, IsNotEmpty } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { Max, Min, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { BaseAccessory } from '../BaseAccessory';
 import { FormFactor, HDDMaker } from './HDDEnums';
+import { Product } from 'model/product/Product';
 
 @Entity()
 export class HDD extends BaseAccessory {
@@ -14,15 +15,13 @@ export class HDD extends BaseAccessory {
     maker: HDDMaker;
 
     @Column({
-        name: 'price',
-        type: 'integer',
-        nullable: false,
-        default: 0
+        name: 'line',
+        type: 'text',
+        nullable: true
     })
-    @Max(600000)
-    @Min(10000)
-    @IsNotEmpty()
-    public price: number;
+    @MaxLength(35)
+    @MinLength(2)
+    line: string;
 
     @Column({
         name: 'form_factor',
@@ -191,4 +190,23 @@ export class HDD extends BaseAccessory {
         nullable: true
     })
     public size_volume_cm: string;
+
+    @Column({
+        name: 'price',
+        type: 'numeric',
+        precision: 10,
+        scale: 2,
+        nullable: false,
+        default: 10000
+    })
+    @Max(1000000)
+    @Min(10000)
+    @IsNotEmpty()
+    public price: number;
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.HDD, {
+        nullable: true
+    })
+    public products: Product[];
 }
