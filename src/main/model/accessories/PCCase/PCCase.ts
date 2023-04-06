@@ -1,5 +1,5 @@
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { BaseAccessory } from '../BaseAccessory';
 import {
     AdditionalConnectors,
@@ -15,6 +15,7 @@ import {
     PowerUnitLocation,
     SupportedFanDiameters
 } from './PCCaseEnum';
+import { Product } from 'model/product/Product';
 
 @Entity()
 export class PCCase extends BaseAccessory {
@@ -294,4 +295,10 @@ export class PCCase extends BaseAccessory {
     @Min(5000)
     @IsNotEmpty()
     public price: number;
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.PCCase, {
+        nullable: true
+    })
+    public products: Product[];
 }
