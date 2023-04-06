@@ -1,5 +1,5 @@
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { BaseAccessory } from '../BaseAccessory';
 import {
     Connectors,
@@ -14,6 +14,7 @@ import {
     SupportedMulti_GPU,
     Technologies
 } from './GPUEnums';
+import { Product } from 'model/product/Product';
 
 @Entity()
 export class GPU extends BaseAccessory {
@@ -280,4 +281,10 @@ export class GPU extends BaseAccessory {
     @Min(60000)
     @IsNotEmpty()
     public price: number;
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.GPU, {
+        nullable: true
+    })
+    public products: Product[];
 }
