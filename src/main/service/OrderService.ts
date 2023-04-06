@@ -61,7 +61,8 @@ export class OrdersService {
     async findSome(
         pageOptionsDto: PageOptionsDto,
         relations: AllowedOrderRelations,
-        searchByChild: SearchByChild
+        searchByChild: SearchByChild,
+        filter?: Partial<Order>
     ): Promise<PageDto<Order>> {
         try {
             const includedInClientSearchFields = [
@@ -76,6 +77,10 @@ export class OrdersService {
             const includedInProductSearchFields = ['name', 'maker', 'model', 'vendor_code'];
 
             const queryBuilder = this.orderRepository.createQueryBuilder(Order.name.toLowerCase());
+
+            if (filter) {
+                queryBuilder.where(filter);
+            }
 
             if (searchByChild.client) {
                 queryBuilder.where(getSQLSearch(includedInClientSearchFields, 'client'), {
