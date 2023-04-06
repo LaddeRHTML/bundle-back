@@ -7,6 +7,7 @@ import { AuthModule } from 'module/AuthModule';
 import { CPUModule } from 'module/CPUModule';
 import { CoolerModule } from 'module/CoolerModule';
 import { FilesModule } from 'module/FileModule';
+import { GPUModule } from 'module/GPUModule';
 import { HDDModule } from 'module/HDDModule';
 import { MotherboardModule } from 'module/MotherboardModule';
 import { OrdersModule } from 'module/OrderModule';
@@ -26,6 +27,7 @@ import { UsersModule } from 'module/UserModule';
         OrdersModule,
         CPUModule,
         MotherboardModule,
+        GPUModule,
         RAMModule,
         HDDModule,
         CoolerModule,
