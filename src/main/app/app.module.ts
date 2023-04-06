@@ -11,6 +11,7 @@ import { GPUModule } from 'module/GPUModule';
 import { HDDModule } from 'module/HDDModule';
 import { MotherboardModule } from 'module/MotherboardModule';
 import { OrdersModule } from 'module/OrderModule';
+import { PCCaseModule } from 'module/PCCaseModule';
 import { PowerUnitModule } from 'module/PowerUnitModule';
 import { ProductsModule } from 'module/ProductModule';
 import { RAMModule } from 'module/RAMModule';
@@ -31,7 +32,8 @@ import { UsersModule } from 'module/UserModule';
         RAMModule,
         HDDModule,
         CoolerModule,
-        PowerUnitModule
+        PowerUnitModule,
+        PCCaseModule
     ],
     controllers: [],
     providers: []
