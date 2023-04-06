@@ -9,7 +9,7 @@ export abstract class BaseAccessory extends BaseEntity {
         nullable: false,
         unique: true
     })
-    name: string;
+    public name: string;
 
     @Column({
         name: 'maker',
@@ -19,7 +19,7 @@ export abstract class BaseAccessory extends BaseEntity {
     @MaxLength(15)
     @MinLength(2)
     @IsNotEmpty()
-    maker: string;
+    public maker: string;
 
     @Column({
         name: 'model',
@@ -30,5 +30,5 @@ export abstract class BaseAccessory extends BaseEntity {
     @MaxLength(35)
     @MinLength(2)
     @IsNotEmpty()
-    model: string;
+    public model: string;
 }

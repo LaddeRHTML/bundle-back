@@ -175,6 +175,15 @@ export class Motherboard extends BaseAccessory {
     public video_cabel_type: VideoCabel[];
 
     @Column({
+        name: 'internal_connectors',
+        type: 'text',
+        nullable: true
+    })
+    @MaxLength(550)
+    @MinLength(1)
+    public internal_connectors: string;
+
+    @Column({
         name: 'power_connectors',
         type: 'text',
         nullable: false
@@ -222,7 +231,7 @@ export class Motherboard extends BaseAccessory {
     @Max(2)
     @Min(1)
     @IsNotEmpty()
-    public usb_31_gen2x2_type_c: number;
+    public usb_32_gen2x2_type_c: number;
 
     @Column({
         name: 'included_buttons',
