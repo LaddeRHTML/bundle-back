@@ -59,9 +59,10 @@ export class OrdersController {
                 optional: true
             })
         )
-        relations: AllowedOrderRelations
+        relations: AllowedOrderRelations,
+        @Body() filter: Partial<Order>
     ): Promise<PageDto<Order>> {
-        return await this.orderService.findSome(pageOptionsDto, relations, searchByChild);
+        return await this.orderService.findSome(pageOptionsDto, relations, searchByChild, filter);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
