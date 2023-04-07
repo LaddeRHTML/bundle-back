@@ -5,6 +5,7 @@ import { VersioningType } from '@nestjs/common/enums';
 
 import { AllExceptionsFilter } from 'filter/AllExceptionFilter';
 import { AppModule } from 'app/app.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 declare const module: any;
 
@@ -12,6 +13,15 @@ async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(AppModule, {
         cors: true
     });
+
+    const config = new DocumentBuilder()
+    .setTitle('Cats example')
+    .setDescription('The cats API description')
+    .setVersion('1.0')
+    .addTag('cats')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
     if (module.hot) {
         module.hot.accept();
