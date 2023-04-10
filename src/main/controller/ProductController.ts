@@ -33,7 +33,17 @@ import { RequestWithUser } from 'service/AuthService';
 import { FilesService, MulterFile } from 'service/FileService';
 import { GetPricesResponse, ProductsService } from 'service/ProductService';
 
-export type AllowedProductRelations = ['orders'];
+export type AllowedProductRelations = [
+    'orders',
+    'CPU',
+    'GPU',
+    'motherboard',
+    'RAM',
+    'HDD',
+    'cooler',
+    'power_unit',
+    'PCCase'
+];
 
 @Controller('/products')
 export class ProductsController {
