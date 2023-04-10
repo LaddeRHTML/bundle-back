@@ -13,7 +13,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
-import getSQLSearch from 'common/utils/array/getSQLSearch';
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
 import { CreateProductDto } from 'dto/Product/CreateProductDto';
@@ -21,6 +20,7 @@ import { UpdateProductDto } from 'dto/Product/UpdateProductDto';
 
 import { Product } from 'model/product/Product';
 import { AllowedProductRelations } from 'controller/ProductController';
+import { SqlSearch } from 'common/utils/array/SqlSearch';
 
 interface Price {
     max: number;
@@ -45,7 +45,7 @@ export class ProductsService {
             createProductDto.last_change_date = new Date();
 
             return await this.productRepository.upsert(createProductDto, {
-                conflictPaths: ['name', 'maker', 'model'],
+                conflictPaths: ['name'],
                 skipUpdateIfNoValuesChanged: true
             });
         } catch (error) {
@@ -85,64 +85,52 @@ export class ProductsService {
         relations: AllowedProductRelations
     ): Promise<PageDto<Product>> {
         try {
-            const includedInSearchFields = ['name', 'maker', 'model', 'vendor_code'];
+            const includedInSearchFields = ['name'];
+            const entityName = Product.name.toLowerCase();
+            const sqlSearch = new SqlSearch();
 
             const options = {
                 ...(filters && filters)
-                // ...(filters.price?.[0] &&
-                //     filters.price?.[1] && {
-                //         price: (
-                //             LessThanOrEqual(filters.price[0]) && MoreThanOrEqual(filters.price[1])
-                //         ).value
-                //     }),
-
-                // ...(filters.supplier_price?.[0] &&
-                //     filters.supplier_price?.[1] && {
-                //         supplier_price: {
-                //             price: (
-                //                 LessThanOrEqual(filters.supplier_price[0]) &&
-                //                 MoreThanOrEqual(filters.supplier_price[1])
-                //             ).value
-                //         }
-                //     }),
-                // ...(filters.market_price?.[0] &&
-                //     filters.market_price?.[1] && {
-                //         market_price: {
-                //             price: (
-                //                 LessThanOrEqual(filters.market_price[0]) &&
-                //                 MoreThanOrEqual(filters.market_price[1])
-                //             ).value
-                //         }
-                //     })
             };
 
-            const queryBuilder = this.productRepository.createQueryBuilder(
-                Product.name.toLowerCase()
-            );
+            const queryBuilder = this.productRepository.createQueryBuilder(entityName);
 
             if (pageOptionsDto.searchBy) {
                 queryBuilder.where(
-                    getSQLSearch(includedInSearchFields, Product.name.toLowerCase()),
+                    sqlSearch.getSearchableFieldsSql(includedInSearchFields, entityName),
                     {
                         s: `%${pageOptionsDto.searchBy}%`
                     }
                 );
             }
 
-            queryBuilder.where(options);
+            queryBuilder.andWhere(options);
 
             queryBuilder
-                .orderBy(`${Product.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${entityName}.last_change_date`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
             if (relations.length > 0) {
                 relations.forEach((relation) => {
-                    queryBuilder.leftJoinAndSelect(
-                        `${Product.name.toLowerCase()}.${relation}`,
-                        relation
-                    );
+                    queryBuilder.leftJoin(`${entityName}.${relation}`, relation);
+
+                    if (relation !== 'orders') {
+                        queryBuilder.addSelect([`${relation}.name`, `${relation}.id`]);
+                    }
                 });
+
+                if (pageOptionsDto.searchBy) {
+                    queryBuilder.orWhere(
+                        sqlSearch.getSearchableRelationFieldsSql(
+                            relations.filter((r) => r !== 'orders'),
+                            'name'
+                        ),
+                        {
+                            s: `%${pageOptionsDto.searchBy}%`
+                        }
+                    );
+                }
             }
 
             const total = await queryBuilder.getCount();
