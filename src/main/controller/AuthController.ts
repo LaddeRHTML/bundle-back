@@ -10,7 +10,9 @@ import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
 
 import { User } from 'model/user/User';
 import { Role } from 'model/user/UserEnums';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Authorization')
 @Controller('/auth')
 export class AuthController {
     constructor(private authService: AuthService, private usersService: UsersService) {}

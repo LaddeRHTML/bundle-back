@@ -4,14 +4,17 @@ import { FormFactor, MotherboardMaker } from './MotherboardEnums';
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { CPUSocket, VideoCabel } from '../CPU/CPUEnums';
 import { Product } from 'model/product/Product';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
+@ApiTags("Motherboard")
 @Entity()
 export class Motherboard extends BaseAccessory {
     constructor(maker: string, model: string, socket: CPUSocket) {
         super();
         this.name = `${maker} ${model} ${socket}`;
     }
-
+    
+    @ApiProperty()
     @Column({ type: 'enum', enum: MotherboardMaker })
     public maker: MotherboardMaker;
 

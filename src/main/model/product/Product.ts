@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
     Column,
     Entity,
@@ -30,7 +31,7 @@ export class Product extends BaseEntity {
         super();
         this.price = sumArray(prices);
     }
-
+    @ApiProperty()
     @Column({ name: 'discount_price', type: 'integer', default: 0 })
     public discount_price: number;
 

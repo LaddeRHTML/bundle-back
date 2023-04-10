@@ -20,11 +20,14 @@ import { PCCase } from 'model/accessories/PCCase/PCCase';
 import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { PCCaseService } from 'service/PCCaseService';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('PC-Case')
 @Controller('/pc-case')
 export class PCCaseController {
     constructor(private readonly pcCaseService: PCCaseService) {}
 
+    
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')

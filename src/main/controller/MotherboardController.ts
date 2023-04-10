@@ -25,11 +25,14 @@ import { UpdateMotherboardDto } from 'dto/Motherboard/UpdateMotherboardDto';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import { ApiProperty,ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Motherboard')
 @Controller('/motherboard')
 export class MotherboardController {
     constructor(private readonly motherboardService: MotherboardService) {}
-
+    
+    @ApiProperty()
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')

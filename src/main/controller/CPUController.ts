@@ -10,6 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -26,10 +27,12 @@ import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { CPUService } from 'service/CPUService';
 
+@ApiTags('CPU')
 @Controller('/cpu')
 export class CPUController {
     constructor(private readonly cpuService: CPUService) {}
 
+    @ApiProperty()
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')

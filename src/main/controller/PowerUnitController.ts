@@ -24,6 +24,9 @@ import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { PowerUnitService } from 'service/PowerUnitService';
 
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Power-unit')
 @Controller('/power-unit')
 export class PowerUnitController {
     constructor(private readonly powerUnitService: PowerUnitService) {}

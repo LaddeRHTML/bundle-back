@@ -25,6 +25,9 @@ import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { RAMService } from 'service/RAMService';
 
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('RAM')
 @Controller('/ram')
 export class RAMController {
     constructor(private readonly ramService: RAMService) {}

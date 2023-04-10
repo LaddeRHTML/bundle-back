@@ -31,7 +31,9 @@ import { MAX_FILE_SIZE_IN_B } from 'common/constants';
 
 import { Role } from 'model/user/UserEnums';
 import { File } from 'model/file/File';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Files')
 @Controller('/files')
 export class FilesController {
     constructor(private readonly filesService: FilesService) {}
