@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 
 import { BaseEntity } from 'model/base';
 import { User } from 'model/user/User';
@@ -39,7 +39,7 @@ export class Order extends BaseEntity {
     public client: User;
 
     @JoinColumn({ name: 'current_manager' })
-    @OneToOne(() => User, {
+    @ManyToOne(() => User, {
         eager: true,
         cascade: true,
         nullable: true
@@ -65,7 +65,7 @@ export class Order extends BaseEntity {
     public products?: Product[];
 
     @JoinColumn({ name: 'delivered_by' })
-    @OneToOne(() => User, {
+    @ManyToOne(() => User, {
         eager: true,
         cascade: true,
         nullable: true
