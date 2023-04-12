@@ -18,6 +18,7 @@ export enum Source {
 
 export enum Status {
     open = 'open',
+    build = 'build',
     success = 'success',
     reject = 'reject',
     onDelivery = 'on_delivery',
