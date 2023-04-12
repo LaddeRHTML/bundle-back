@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { BaseAccessory } from '../BaseAccessory';
@@ -23,9 +25,11 @@ export class GPU extends BaseAccessory {
         this.name = `${maker} ${model} ${graphics_ram_size_Gb}`;
     }
 
+    @ApiProperty()
     @Column({ name: 'maker', type: 'enum', enum: GPUMaker })
     public maker: GPUMaker;
 
+    @ApiProperty()
     @Column({
         name: 'graphics_card_series',
         type: 'enum',
@@ -34,6 +38,7 @@ export class GPU extends BaseAccessory {
     })
     public graphics_card_series: GraphicsCardSeries;
 
+    @ApiProperty()
     @Column({
         name: 'GPU_manufacturer',
         type: 'enum',
@@ -42,6 +47,10 @@ export class GPU extends BaseAccessory {
     })
     public GPU_manufacturer: GPUManufacturer;
 
+    @ApiProperty({
+        maximum: 30,
+        minimum: 1
+    })
     @Column({
         name: 'graphics_coprocessor',
         type: 'text',
@@ -52,6 +61,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public graphics_coprocessor: string;
 
+    @ApiProperty({
+        maximum: 5000,
+        minimum: 1000
+    })
     @Column({
         name: 'frequency_OC_Mode_MHz',
         type: 'smallint',
@@ -62,6 +75,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public frequency_OC_Mode_MHz: number;
 
+    @ApiProperty({
+        maximum: 5000,
+        minimum: 1000
+    })
     @Column({
         name: 'frequency_Gaming_Mode_MHz',
         type: 'smallint',
@@ -72,6 +89,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public frequency_Gaming_Mode_MHz: number;
 
+    @ApiProperty({
+        maximum: 30000,
+        minimum: 100
+    })
     @Column({
         name: 'memory_clock_speed',
         type: 'smallint',
@@ -82,6 +103,7 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public memory_clock_speed: number;
 
+    @ApiProperty()
     @Column({
         name: 'graphics_ram',
         type: 'enum',
@@ -90,6 +112,7 @@ export class GPU extends BaseAccessory {
     })
     public graphics_ram: GraphicsRam;
 
+    @ApiProperty()
     @Column({
         name: 'graphics_ram_size_Gb',
         type: 'enum',
@@ -98,6 +121,10 @@ export class GPU extends BaseAccessory {
     })
     public graphics_ram_size_Gb: GraphicsRamSize;
 
+    @ApiProperty({
+        maximum: 512,
+        minimum: 1
+    })
     @Column({
         name: 'memory_bus_width_bit',
         type: 'smallint',
@@ -108,6 +135,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public memory_bus_width_bit: number;
 
+    @ApiProperty({
+        maximum: 2000,
+        minimum: 100
+    })
     @Column({
         name: 'memory_bandwidth_Gb',
         type: 'smallint',
@@ -118,6 +149,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public memory_bandwidth_Gb: number;
 
+    @ApiProperty({
+        maximum: 25000,
+        minimum: 100
+    })
     @Column({
         name: 'count_universal_processors',
         type: 'smallint',
@@ -128,6 +163,7 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public count_universal_processors: number;
 
+    @ApiProperty()
     @Column({
         name: 'technologies',
         type: 'enum',
@@ -138,6 +174,10 @@ export class GPU extends BaseAccessory {
     })
     public technologies: Technologies[];
 
+    @ApiProperty({
+        maximum: 255,
+        minimum: 10
+    })
     @Column({
         name: 'supported_APIs',
         type: 'text',
@@ -148,6 +188,9 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public supported_APIs: string;
 
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'supported_Multi_GPU',
         type: 'enum',
@@ -156,6 +199,10 @@ export class GPU extends BaseAccessory {
     })
     public supported_Multi_GPU: SupportedMulti_GPU;
 
+    @ApiProperty({
+        maximum: 30,
+        minimum: 1
+    })
     @Column({
         name: 'connection_interface',
         type: 'text',
@@ -166,6 +213,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public connection_interface: string;
 
+    @ApiProperty({
+        maximum: 8,
+        minimum: 1
+    })
     @Column({
         name: 'count_supported_monitors',
         type: 'smallint',
@@ -176,6 +227,7 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public count_supported_monitors: number;
 
+    @ApiProperty()
     @Column({
         name: 'connectors',
         type: 'enum',
@@ -186,6 +238,10 @@ export class GPU extends BaseAccessory {
     })
     public connectors: Connectors[];
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 1
+    })
     @Column({
         name: 'maximum_resolution',
         type: 'text',
@@ -196,6 +252,7 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public maximum_resolution: string;
 
+    @ApiProperty()
     @Column({
         name: 'cooling',
         type: 'enum',
@@ -206,6 +263,7 @@ export class GPU extends BaseAccessory {
     })
     public cooling: Cooling[];
 
+    @ApiProperty()
     @Column({
         name: 'power_connectors',
         type: 'enum',
@@ -214,6 +272,7 @@ export class GPU extends BaseAccessory {
     })
     public power_connectors: PowerConnectors;
 
+    @ApiProperty()
     @Column({
         name: 'backlight',
         type: 'boolean',
@@ -222,6 +281,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public backlight: boolean;
 
+    @ApiProperty({
+        maximum: 2000,
+        minimum: 200
+    })
     @Column({
         name: 'minimum_power_supply_capacity_wt',
         type: 'smallint',
@@ -232,6 +295,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public minimum_power_supply_capacity_wt: number;
 
+    @ApiProperty({
+        maximum: 8,
+        minimum: 1
+    })
     @Column({
         name: 'count_occupied_expansion_slots',
         type: 'double precision',
@@ -242,6 +309,11 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public count_occupied_expansion_slots: number;
 
+    @ApiProperty({
+        maximum: 455,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'more',
         type: 'text',
@@ -251,6 +323,11 @@ export class GPU extends BaseAccessory {
     @MinLength(6)
     public more: string;
 
+    @ApiProperty({
+        maximum: 50,
+        minimum: 0,
+        required: false
+    })
     @Column({
         name: 'power_unit_length_mm',
         type: 'double precision',
@@ -260,6 +337,7 @@ export class GPU extends BaseAccessory {
     @Min(0)
     public GPU_length_cm: number;
 
+    @ApiProperty()
     @Column({
         name: 'packege',
         type: 'enum',
@@ -269,6 +347,10 @@ export class GPU extends BaseAccessory {
     @IsNotEmpty()
     public package: Package;
 
+    @ApiProperty({
+        maximum: 2000000,
+        minimum: 60000
+    })
     @Column({
         name: 'price',
         type: 'numeric',

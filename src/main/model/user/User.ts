@@ -8,12 +8,11 @@ import { Gender, Role } from './UserEnums';
 import { ApiHeader, ApiProperty, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Controller } from '@nestjs/common';
 
-@ApiHeader({
-    name: 'Users',
-    description: 'Пользователи',
-})
+// @ApiHeader({
+//     name: 'Users',
+//     description: 'Пользователи',
+// })
 @Entity()
-@ApiTags('PC')
 @Controller('/users')
 export class User {
     @ApiProperty()

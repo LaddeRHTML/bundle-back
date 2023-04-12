@@ -10,6 +10,8 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
@@ -20,7 +22,6 @@ import { PCCase } from 'model/accessories/PCCase/PCCase';
 import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { PCCaseService } from 'service/PCCaseService';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('PC-Case')
 @Controller('/pc-case')

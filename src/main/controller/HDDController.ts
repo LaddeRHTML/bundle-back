@@ -31,7 +31,6 @@ import { HDDService } from 'service/HDDService';
 export class HDDController {
     constructor(private readonly hddService: HDDService) {}
 
-    @ApiTags('HDD')
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')

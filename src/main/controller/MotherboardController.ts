@@ -10,6 +10,8 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
+import { ApiProperty,ApiTags } from '@nestjs/swagger';
+
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
 
@@ -25,7 +27,6 @@ import { UpdateMotherboardDto } from 'dto/Motherboard/UpdateMotherboardDto';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
-import { ApiProperty,ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Motherboard')
 @Controller('/motherboard')

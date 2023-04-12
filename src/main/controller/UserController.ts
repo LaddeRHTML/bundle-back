@@ -17,6 +17,7 @@ import {
 import { Req } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InsertResult } from 'typeorm';
+import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
@@ -35,7 +36,6 @@ import { RequestWithUser } from 'service/AuthService';
 import { FilesService, MulterFile } from 'service/FileService';
 import { ChangePassword, UsersService } from 'service/UserService';
 import { File } from 'model/file/File';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 export type AllowedUserRelations = ['orders'];
 
@@ -57,7 +57,7 @@ export class UsersController {
     ): Promise<InsertResult> {
         return this.usersService.createOne(createUserDto, role);
     }
-    @ApiOperation({description: "Щас тут напишем"})
+    @ApiOperation({description: ""})
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
@@ -65,7 +65,7 @@ export class UsersController {
         return this.usersService.findAll();
     }
 
-    @ApiOperation({description: "Тут что нибудь придумаем"})
+    @ApiOperation({description: ""})
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/filter?')
@@ -85,7 +85,7 @@ export class UsersController {
         return await this.usersService.findSome(pageOptionsDto, relations);
     }
 
-    @ApiOperation({description: "Ага"})
+    @ApiOperation({description: ""})
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get(':id')

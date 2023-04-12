@@ -1,9 +1,11 @@
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import { ApiProperty} from '@nestjs/swagger';
 
 import { CPUMaker, CPUSocket, Package } from './CPUEnums';
 import { BaseAccessory } from '../BaseAccessory';
 import { Product } from 'model/product/Product';
+import { mixin } from '@nestjs/common';
 
 interface Ram {
     name: 'ddr4' | 'ddr5';
@@ -16,10 +18,15 @@ export class CPU extends BaseAccessory {
         super();
         this.name = `${maker} ${type} ${model} ${socket}`;
     }
-
+    
+    @ApiProperty()
     @Column({ name: 'maker', type: 'enum', enum: CPUMaker })
     public maker: CPUMaker;
 
+    @ApiProperty({
+        maximum: 10,
+        minimum: 1
+    })
     @Column({
         name: 'type',
         type: 'text',
@@ -30,6 +37,7 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public type: string;
 
+    @ApiProperty({})
     @Column({
         name: 'socket',
         enum: CPUSocket,
@@ -39,6 +47,10 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public socket: CPUSocket;
 
+    @ApiProperty({
+        maximum: 256,
+        minimum: 2
+    })
     @Column({
         name: 'core_count',
         type: 'smallint',
@@ -49,6 +61,9 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public core_count: number;
 
+    @ApiProperty({
+        minimum: 1
+    })
     @Column({
         name: 'thread_count',
         type: 'smallint',
@@ -58,6 +73,10 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public thread_count: number;
 
+    @ApiProperty({
+        maximum: 7,
+        minimum: 1.8
+    })
     @Column({
         name: 'clock_frequency_max_ghz',
         type: 'double precision',
@@ -68,6 +87,10 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public clock_frequency_max_ghz: number;
 
+    @ApiProperty({
+        maximum: 7,
+        minimum: 1.8
+    })
     @Column({
         name: 'clock_frequency_min_ghz',
         type: 'double precision',
@@ -78,6 +101,7 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public clock_frequency_min_ghz: number;
 
+    @ApiProperty()
     @Column({
         name: 'microarchitecture',
         type: 'text',
@@ -86,6 +110,7 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public microarchitecture: string;
 
+    @ApiProperty()
     @Column({
         name: 'cache_size_l2',
         type: 'smallint',
@@ -94,6 +119,7 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public cache_size_l2: number;
 
+    @ApiProperty()
     @Column({
         name: 'cache_size_l3',
         type: 'smallint',
@@ -102,6 +128,7 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public cache_size_l3: number;
 
+    @ApiProperty()
     @Column({
         name: 'support_ram',
         type: 'jsonb',
@@ -110,6 +137,10 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public support_ram: Ram[];
 
+    @ApiProperty({
+        maximum: 256,
+        minimum: 1
+    })
     @Column({
         name: 'max_ram_gb',
         type: 'smallint',
@@ -120,6 +151,7 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public max_ram_gb: number;
 
+    @ApiProperty()
     @Column({
         name: 'support_ess',
         type: 'boolean',
@@ -128,6 +160,10 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public support_ess: boolean;
 
+    @ApiProperty({
+        maximum: 40,
+        minimum: 4
+    })
     @Column({
         name: 'integrated_graphics_system',
         type: 'text',
@@ -138,6 +174,10 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public integrated_graphics_system: string;
 
+    @ApiProperty({
+        maximum: 256,
+        minimum: 1
+    })
     @Column({
         name: 'techproc_nm',
         type: 'smallint',
@@ -148,6 +188,10 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public techproccess_nm: number;
 
+    @ApiProperty({
+        maximum: 1000,
+        minimum: 1
+    })
     @Column({
         name: 'TDP',
         type: 'smallint',
@@ -158,6 +202,10 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public TDP_wt: number;
 
+    @ApiProperty({
+        maximum: 1000,
+        minimum: 1
+    })
     @Column({
         name: 'max_TDP_wt',
         type: 'smallint',
@@ -168,6 +216,9 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public max_TDP_wt: number;
 
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'instruction_set',
         type: 'text',
@@ -177,6 +228,7 @@ export class CPU extends BaseAccessory {
     })
     public instruction_set: string[];
 
+    @ApiProperty()
     @Column({
         name: 'support_hyper_threading',
         type: 'boolean',
@@ -185,6 +237,7 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public support_hyper_threading: boolean;
 
+    @ApiProperty()
     @Column({
         name: 'support_64_b',
         type: 'boolean',
@@ -193,10 +246,17 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public support_64_b: boolean;
 
-    @Column({ type: 'enum', enum: Package, default: Package.OEM, nullable: false })
+    @ApiProperty()
+    @Column({ 
+        type: 'enum', 
+        enum: Package, 
+        default: Package.OEM, 
+        nullable: false 
+    })
     @IsNotEmpty()
     public package: Package;
 
+    @ApiProperty()
     @Column({
         name: 'critical_temperature_c',
         type: 'smallint',
@@ -205,6 +265,11 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public critical_temperature_c: number;
 
+    @ApiProperty({
+        maximum: 455,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'more',
         type: 'text',
@@ -214,6 +279,10 @@ export class CPU extends BaseAccessory {
     @MinLength(6)
     public more: string;
 
+    @ApiProperty({
+        maximum: 1000000,
+        minimum: 6000
+    })
     @Column({
         name: 'price',
         type: 'numeric',

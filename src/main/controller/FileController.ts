@@ -16,6 +16,8 @@ import {
     UseGuards,
     UseInterceptors
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Readable } from 'stream';
 import { DeleteResult } from 'typeorm';
@@ -31,7 +33,6 @@ import { MAX_FILE_SIZE_IN_B } from 'common/constants';
 
 import { Role } from 'model/user/UserEnums';
 import { File } from 'model/file/File';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Files')
 @Controller('/files')
