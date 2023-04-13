@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { BaseAccessory } from '../BaseAccessory';
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
@@ -19,12 +21,18 @@ export class PowerUnit extends BaseAccessory {
         this.name = `${maker},${model},${form_factor},${power}`;
     }
 
+    @ApiProperty()
     @Column({ name: 'maker', type: 'enum', enum: PowerUnitMaker, nullable: false })
     public maker: PowerUnitMaker;
 
+    @ApiProperty()
     @Column({ name: 'form_factor', type: 'enum', enum: FormFactor, nullable: false })
     public form_factor: FormFactor;
 
+    @ApiProperty({
+        maximum: 1600,
+        minimum: 100
+    })
     @Column({
         name: 'power',
         type: 'smallint',
@@ -35,6 +43,7 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public power: number;
 
+    @ApiProperty()
     @Column({
         name: 'PFC',
         type: 'enum',
@@ -42,6 +51,9 @@ export class PowerUnit extends BaseAccessory {
     })
     public PFC: AvailabilityPFT;
 
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'compliance_with_standard',
         type: 'enum',
@@ -51,6 +63,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public compliance_with_standard: ComplianceMarking;
 
+    @ApiProperty({
+        maximum: 200,
+        minimum: 1
+    })
     @Column({
         name: 'KPD',
         type: 'text',
@@ -61,6 +77,7 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public KPD: string;
 
+    @ApiProperty()
     @Column({
         name: 'motherboard_power_connectors',
         type: 'enum',
@@ -71,6 +88,7 @@ export class PowerUnit extends BaseAccessory {
     })
     public motherboard_power_connectors: MPC[];
 
+    @ApiProperty()
     @Column({
         name: 'support_video_card_connection_schemas',
         type: 'enum',
@@ -81,6 +99,10 @@ export class PowerUnit extends BaseAccessory {
     })
     public support_video_card_connection_schemas: SVCCS[];
 
+    @ApiProperty({
+        maximum: 10,
+        minimum: 1
+    })
     @Column({
         name: 'count_PCI_E_connectors_2pin',
         type: 'smallint',
@@ -91,6 +113,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public count_PCI_E_connectors_2pin: number;
 
+    @ApiProperty({
+        maximum: 10,
+        minimum: 1
+    })
     @Column({
         name: 'count_PCI_E_connectors_6pin',
         type: 'smallint',
@@ -101,6 +127,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public count_PCI_E_connectors_6pin: number;
 
+    @ApiProperty({
+        maximum: 2,
+        minimum: 1
+    })
     @Column({
         name: 'count_PCI_E_connectors_16pin',
         type: 'smallint',
@@ -111,6 +141,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public count_PCI_E_connectors_16pin: number;
 
+    @ApiProperty({
+        maximum: 8,
+        minimum: 1
+    })
     @Column({
         name: 'count_Molex_connectors_4pin',
         type: 'smallint',
@@ -121,6 +155,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public count_Molex_connectors_4pin: number;
 
+    @ApiProperty({
+        maximum: 14,
+        minimum: 1
+    })
     @Column({
         name: 'count_SATA_connectors',
         type: 'smallint',
@@ -131,6 +169,9 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public count_SATA_connectors: number;
 
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'cables',
         type: 'text',
@@ -138,6 +179,10 @@ export class PowerUnit extends BaseAccessory {
     })
     public cables: string;
 
+    @ApiProperty({
+        maximum: 300,
+        minimum: 1
+    })
     @Column({
         name: 'input_voltage_range_w',
         type: 'smallint',
@@ -150,6 +195,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public input_voltage_range_w: number[];
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 1
+    })
     @Column({
         name: 'input_frequency_hz',
         type: 'smallint',
@@ -162,6 +211,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public input_frequency_hz: number[];
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 1
+    })
     @Column({
         name: 'line_output_current_3_3V_A',
         type: 'smallint',
@@ -172,6 +225,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public line_output_current_3_3V_A: number;
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 1
+    })
     @Column({
         name: 'line_output_current_5V_A',
         type: 'smallint',
@@ -182,6 +239,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public line_output_current_5V_A: number;
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 1
+    })
     @Column({
         name: 'line_output_current_12V_A',
         type: 'smallint',
@@ -192,6 +253,10 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public line_output_current_12V_A: number;
 
+    @ApiProperty({
+        maximum: 20,
+        minimum: 1
+    })
     @Column({
         name: 'fan_size_cm',
         type: 'double precision',
@@ -202,6 +267,11 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public fan_size_cm: number;
 
+    @ApiProperty({
+        maximum: 255,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'fan_bearing_type',
         type: 'text',
@@ -211,6 +281,7 @@ export class PowerUnit extends BaseAccessory {
     @MinLength(6)
     public fan_bearing_type: string;
 
+    @ApiProperty()
     @Column({
         name: 'complement',
         type: 'text',
@@ -219,6 +290,11 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public complement: string;
 
+    @ApiProperty({
+        maximum: 255,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'peculiarities',
         type: 'text',
@@ -228,6 +304,7 @@ export class PowerUnit extends BaseAccessory {
     @MinLength(6)
     public peculiarities: string;
 
+    @ApiProperty()
     @Column({
         name: 'protection_systems',
         type: 'text',
@@ -236,6 +313,11 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public protection_systems: string;
 
+    @ApiProperty({
+        maximum: 455,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'more',
         type: 'text',
@@ -245,6 +327,11 @@ export class PowerUnit extends BaseAccessory {
     @MinLength(6)
     public more: string;
 
+    @ApiProperty({
+        maximum: 250,
+        minimum: 0,
+        required: false
+    })
     @Column({
         name: 'power_unit_length_mm',
         type: 'double precision',
@@ -254,6 +341,11 @@ export class PowerUnit extends BaseAccessory {
     @Min(0)
     public power_unit_length_mm: number;
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 1,
+        required: false
+    })
     @Column({
         name: 'size_volume_cm',
         type: 'text',
@@ -263,6 +355,10 @@ export class PowerUnit extends BaseAccessory {
     @MinLength(6)
     public size_volume_cm: string;
 
+    @ApiProperty({
+        maximum: 5,
+        minimum: 1
+    })
     @Column({
         name: 'weight_Kg',
         type: 'double precision',
@@ -273,6 +369,7 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public weight_Kg: number;
 
+    @ApiProperty()
     @Column({
         name: 'packege',
         type: 'enum',
@@ -282,6 +379,11 @@ export class PowerUnit extends BaseAccessory {
     @IsNotEmpty()
     public package: Package;
 
+    @ApiProperty({
+        maximum: 500000,
+        minimum: 10000,
+        default: 10000
+    })
     @Column({
         name: 'price',
         type: 'numeric',

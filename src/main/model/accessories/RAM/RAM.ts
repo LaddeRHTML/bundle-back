@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
@@ -12,12 +14,18 @@ export class RAM extends BaseAccessory {
         this.name = `${maker} ${model} ${memory_type} ${memory_Gb}`;
     }
 
+    @ApiProperty()
     @Column({ name: 'maker', type: 'enum', enum: RAMMaker })
     public maker: RAMMaker;
 
+    @ApiProperty()
     @Column({ name: 'memory_type', type: 'enum', enum: MemoryType })
     public memory_type: MemoryType;
 
+    @ApiProperty({
+        maximum: 512,
+        minimum: 1
+    })
     @Column({
         name: 'memory_Gb',
         type: 'smallint',
@@ -28,6 +36,10 @@ export class RAM extends BaseAccessory {
     @IsNotEmpty()
     public memory_Gb: number;
 
+    @ApiProperty({
+        maximum: 10000,
+        minimum: 1
+    })
     @Column({
         name: 'memory_clock_MHz',
         type: 'smallint',
@@ -38,6 +50,10 @@ export class RAM extends BaseAccessory {
     @IsNotEmpty()
     public memory_clock_MHz: number;
 
+    @ApiProperty({
+        maximum: 10000,
+        minimum: 1
+    })
     @Column({
         name: 'number_transactions',
         type: 'smallint',
@@ -48,6 +64,10 @@ export class RAM extends BaseAccessory {
     @IsNotEmpty()
     public number_transactions: number;
 
+    @ApiProperty({
+        maximum: 10,
+        minimum: 0.5
+    })
     @Column({
         name: 'supply_voltage',
         type: 'double precision',
@@ -58,6 +78,10 @@ export class RAM extends BaseAccessory {
     @IsNotEmpty()
     public supply_voltage: number;
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 1
+    })
     @Column({
         name: 'timings',
         type: 'smallint',
@@ -70,6 +94,9 @@ export class RAM extends BaseAccessory {
     @IsNotEmpty()
     public timings: number[];
 
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'peculiarities',
         type: 'text',
@@ -78,6 +105,11 @@ export class RAM extends BaseAccessory {
     @IsNotEmpty()
     public peculiarities: string;
 
+    @ApiProperty({
+        maximum: 455,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'more',
         type: 'text',
@@ -87,10 +119,15 @@ export class RAM extends BaseAccessory {
     @MinLength(6)
     public more: string;
 
+    @ApiProperty()
     @Column({ type: 'enum', enum: Package, default: Package.BOX })
     @IsNotEmpty()
     public package: Package;
 
+    @ApiProperty({
+        maximum: 15,
+        minimum: 1
+    })
     @Column({
         name: 'ram_height_cm',
         type: 'double precision',
@@ -101,6 +138,11 @@ export class RAM extends BaseAccessory {
     @IsNotEmpty()
     public ram_height_cm: number;
 
+    @ApiProperty({
+        maximum: 1000000,
+        minimum: 10000,
+        default: 6000
+    })
     @Column({
         name: 'price',
         type: 'numeric',

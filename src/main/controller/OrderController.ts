@@ -12,6 +12,8 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
 
@@ -30,6 +32,7 @@ import { OrdersService, SearchByChild } from 'service/OrderService';
 
 export type AllowedOrderRelations = ['client', 'delivered_by', 'current_manager', 'products'];
 
+@ApiTags('Orders')
 @Controller('/orders')
 export class OrdersController {
     constructor(private readonly orderService: OrdersService) {}

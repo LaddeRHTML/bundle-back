@@ -1,16 +1,23 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { BaseEntity } from 'model/base';
 import { Column } from 'typeorm';
 
 export abstract class BaseAccessory extends BaseEntity {
+    @ApiProperty()
     @Column({
         name: 'name',
         type: 'text',
         nullable: false,
         unique: true
     })
+    @IsNotEmpty()
     public name: string;
 
+    @ApiProperty({
+        maximum: 15,
+        minimum: 2
+    })
     @Column({
         name: 'maker',
         type: 'text',
@@ -21,6 +28,10 @@ export abstract class BaseAccessory extends BaseEntity {
     @IsNotEmpty()
     public maker: string;
 
+    @ApiProperty({
+        maximum: 35,
+        minimum: 2
+    })
     @Column({
         name: 'model',
         type: 'text',

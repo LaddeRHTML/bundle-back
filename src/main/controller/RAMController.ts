@@ -10,6 +10,7 @@ import {
     Patch,
     Delete
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -25,6 +26,8 @@ import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { RAMService } from 'service/RAMService';
 
+
+@ApiTags('RAM')
 @Controller('/ram')
 export class RAMController {
     constructor(private readonly ramService: RAMService) {}

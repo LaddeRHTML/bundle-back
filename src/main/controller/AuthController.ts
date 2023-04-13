@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { InsertResult } from 'typeorm';
 import { Request } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
 import { AccessToken, AuthService, RequestWithUser } from 'service/AuthService';
 import { UsersService } from 'service/UserService';
@@ -11,6 +12,7 @@ import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
 import { User } from 'model/user/User';
 import { Role } from 'model/user/UserEnums';
 
+@ApiTags('Authorization')
 @Controller('/auth')
 export class AuthController {
     constructor(private authService: AuthService, private usersService: UsersService) {}

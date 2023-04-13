@@ -1,10 +1,12 @@
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Entity, Column, JoinColumn, OneToMany } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { BaseAccessory } from '../BaseAccessory';
 import { CoolerMaker, Package } from './CoolerEnums';
 import { Product } from 'model/product/Product';
 import { CPUSocket } from '../CPU/CPUEnums';
+
 
 @Entity()
 export class Cooler extends BaseAccessory {
@@ -12,10 +14,11 @@ export class Cooler extends BaseAccessory {
         super();
         this.name = `${maker} ${model}`;
     }
-
+    @ApiProperty()
     @Column({ type: 'enum', enum: CoolerMaker })
     public maker: CoolerMaker;
-
+    
+    @ApiProperty()
     @Column({
         name: 'socket',
         type: 'enum',
@@ -27,6 +30,11 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public socket: CPUSocket[];
 
+    @ApiProperty({
+        maximum: 500,
+        minimum: 1,
+        required: false
+    })
     @Column({
         name: 'max_TDP_wt',
         type: 'smallint',
@@ -36,6 +44,7 @@ export class Cooler extends BaseAccessory {
     @Min(1)
     public max_TDP_wt: number;
 
+    @ApiProperty({})
     @Column({
         name: 'material',
         type: 'text',
@@ -46,6 +55,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public material: string[];
 
+    @ApiProperty({
+        maximum: 250,
+        minimum: 1
+    })
     @Column({
         name: 'fan_diameter_mm',
         type: 'smallint',
@@ -56,6 +69,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public fan_diameter_mm: number;
 
+    @ApiProperty({
+        maximum: 1000,
+        minimum: 100
+    })
     @Column({
         name: 'min_rotation_speed_rpm',
         type: 'smallint',
@@ -66,6 +83,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public min_rotation_speed_rpm: number;
 
+    @ApiProperty({
+        maximum: 6000,
+        minimum: 100
+    })
     @Column({
         name: 'max_rotation_speed_rpm',
         type: 'smallint',
@@ -76,6 +97,7 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public max_rotation_speed_rpm: number;
 
+    @ApiProperty()
     @Column({
         name: 'possibility_speed_regulation',
         type: 'boolean',
@@ -84,6 +106,11 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public possibility_speed_regulation: boolean;
 
+    @ApiProperty({
+        maximum: 250,
+        minimum: 1,
+        required: false
+    })
     @Column({
         name: 'cooler_height_mm',
         type: 'smallint',
@@ -93,6 +120,10 @@ export class Cooler extends BaseAccessory {
     @Min(1)
     public cooler_height_mm: number;
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 1
+    })
     @Column({
         name: 'min_noise_leve_dB',
         type: 'smallint',
@@ -103,6 +134,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public min_noise_leve_dB: number;
 
+    @ApiProperty({
+        maximum: 200,
+        minimum: 1
+    })
     @Column({
         name: 'max_noise_leve_dB',
         type: 'smallint',
@@ -113,6 +148,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public max_noise_leve_dB: number;
 
+    @ApiProperty({
+        maximum: 255,
+        minimum: 6
+    })
     @Column({
         name: 'connector',
         type: 'text',
@@ -123,6 +162,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public connector: string;
 
+    @ApiProperty({
+        maximum: 150,
+        minimum: 1
+    })
     @Column({
         name: 'air_flow_CFM',
         type: 'double precision',
@@ -133,6 +176,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public air_flow_CFM: number;
 
+    @ApiProperty({
+        maximum: 400000,
+        minimum: 1
+    })
     @Column({
         name: 'MTBF_hours',
         type: 'int',
@@ -143,6 +190,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public MTBF_hours: number;
 
+    @ApiProperty({
+        maximum: 255,
+        minimum: 6
+    })
     @Column({
         name: 'supply_voltage',
         type: 'text',
@@ -153,6 +204,7 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public supply_voltage_w: string;
 
+    @ApiProperty()
     @Column({
         name: 'backlight',
         type: 'boolean',
@@ -161,6 +213,11 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public backlight: boolean;
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'backlight_color',
         type: 'text',
@@ -170,6 +227,11 @@ export class Cooler extends BaseAccessory {
     @MinLength(6)
     public backlight_color: string;
 
+    @ApiProperty({
+        maximum: 500,
+        minimum: 1,
+        required: false
+    })
     @Column({
         name: 'length_tubes_mm',
         type: 'smallint',
@@ -179,6 +241,11 @@ export class Cooler extends BaseAccessory {
     @Min(1)
     public length_tubes_mm: number;
 
+    @ApiProperty({
+        maximum: 500,
+        minimum: 1,
+        required: false
+    })
     @Column({
         name: 'radiator_size_mm',
         type: 'smallint',
@@ -188,6 +255,9 @@ export class Cooler extends BaseAccessory {
     @Min(1)
     public radiator_size_mm: number;
 
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'bearing_type',
         type: 'text',
@@ -196,6 +266,11 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public bearing_type: string;
 
+    @ApiProperty({
+        maximum: 12,
+        minimum: 1,
+        required: false
+    })
     @Column({
         name: 'number_heat_pipes',
         type: 'smallint',
@@ -205,6 +280,11 @@ export class Cooler extends BaseAccessory {
     @Min(1)
     public number_heat_pipes: number;
 
+    @ApiProperty({
+        maximum: 12,
+        minimum: 0,
+        required: false
+    })
     @Column({
         name: 'power_consumption_wt',
         type: 'double precision',
@@ -214,6 +294,11 @@ export class Cooler extends BaseAccessory {
     @Min(0)
     public power_consumption_wt: number;
 
+    @ApiProperty({
+        maximum: 455,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'more',
         type: 'text',
@@ -223,6 +308,11 @@ export class Cooler extends BaseAccessory {
     @MinLength(6)
     public more: string;
 
+    @ApiProperty({
+        maximum: 30,
+        minimum: 0,
+        required: false
+    })
     @Column({
         name: 'pump_size_cm',
         type: 'double precision',
@@ -232,6 +322,11 @@ export class Cooler extends BaseAccessory {
     @Min(0)
     public pump_size_cm: number;
 
+    @ApiProperty({
+        maximum: 40,
+        minimum: 0,
+        required: false
+    })
     @Column({
         name: 'radiator_size_cm',
         type: 'double precision',
@@ -241,6 +336,10 @@ export class Cooler extends BaseAccessory {
     @Min(0)
     public radiator_size_cm: number;
 
+    @ApiProperty({
+        maximum: 6,
+        minimum: 0
+    })
     @Column({
         name: 'weight_kg',
         type: 'double precision',
@@ -251,6 +350,11 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public weight_kg: number;
 
+    @ApiProperty({
+        maximum: 100,
+        minimum: 6,
+        required: false
+    })
     @Column({
         name: 'size_volume_cm',
         type: 'text',
@@ -260,6 +364,7 @@ export class Cooler extends BaseAccessory {
     @MinLength(6)
     public size_volume_cm: string;
 
+    @ApiProperty()
     @Column({
         name: 'package',
         type: 'enum',
@@ -269,6 +374,10 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public package: Package;
 
+    @ApiProperty({
+        maximum: 500000,
+        minimum: 1000
+    })
     @Column({
         name: 'price',
         type: 'numeric',

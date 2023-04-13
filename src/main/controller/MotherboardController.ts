@@ -10,6 +10,8 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
+import { ApiProperty,ApiTags } from '@nestjs/swagger';
+
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
 
@@ -26,10 +28,12 @@ import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 
+@ApiTags('Motherboard')
 @Controller('/motherboard')
 export class MotherboardController {
     constructor(private readonly motherboardService: MotherboardService) {}
-
+    
+    @ApiProperty()
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')

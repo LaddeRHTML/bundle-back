@@ -10,6 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -26,6 +27,7 @@ import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { GPUService } from 'service/GPUService';
 
+@ApiTags('GPU')
 @Controller('/gpu')
 export class GPUController {
     constructor(private readonly gpuService: GPUService) {}
