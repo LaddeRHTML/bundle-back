@@ -14,5 +14,8 @@ sudo npm install
 echo "Build your app"
 sudo npm run build
 
+echo "Download pm2"
+sudo npm i pm2@latest -g
+
 echo "Run new PM2 action"
 sudo pm2 start bundle-back ./dist/main
