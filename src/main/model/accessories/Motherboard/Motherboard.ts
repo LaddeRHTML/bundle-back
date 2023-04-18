@@ -84,6 +84,14 @@ export class Motherboard extends BaseAccessory {
     @IsNotEmpty()
     public supported_memory_frequencies: number[];
 
+    @ApiProperty()
+    @Column({
+        name: 'memory_slots_count',
+        type: 'smallint',
+        nullable: true
+    })
+    public memory_slots_count: number;
+
     @ApiProperty({
         maximum: 256,
         minimum: 1
