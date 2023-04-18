@@ -34,9 +34,7 @@ export class PCCase extends BaseAccessory {
     })
     public maker: PCCaseMaker;
 
-    @ApiProperty({
-        enum: FormFactor
-    })
+    @ApiProperty()
     @Column({
         name: 'form_factor',
         type: 'enum',
