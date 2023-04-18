@@ -64,44 +64,44 @@ export class GPU extends BaseAccessory {
 
     @ApiProperty({
         maximum: 5000,
-        minimum: 1000
+        minimum: 1000,
+        required: false
     })
     @Column({
         name: 'frequency_OC_Mode_MHz',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(5000)
     @Min(1000)
-    @IsNotEmpty()
     public frequency_OC_Mode_MHz: number;
 
     @ApiProperty({
         maximum: 5000,
-        minimum: 1000
+        minimum: 1000,
+        required: false
     })
     @Column({
         name: 'frequency_Gaming_Mode_MHz',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(5000)
     @Min(1000)
-    @IsNotEmpty()
     public frequency_Gaming_Mode_MHz: number;
 
     @ApiProperty({
         maximum: 30000,
-        minimum: 100
+        minimum: 100,
+        required: false
     })
     @Column({
         name: 'memory_clock_speed',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(30000)
     @Min(100)
-    @IsNotEmpty()
     public memory_clock_speed: number;
 
     @ApiProperty()
@@ -124,16 +124,16 @@ export class GPU extends BaseAccessory {
 
     @ApiProperty({
         maximum: 512,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'memory_bus_width_bit',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(512)
     @Min(1)
-    @IsNotEmpty()
     public memory_bus_width_bit: number;
 
     @ApiProperty({
