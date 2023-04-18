@@ -92,8 +92,8 @@ export class RAM extends BaseAccessory {
     public peculiarities: string;
 
     @ApiProperty({
-        maximum: 455,
-        minimum: 6,
+        maxLength: 455,
+        minLength: 6,
         required: false
     })
     @Column({
@@ -123,6 +123,23 @@ export class RAM extends BaseAccessory {
     @Min(1)
     @IsNotEmpty()
     public ram_height_cm: number;
+
+    @ApiProperty({
+        maximum: 8,
+        minimum: 1,
+        default: 1,
+        required: false
+    })
+    @Column({
+        name: 'count_included',
+        type: 'smallint',
+        precision: 10,
+        default: 1
+    })
+    @Max(8)
+    @Min(1)
+    @IsNotEmpty()
+    public count_included: number;
 
     @ApiProperty({
         maximum: 1000000,
