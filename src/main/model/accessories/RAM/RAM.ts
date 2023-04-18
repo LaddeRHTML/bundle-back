@@ -133,7 +133,6 @@ export class RAM extends BaseAccessory {
     @Column({
         name: 'count_included',
         type: 'smallint',
-        precision: 10,
         default: 1
     })
     @Max(8)
