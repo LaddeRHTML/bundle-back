@@ -19,6 +19,7 @@ export enum VideoCabel {
     hdmi = 'HDMI',
     vga = 'VGA',
     dvi = 'DVI',
+    dvid = 'DVI-D',
     diplayPort = 'DisplayPort',
     thunderBolt = 'ThunderBolt'
 }
