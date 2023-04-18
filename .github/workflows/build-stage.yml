@@ -21,7 +21,7 @@ jobs:
             - run: mkdir "$HOME/.ssh"
             - run: echo "${{ secrets.private_ssh_key }}" > "$HOME/.ssh/key"
             - run: chmod 600 "$HOME/.ssh/key"
-            - run: rsync -e -avz --exclude '.git' --chown=github:www-data --chmod=Dg=rwx,Fg=rwx ./ "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete . user@bundle-backend.kz:/var/www/bundle-backend.kz/html/bundle-back/
+            - run: rsync -avz --exclude '.git' --chown=github:www-data --chmod=Dg=rwx,Fg=rwx ./ -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete . user@bundle-backend.kz:/var/www/bundle-backend.kz/html/bundle-back/
             - run: git checkout release
             - run: git pull
             - run: exit
