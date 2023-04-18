@@ -25,8 +25,8 @@ jobs:
             - run: git checkout release
             - run: git pull
             - run: npm ci
-            - run: npm install pm2@latest -g
+            - run: npm i pm2 -g
             - run: npm run build
             - run: pm2 -V
-            - run: pm2 start bundle-back /var/www/bundle-backend.kz/html/bundle-back/dist/main
+            - run: pm2 restart bundle-back
             - run: exit
