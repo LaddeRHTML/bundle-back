@@ -275,7 +275,8 @@ export class Motherboard extends BaseAccessory {
 
     @ApiProperty({
         maximum: 255,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'backpanel_connectors',
@@ -289,12 +290,13 @@ export class Motherboard extends BaseAccessory {
 
     @ApiProperty({
         maximum: 10,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'usb_30',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(10)
     @Min(1)
@@ -303,12 +305,13 @@ export class Motherboard extends BaseAccessory {
 
     @ApiProperty({
         maximum: 10,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'usb_31_gen1',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(10)
     @Min(1)
@@ -317,12 +320,13 @@ export class Motherboard extends BaseAccessory {
 
     @ApiProperty({
         maximum: 10,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'usb_31_gen2',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(10)
     @Min(1)
@@ -331,12 +335,13 @@ export class Motherboard extends BaseAccessory {
 
     @ApiProperty({
         maximum: 2,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'usb_31_gen2_type_c',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(2)
     @Min(1)
@@ -345,12 +350,13 @@ export class Motherboard extends BaseAccessory {
 
     @ApiProperty({
         maximum: 2,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'usb_31_gen2x2_type_c',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(2)
     @Min(1)
@@ -359,12 +365,13 @@ export class Motherboard extends BaseAccessory {
 
     @ApiProperty({
         maximum: 10,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'usb_32_gen1',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(10)
     @Min(1)
