@@ -29,5 +29,4 @@ jobs:
             - run: npm run build
             - run: pm2 -V
             - run: pm2 start bundle-back ./dist/main
-            - run: pm2 delete main
             - run: exit
