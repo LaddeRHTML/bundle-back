@@ -8,7 +8,4 @@ echo "Build your app"
 sudo npm run build
 
 echo "Run new PM2 action"
-sudo pm2 start bundle-back ./dist/main
-
-echo "Remove unnecessary action"
-sudo pm2 delete main
+sudo pm2 start --name bundle-back ./dist/main

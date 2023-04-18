@@ -34,7 +34,9 @@ export class PCCase extends BaseAccessory {
     })
     public maker: PCCaseMaker;
 
-    @ApiProperty()
+    @ApiProperty({
+        enum: FormFactor
+    })
     @Column({
         name: 'form_factor',
         type: 'enum',
@@ -290,14 +292,16 @@ export class PCCase extends BaseAccessory {
     })
     public dust_filter: DustFilter[];
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'additional_connectors',
         type: 'enum',
         enum: AdditionalConnectors,
         array: true,
         default: [],
-        nullable: false
+        nullable: true
     })
     @IsNotEmpty()
     public additional_connectors: AdditionalConnectors[];
