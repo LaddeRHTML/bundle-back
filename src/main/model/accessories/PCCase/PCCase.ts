@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
-import { BaseAccessory } from '../BaseAccessory';
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { Product } from 'model/product/Product';
 import {
     AdditionalConnectors,
     Buttons,
@@ -17,7 +17,7 @@ import {
     PowerUnitLocation,
     SupportedFanDiameters
 } from './PCCaseEnum';
-import { Product } from 'model/product/Product';
+import { BaseAccessory } from '../BaseAccessory';
 
 @Entity()
 export class PCCase extends BaseAccessory {
@@ -25,7 +25,7 @@ export class PCCase extends BaseAccessory {
         super();
         this.name = `${maker} ${model} ${color} ${form_factor}`;
     }
-    
+
     @ApiProperty()
     @Column({
         name: 'maker',

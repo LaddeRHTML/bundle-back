@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
-import { BaseAccessory } from '../BaseAccessory';
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
+
+import { Product } from 'model/product/Product';
 import {
     AvailabilityPFT,
     ComplianceMarking,
@@ -12,13 +13,12 @@ import {
     PowerUnitMaker,
     SVCCS
 } from './PowerUnitEnum';
-import { Product } from 'model/product/Product';
-
+import { BaseAccessory } from '../BaseAccessory';
 @Entity()
 export class PowerUnit extends BaseAccessory {
     constructor(maker: string, model: string, form_factor: FormFactor, power: number) {
         super();
-        this.name = `${maker},${model},${form_factor},${power}`;
+        this.name = `${maker} ${model} ${form_factor} ${power}`;
     }
 
     @ApiProperty()
@@ -70,11 +70,10 @@ export class PowerUnit extends BaseAccessory {
     @Column({
         name: 'KPD',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(200)
     @MinLength(1)
-    @IsNotEmpty()
     public KPD: string;
 
     @ApiProperty()
@@ -134,11 +133,10 @@ export class PowerUnit extends BaseAccessory {
     @Column({
         name: 'count_PCI_E_connectors_16pin',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(2)
     @Min(1)
-    @IsNotEmpty()
     public count_PCI_E_connectors_16pin: number;
 
     @ApiProperty({
@@ -326,20 +324,6 @@ export class PowerUnit extends BaseAccessory {
     @MaxLength(455)
     @MinLength(6)
     public more: string;
-
-    @ApiProperty({
-        maximum: 250,
-        minimum: 0,
-        required: false
-    })
-    @Column({
-        name: 'power_unit_length_mm',
-        type: 'double precision',
-        nullable: true
-    })
-    @Max(250)
-    @Min(0)
-    public power_unit_length_mm: number;
 
     @ApiProperty({
         maximum: 100,

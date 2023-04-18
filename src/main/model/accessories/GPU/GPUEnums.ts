@@ -124,9 +124,9 @@ export enum Cooling {
 
 export enum PowerConnectors {
     missing = 'Отсутствуют',
-    pin6 = '6-pin ',
-    pin8 = '8-pin ',
-    pin8_x2 = '2 х 8-pin ',
-    pin8_x3 = '3 х 8-pin ',
+    pin6 = '6-pin',
+    pin8 = '8-pin',
+    pin8_x2 = '2 х 8-pin',
+    pin8_x3 = '3 х 8-pin',
     pin16_x1 = '1 х 16-pin'
 }

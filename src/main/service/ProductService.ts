@@ -3,7 +3,6 @@ import {
     FindManyOptions,
     FindOneOptions,
     FindOptionsWhere,
-    InsertResult,
     Repository,
     UpdateResult
 } from 'typeorm';
@@ -37,17 +36,14 @@ export interface GetPricesResponse {
 export class ProductsService {
     constructor(@InjectRepository(Product) private productRepository: Repository<Product>) {}
 
-    async createOne(createProductDto: CreateProductDto, userId: string): Promise<InsertResult> {
+    async createOne(createProductDto: CreateProductDto, userId: string): Promise<Product> {
         try {
             createProductDto.last_changed_by = userId;
             createProductDto.created_by = userId;
             createProductDto.create_date = new Date();
             createProductDto.last_change_date = new Date();
 
-            return await this.productRepository.upsert(createProductDto, {
-                conflictPaths: ['name'],
-                skipUpdateIfNoValuesChanged: true
-            });
+            return await this.productRepository.save(createProductDto);
         } catch (error) {
             throw new Error(`product.service | createOne error: ${getErrorMessage(error)}`);
         }

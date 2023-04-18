@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+
+import { Product } from 'model/product/Product';
 import { BaseAccessory } from '../BaseAccessory';
 import {
     Connectors,
@@ -16,7 +18,6 @@ import {
     SupportedMulti_GPU,
     Technologies
 } from './GPUEnums';
-import { Product } from 'model/product/Product';
 
 @Entity()
 export class GPU extends BaseAccessory {
@@ -52,14 +53,14 @@ export class GPU extends BaseAccessory {
         minimum: 1
     })
     @Column({
-        name: 'graphics_coprocessor',
+        name: 'chipset_model',
         type: 'text',
         nullable: false
     })
     @MaxLength(30)
     @MinLength(1)
     @IsNotEmpty()
-    public graphics_coprocessor: string;
+    public chipset_model: string;
 
     @ApiProperty({
         maximum: 5000,

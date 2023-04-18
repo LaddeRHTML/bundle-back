@@ -1,11 +1,10 @@
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
-import { ApiProperty} from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
+import { Product } from 'model/product/Product';
 import { CPUMaker, CPUSocket, Package } from './CPUEnums';
 import { BaseAccessory } from '../BaseAccessory';
-import { Product } from 'model/product/Product';
-import { mixin } from '@nestjs/common';
 
 interface Ram {
     name: 'ddr4' | 'ddr5';
@@ -18,7 +17,7 @@ export class CPU extends BaseAccessory {
         super();
         this.name = `${maker} ${type} ${model} ${socket}`;
     }
-    
+
     @ApiProperty()
     @Column({ name: 'maker', type: 'enum', enum: CPUMaker })
     public maker: CPUMaker;
@@ -113,18 +112,22 @@ export class CPU extends BaseAccessory {
     @ApiProperty()
     @Column({
         name: 'cache_size_l2',
-        type: 'smallint',
+        type: 'double precision',
         nullable: false
     })
+    @Max(30)
+    @Min(0.5)
     @IsNotEmpty()
     public cache_size_l2: number;
 
     @ApiProperty()
     @Column({
         name: 'cache_size_l3',
-        type: 'smallint',
+        type: 'double precision',
         nullable: false
     })
+    @Max(30)
+    @Min(0.5)
     @IsNotEmpty()
     public cache_size_l3: number;
 
@@ -167,7 +170,7 @@ export class CPU extends BaseAccessory {
     @Column({
         name: 'integrated_graphics_system',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(40)
     @MinLength(4)
@@ -247,11 +250,11 @@ export class CPU extends BaseAccessory {
     public support_64_b: boolean;
 
     @ApiProperty()
-    @Column({ 
-        type: 'enum', 
-        enum: Package, 
-        default: Package.OEM, 
-        nullable: false 
+    @Column({
+        type: 'enum',
+        enum: Package,
+        default: Package.OEM,
+        nullable: false
     })
     @IsNotEmpty()
     public package: Package;
@@ -288,8 +291,7 @@ export class CPU extends BaseAccessory {
         type: 'numeric',
         precision: 10,
         scale: 2,
-        nullable: false,
-        default: 6000
+        nullable: true
     })
     @Max(1000000)
     @Min(6000)

@@ -31,10 +31,12 @@ export class Product extends BaseEntity {
         super();
         this.price = sumArray(prices);
     }
+
     @ApiProperty()
     @Column({ name: 'discount_price', type: 'integer', default: 0 })
     public discount_price: number;
 
+    @ApiProperty()
     @Index({ unique: true })
     @Column({ name: 'name', type: 'varchar' })
     public name: string;
@@ -72,11 +74,19 @@ export class Product extends BaseEntity {
     })
     public motherboard: Motherboard;
 
+    @Column({ name: 'ram_count', type: 'smallint', nullable: true })
+    @Max(8)
+    public ram_count: number;
+
     @ManyToOne(() => RAM, (r: RAM) => r, {
         cascade: true,
         eager: true
     })
     public RAM: RAM;
+
+    @Column({ name: 'hdd_count', type: 'smallint', nullable: true })
+    @Max(8)
+    public hdd_count: number;
 
     @ManyToOne(() => HDD, (h: HDD) => h, {
         cascade: true,
