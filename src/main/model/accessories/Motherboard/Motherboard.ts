@@ -292,6 +292,34 @@ export class Motherboard extends BaseAccessory {
         minimum: 1
     })
     @Column({
+        name: 'usb_30',
+        type: 'smallint',
+        nullable: false
+    })
+    @Max(10)
+    @Min(1)
+    @IsNotEmpty()
+    public usb_30: number;
+
+    @ApiProperty({
+        maximum: 10,
+        minimum: 1
+    })
+    @Column({
+        name: 'usb_31_gen1',
+        type: 'smallint',
+        nullable: false
+    })
+    @Max(10)
+    @Min(1)
+    @IsNotEmpty()
+    public usb_31_gen1: number;
+
+    @ApiProperty({
+        maximum: 10,
+        minimum: 1
+    })
+    @Column({
         name: 'usb_31_gen2',
         type: 'smallint',
         nullable: false
@@ -328,6 +356,20 @@ export class Motherboard extends BaseAccessory {
     @Min(1)
     @IsNotEmpty()
     public usb_32_gen2x2_type_c: number;
+
+    @ApiProperty({
+        maximum: 10,
+        minimum: 1
+    })
+    @Column({
+        name: 'usb_32_gen1',
+        type: 'smallint',
+        nullable: false
+    })
+    @Max(10)
+    @Min(1)
+    @IsNotEmpty()
+    public usb_32_gen1: number;
 
     @ApiProperty({
         maximum: 255,
