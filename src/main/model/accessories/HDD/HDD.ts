@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-
-import { Max, Min, IsNotEmpty, MaxLength, MinLength, min } from 'class-validator';
+import { Max, Min, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+
+import { Product } from 'model/product/Product';
 import { BaseAccessory } from '../BaseAccessory';
 import { FormFactor, HDDMaker } from './HDDEnums';
-import { Product } from 'model/product/Product';
 
 @Entity()
 export class HDD extends BaseAccessory {
     constructor(maker: string, disk_capacity_Gb: number, model: string, form_factor: string) {
         super();
-        this.name = `${maker} ${disk_capacity_Gb} ${model} ${form_factor} `;
+        this.name = `${maker} ${disk_capacity_Gb} ${model} ${form_factor}`;
     }
 
     @ApiProperty()
@@ -90,13 +90,13 @@ export class HDD extends BaseAccessory {
         required: false
     })
     @Column({
-        name: 'reading_speed_up_to_MB/s',
+        name: 'sequential_read_mb_s',
         type: 'smallint',
         nullable: true
     })
     @Max(15000)
     @Min(100)
-    public reading_speed_up_to_MB: number;
+    public sequential_read_mb_s: number;
 
     @ApiProperty({
         maximum: 15000,
@@ -104,13 +104,13 @@ export class HDD extends BaseAccessory {
         required: false
     })
     @Column({
-        name: 'write_speed_up_to_MB/s',
+        name: 'sequential_write_mb_s',
         type: 'smallint',
         nullable: true
     })
     @Max(15000)
     @Min(100)
-    public write_speed_up_to_MB: number;
+    public sequential_write_mb_s: number;
 
     @ApiProperty({
         required: false
@@ -199,11 +199,10 @@ export class HDD extends BaseAccessory {
     @Column({
         name: 'max_overloads_in_the_off_state',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(500)
     @Min(1)
-    @IsNotEmpty()
     public max_overloads_off_state_G: number;
 
     @ApiProperty({
@@ -236,9 +235,9 @@ export class HDD extends BaseAccessory {
 
     @ApiProperty()
     @Column({
-        name: 'MTBF',
+        name: 'MTBF_hours',
         type: 'int',
-        nullable: false
+        nullable: true
     })
     @IsNotEmpty()
     public MTBF_hours: number;

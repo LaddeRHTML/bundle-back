@@ -3,9 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
+import { Product } from 'model/product/Product';
 import { MemoryType, Package, RAMMaker } from './RAMEnums';
 import { BaseAccessory } from '../BaseAccessory';
-import { Product } from 'model/product/Product';
 
 @Entity()
 export class RAM extends BaseAccessory {
@@ -49,20 +49,6 @@ export class RAM extends BaseAccessory {
     @Min(1)
     @IsNotEmpty()
     public memory_clock_MHz: number;
-
-    @ApiProperty({
-        maximum: 10000,
-        minimum: 1
-    })
-    @Column({
-        name: 'number_transactions',
-        type: 'smallint',
-        nullable: false
-    })
-    @Max(10000)
-    @Min(1)
-    @IsNotEmpty()
-    public number_transactions: number;
 
     @ApiProperty({
         maximum: 10,

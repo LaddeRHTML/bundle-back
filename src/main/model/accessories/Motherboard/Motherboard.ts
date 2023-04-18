@@ -1,21 +1,21 @@
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { mixin } from '@nestjs/common';
 
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
-import { BaseAccessory } from '../BaseAccessory';
-import { FormFactor, MotherboardMaker } from './MotherboardEnums';
-import { IsNotEmpty, Max, MaxLength, Min, MinLength, min } from 'class-validator';
-import { CPUSocket, VideoCabel } from '../CPU/CPUEnums';
+import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Product } from 'model/product/Product';
 
-@ApiTags("Motherboard")
+import { BaseAccessory } from '../BaseAccessory';
+import { FormFactor, MotherboardMaker } from './MotherboardEnums';
+import { CPUSocket, VideoCabel } from '../CPU/CPUEnums';
+
+@ApiTags('Motherboard')
 @Entity()
 export class Motherboard extends BaseAccessory {
     constructor(maker: string, model: string, socket: CPUSocket) {
         super();
         this.name = `${maker} ${model} ${socket}`;
     }
-    
+
     @ApiProperty()
     @Column({ type: 'enum', enum: MotherboardMaker })
     public maker: MotherboardMaker;
@@ -50,8 +50,8 @@ export class Motherboard extends BaseAccessory {
 
     @ApiProperty({
         maximum: 255,
-         minimum: 6,
-         required: true
+        minimum: 6,
+        required: true
     })
     @Column({
         name: 'technologies',
@@ -224,7 +224,6 @@ export class Motherboard extends BaseAccessory {
     @IsNotEmpty()
     public channel_count: number;
 
-    
     @ApiProperty({
         required: false
     })
@@ -376,6 +375,37 @@ export class Motherboard extends BaseAccessory {
     @MinLength(1)
     @IsNotEmpty()
     public bios: string;
+
+    @ApiProperty({
+        isArray: true,
+        maxLength: 4,
+        maximum: 10,
+        minimum: 1,
+        required: false
+    })
+    @Column({
+        name: 'RAID_sata_array',
+        type: 'double precision',
+        array: true,
+        default: [],
+        nullable: true
+    })
+    @MaxLength(4)
+    @MinLength(0)
+    RAID_sata_array: [];
+
+    @ApiProperty({
+        maxLength: 20,
+        minLength: 1
+    })
+    @Column({
+        name: 'size_w_h',
+        type: 'text',
+        nullable: true
+    })
+    @MaxLength(20)
+    @MinLength(0)
+    size_w_h: string;
 
     @ApiProperty({
         maximum: 455,

@@ -2,11 +2,10 @@ import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Entity, Column, JoinColumn, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
+import { Product } from 'model/product/Product';
 import { BaseAccessory } from '../BaseAccessory';
 import { CoolerMaker, Package } from './CoolerEnums';
-import { Product } from 'model/product/Product';
 import { CPUSocket } from '../CPU/CPUEnums';
-
 
 @Entity()
 export class Cooler extends BaseAccessory {
@@ -17,7 +16,7 @@ export class Cooler extends BaseAccessory {
     @ApiProperty()
     @Column({ type: 'enum', enum: CoolerMaker })
     public maker: CoolerMaker;
-    
+
     @ApiProperty()
     @Column({
         name: 'socket',
@@ -127,7 +126,7 @@ export class Cooler extends BaseAccessory {
     @Column({
         name: 'min_noise_leve_dB',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(100)
     @Min(1)
@@ -383,8 +382,7 @@ export class Cooler extends BaseAccessory {
         type: 'numeric',
         precision: 10,
         scale: 2,
-        nullable: false,
-        default: 1000
+        nullable: true
     })
     @Max(500000)
     @Min(1000)

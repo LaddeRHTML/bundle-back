@@ -15,7 +15,6 @@ import {
     UseInterceptors
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { InsertResult } from 'typeorm';
 import { ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
@@ -34,7 +33,6 @@ import { RequestWithUser } from 'service/AuthService';
 import { FilesService, MulterFile } from 'service/FileService';
 import { GetPricesResponse, ProductsService } from 'service/ProductService';
 
-
 export type AllowedProductRelations = [
     'orders',
     'CPU',
@@ -46,7 +44,6 @@ export type AllowedProductRelations = [
     'power_unit',
     'PCCase'
 ];
-
 
 @ApiTags('Products')
 @Controller('/products')
@@ -62,7 +59,7 @@ export class ProductsController {
     async createOne(
         @Body() createProductDto: CreateProductDto,
         @Req() { user: { id } }: RequestWithUser
-    ): Promise<InsertResult> {
+    ): Promise<Product> {
         return await this.productsService.createOne(createProductDto, id);
     }
 
