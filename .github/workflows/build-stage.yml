@@ -28,5 +28,6 @@ jobs:
             - run: npm i pm2 -g
             - run: npm run build
             - run: pm2 -V
-            - run: pm2 restart bundle-back
+            - run: pm2 list
+            - run: pm2 start bundle-back /var/www/bundle-backend.kz/html/bundle-back/dist/main
             - run: exit
