@@ -195,30 +195,30 @@ export class CPU extends BaseAccessory {
 
     @ApiProperty({
         maximum: 1000,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'TDP',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(1000)
     @Min(1)
-    @IsNotEmpty()
     public TDP_wt: number;
 
     @ApiProperty({
         maximum: 1000,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'max_TDP_wt',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(1000)
     @Min(1)
-    @IsNotEmpty()
     public max_TDP_wt: number;
 
     @ApiProperty({
