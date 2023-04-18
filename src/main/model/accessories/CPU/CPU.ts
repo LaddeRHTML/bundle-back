@@ -23,8 +23,8 @@ export class CPU extends BaseAccessory {
     public maker: CPUMaker;
 
     @ApiProperty({
-        maximum: 10,
-        minimum: 1
+        maxLength: 10,
+        minLength: 1
     })
     @Column({
         name: 'type',
@@ -61,6 +61,7 @@ export class CPU extends BaseAccessory {
     public core_count: number;
 
     @ApiProperty({
+        maximum: 100000,
         minimum: 1
     })
     @Column({
@@ -68,6 +69,7 @@ export class CPU extends BaseAccessory {
         type: 'smallint',
         nullable: false
     })
+    @Max(100000)
     @Min(1)
     @IsNotEmpty()
     public thread_count: number;
@@ -79,7 +81,7 @@ export class CPU extends BaseAccessory {
     @Column({
         name: 'clock_frequency_max_ghz',
         type: 'double precision',
-        nullable: false
+        nullable: true
     })
     @Max(7)
     @Min(1.8)
@@ -93,7 +95,7 @@ export class CPU extends BaseAccessory {
     @Column({
         name: 'clock_frequency_min_ghz',
         type: 'double precision',
-        nullable: false
+        nullable: true
     })
     @Max(7)
     @Min(1.8)
