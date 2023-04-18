@@ -28,9 +28,9 @@ export enum PCCaseMaker {
 export enum FormFactor {
     Min_ITX_desktop = 'Min-ITX desktop',
     Slim_Desktop = 'Slim-Desktop',
-    Min_Tower = 'Min Tower',
-    Mid_Tower = 'Mid Tower',
-    Big_Tower = 'Big Tower',
+    Mini_Tower = 'Mini Tower',
+    Midi_Tower = 'Midi (middle) Tower',
+    Bigi_Tower = 'Big (full) Tower',
     Ultra_Tower = 'Ultra Tower',
     Case_Table = 'Корпус-стол'
 }
