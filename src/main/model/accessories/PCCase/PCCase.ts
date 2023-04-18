@@ -367,7 +367,7 @@ export class PCCase extends BaseAccessory {
         type: 'numeric',
         precision: 10,
         scale: 2,
-        nullable: false,
+        nullable: true,
         default: 5000
     })
     @Max(2000000)
