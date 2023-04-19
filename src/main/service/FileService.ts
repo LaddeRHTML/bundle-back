@@ -46,12 +46,13 @@ export class FilesService {
                 data: file.buffer
             });
 
-            await this.fileRepository.save({
+            const savedFile = await this.fileRepository.save({
                 ...newFile,
                 created_by: userId,
                 last_changed_by: userId
             });
-            return deleteObjectProperty(newFile, 'data');
+
+            return deleteObjectProperty(savedFile, 'data');
         } catch (error) {
             throw new Error(`files.service | uploadFile error: ${getErrorMessage(error)}`);
         }
@@ -139,7 +140,7 @@ export class FilesService {
         }
     }
 
-    async deleteFiles(files: string[]): Promise<DeleteResult> {
+    async deleteFiles(files: string[]) {
         try {
             return await this.fileRepository.delete({ id: In(files) });
         } catch (error) {

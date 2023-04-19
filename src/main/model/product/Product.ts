@@ -118,14 +118,6 @@ export class Product extends BaseEntity {
     })
     public PCCase: PCCase;
 
-    @JoinColumn({ name: 'pictures' })
-    @ManyToOne(() => File, {
-        eager: true,
-        cascade: true,
-        nullable: true
-    })
-    public pictures?: File[];
-
     @Column('simple-array', { nullable: true })
     @IsArray()
     public pictures_id: string[];

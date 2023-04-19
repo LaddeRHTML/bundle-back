@@ -103,23 +103,7 @@ export class FilesController {
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('delete-many/')
-    async deleteFiles(@Body() filesId: string[]): Promise<string[]> {
-        const affectedImages = [];
-
-        for (const id of filesId) {
-            const isExists = await this.filesService.isFileExists({ id });
-
-            if (!isExists) {
-                continue;
-            }
-
-            const result = await this.filesService.deleteFile(id);
-
-            if (result.affected !== 0) {
-                affectedImages.push(id);
-            }
-        }
-
-        return affectedImages;
+    async deleteFiles(@Body() filesId: string[]): Promise<DeleteResult> {
+        return await this.filesService.deleteFiles(filesId);
     }
 }
