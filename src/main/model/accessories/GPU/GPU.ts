@@ -366,7 +366,7 @@ export class GPU extends BaseAccessory {
     public price: number;
 
     @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.GPU, {
+    @OneToMany(() => Product, (p: Product) => p.gpu, {
         nullable: true
     })
     public products: Product[];

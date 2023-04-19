@@ -145,7 +145,7 @@ export class UsersController {
         @Request() { user: { id } }: RequestWithUser
     ): Promise<File> {
         const avatar = await this.filesService.uploadFile(file, id);
-        await this.usersService.updateOne(id, { avatar_id: avatar.id });
+        await this.usersService.updateOne(id, { avatarId: avatar.id });
         return avatar;
     }
 
@@ -154,10 +154,10 @@ export class UsersController {
     @UseGuards(RoleGuard)
     @Patch('/avatar/remove')
     async removeAvatar(@Request() { user: { id } }: RequestWithUser): Promise<User> {
-        const user = await this.usersService.findOne({ where: { id }, select: ['avatar_id'] });
-        await this.filesService.deleteFile(user?.avatar_id ?? '');
+        const user = await this.usersService.findOne({ where: { id }, select: ['avatarId'] });
+        await this.filesService.deleteFile(user?.avatarId ?? '');
         return await this.usersService.updateOne(id, {
-            avatar_id: null
+            avatarId: null
         });
     }
 

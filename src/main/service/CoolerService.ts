@@ -21,10 +21,10 @@ export class CoolerService {
         try {
             const dto = new CreateCoolerDto(createCoolerDto.maker, createCoolerDto.model);
 
-            createCoolerDto.last_changed_by = userId;
-            createCoolerDto.created_by = userId;
-            createCoolerDto.create_date = new Date();
-            createCoolerDto.last_change_date = new Date();
+            createCoolerDto.lastChangedBy = userId;
+            createCoolerDto.createdBy = userId;
+            createCoolerDto.createDate = new Date();
+            createCoolerDto.lastChangeDate = new Date();
             createCoolerDto.name = dto.name;
 
             return await this.coolerRepository.save(createCoolerDto);
@@ -71,7 +71,7 @@ export class CoolerService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${Cooler.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${Cooler.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -88,8 +88,8 @@ export class CoolerService {
 
     async updateOne(id: string, updateCoolerDto: UpdateCoolerDto, userId: string): Promise<Cooler> {
         try {
-            updateCoolerDto.last_change_date = new Date();
-            updateCoolerDto.last_changed_by = userId;
+            updateCoolerDto.lastChangeDate = new Date();
+            updateCoolerDto.lastChangedBy = userId;
 
             return await this.coolerRepository.save({ id, ...updateCoolerDto });
         } catch (error) {

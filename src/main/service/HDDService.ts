@@ -26,10 +26,10 @@ export class HDDService {
                 createHDDDto.form_factor
             );
 
-            createHDDDto.last_changed_by = userId;
-            createHDDDto.created_by = userId;
-            createHDDDto.create_date = new Date();
-            createHDDDto.last_change_date = new Date();
+            createHDDDto.lastChangedBy = userId;
+            createHDDDto.createdBy = userId;
+            createHDDDto.createDate = new Date();
+            createHDDDto.lastChangeDate = new Date();
             createHDDDto.name = dto.name;
 
             return await this.HDDrepository.save(createHDDDto);
@@ -71,7 +71,7 @@ export class HDDService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${HDD.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${HDD.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -88,8 +88,8 @@ export class HDDService {
 
     async updateOne(id: string, updateHDDDto: UpdateHDDDto, userId: string): Promise<HDD> {
         try {
-            updateHDDDto.last_change_date = new Date();
-            updateHDDDto.last_changed_by = userId;
+            updateHDDDto.lastChangeDate = new Date();
+            updateHDDDto.lastChangedBy = userId;
 
             return await this.HDDrepository.save({ id, ...updateHDDDto });
         } catch (error) {

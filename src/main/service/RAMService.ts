@@ -26,10 +26,10 @@ export class RAMService {
                 createRAMDto.memory_Gb
             );
 
-            createRAMDto.last_changed_by = userId;
-            createRAMDto.created_by = userId;
-            createRAMDto.create_date = new Date();
-            createRAMDto.last_change_date = new Date();
+            createRAMDto.lastChangedBy = userId;
+            createRAMDto.createdBy = userId;
+            createRAMDto.createDate = new Date();
+            createRAMDto.lastChangeDate = new Date();
             createRAMDto.name = dto.name;
 
             return await this.RAMrepository.save(createRAMDto);
@@ -71,7 +71,7 @@ export class RAMService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${RAM.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${RAM.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -88,8 +88,8 @@ export class RAMService {
 
     async updateOne(id: string, updateRAMDto: UpdateRAMDto, userId: string): Promise<RAM> {
         try {
-            updateRAMDto.last_change_date = new Date();
-            updateRAMDto.last_changed_by = userId;
+            updateRAMDto.lastChangeDate = new Date();
+            updateRAMDto.lastChangedBy = userId;
 
             return await this.RAMrepository.save({ id, ...updateRAMDto });
         } catch (error) {

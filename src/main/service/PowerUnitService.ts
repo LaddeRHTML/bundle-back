@@ -26,10 +26,10 @@ export class PowerUnitService {
                 createPowerUnitDto.power
             );
 
-            createPowerUnitDto.last_changed_by = userId;
-            createPowerUnitDto.created_by = userId;
-            createPowerUnitDto.create_date = new Date();
-            createPowerUnitDto.last_change_date = new Date();
+            createPowerUnitDto.lastChangedBy = userId;
+            createPowerUnitDto.createdBy = userId;
+            createPowerUnitDto.createDate = new Date();
+            createPowerUnitDto.lastChangeDate = new Date();
             createPowerUnitDto.name = dto.name;
 
             return await this.PowerUnitrepository.save(createPowerUnitDto);
@@ -79,7 +79,7 @@ export class PowerUnitService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${PowerUnit.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${PowerUnit.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -100,8 +100,8 @@ export class PowerUnitService {
         userId: string
     ): Promise<PowerUnit> {
         try {
-            updatePowerUnitDto.last_change_date = new Date();
-            updatePowerUnitDto.last_changed_by = userId;
+            updatePowerUnitDto.lastChangeDate = new Date();
+            updatePowerUnitDto.lastChangedBy = userId;
 
             return await this.PowerUnitrepository.save({ id, ...updatePowerUnitDto });
         } catch (error) {

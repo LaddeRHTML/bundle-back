@@ -26,10 +26,10 @@ export class PCCaseService {
                 createPCCaseDto.form_factor
             );
 
-            createPCCaseDto.last_changed_by = userId;
-            createPCCaseDto.created_by = userId;
-            createPCCaseDto.create_date = new Date();
-            createPCCaseDto.last_change_date = new Date();
+            createPCCaseDto.lastChangedBy = userId;
+            createPCCaseDto.createdBy = userId;
+            createPCCaseDto.createDate = new Date();
+            createPCCaseDto.lastChangeDate = new Date();
             createPCCaseDto.name = dto.name;
 
             return await this.PCCaseRepository.save(createPCCaseDto);
@@ -76,7 +76,7 @@ export class PCCaseService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${PCCase.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${PCCase.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -93,8 +93,8 @@ export class PCCaseService {
 
     async updateOne(id: string, updatePCCaseDto: UpdatePCCaseDto, userId: string): Promise<PCCase> {
         try {
-            updatePCCaseDto.last_change_date = new Date();
-            updatePCCaseDto.last_changed_by = userId;
+            updatePCCaseDto.lastChangeDate = new Date();
+            updatePCCaseDto.lastChangedBy = userId;
 
             return await this.PCCaseRepository.save({ id, ...updatePCCaseDto });
         } catch (error) {

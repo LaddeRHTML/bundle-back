@@ -254,9 +254,9 @@ export class PCCase extends BaseAccessory {
         minimum: 50
     })
     @Column({
-        name: 'max_lengtht_WCS_radiator_mm',
+        name: 'max_length_WCS_radiator_mm',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(800)
     @Min(50)
@@ -374,7 +374,7 @@ export class PCCase extends BaseAccessory {
     public price: number;
 
     @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.PCCase, {
+    @OneToMany(() => Product, (p: Product) => p.pccase, {
         nullable: true
     })
     public products: Product[];

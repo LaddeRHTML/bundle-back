@@ -1,4 +1,5 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { BaseEntity } from 'model/base';
 import { User } from 'model/user/User';
@@ -8,44 +9,88 @@ import { DeliveryType, PaymentMethod, Source, Status } from './OrderEnums';
 
 @Entity()
 export class Order extends BaseEntity {
-    @Column({ type: 'smallint', nullable: true })
-    public close_interval: number;
-
-    @Column({ type: 'timestamptz', nullable: true })
-    public delivery_date: Date;
-
-    @Column({ type: 'timestamptz' })
-    public purchase_date: Date;
-
-    @Column({ type: 'timestamptz' })
-    public planned_delivery_date: Date;
-
-    @Column({ type: 'enum', enum: DeliveryType, default: DeliveryType.teamMember })
-    public delivery_type: DeliveryType;
-
-    @Column({ type: 'enum', enum: PaymentMethod, default: PaymentMethod.cash })
-    public payment_method: PaymentMethod;
-
-    @Column({ type: 'enum', enum: Source, default: Source.webSite })
-    public source: Source;
-
-    @Column({ type: 'enum', enum: Status, default: Status.open })
-    public status: Status;
-
-    @ManyToOne(() => User, (u) => u.orders, {
-        cascade: true,
-        eager: true
+    @ApiProperty({
+        name: 'closeInterval',
+        type: 'smallint',
+        nullable: true,
+        required: false
     })
-    public client: User;
+    @Column({ name: 'close_interval', type: 'smallint', nullable: true })
+    public closeInterval: number;
 
-    @JoinColumn({ name: 'current_manager' })
-    @ManyToOne(() => User, {
-        eager: true,
-        cascade: true,
+    @ApiProperty({
+        name: 'deliveryDate',
+        type: 'timestamptz',
+        nullable: true,
+        required: false
+    })
+    @Column({ name: 'delivery_date', type: 'timestamptz', nullable: true })
+    public deliveryDate: Date;
+
+    @ApiProperty({
+        name: 'purchaseDate',
+        type: 'timestamptz',
+        nullable: true,
+        required: false
+    })
+    @Column({ name: 'purchase_date', type: 'timestamptz', nullable: true })
+    public purchaseDate: Date;
+
+    @ApiProperty({
+        name: 'plannedDeliveryDate',
+        type: 'timestamptz',
+        nullable: true,
+        required: false
+    })
+    @Column({ name: 'planned_delivery_date', type: 'timestamptz', nullable: true })
+    public plannedDeliveryDate: Date;
+
+    @ApiProperty({
+        name: 'deliveryType',
+        type: 'enum',
+        enum: DeliveryType,
+        default: DeliveryType.teamMember
+    })
+    @Column({
+        name: 'delivery_type',
+        type: 'enum',
+        enum: DeliveryType,
+        default: DeliveryType.teamMember
+    })
+    public deliveryType: DeliveryType;
+
+    @ApiProperty({
+        name: 'paymentMethod',
+        type: 'enum',
+        enum: PaymentMethod,
         nullable: true
     })
-    public current_manager: User;
+    @Column({ name: 'payment_method', type: 'enum', enum: PaymentMethod, nullable: true })
+    public paymentMethod: PaymentMethod;
 
+    @ApiProperty({
+        name: 'source',
+        type: 'enum',
+        enum: Source
+    })
+    @Column({ name: 'source', type: 'enum', enum: Source })
+    public source: Source;
+
+    @ApiProperty({ name: 'status', type: 'enum', enum: Status, default: Status.open })
+    @Column({ name: 'status', type: 'enum', enum: Status, default: Status.open })
+    public status: Status;
+
+    @ApiProperty({ name: 'client', type: () => User, nullable: true })
+    @ManyToOne(() => User, (u) => u.orders, { cascade: true, eager: true, nullable: true })
+    @JoinColumn({ name: 'client' })
+    public client: User;
+
+    @ApiProperty({ name: 'currentManager', type: () => User, nullable: true })
+    @ManyToOne(() => User, { eager: true, cascade: true, nullable: true })
+    @JoinColumn({ name: 'current_manager' })
+    public currentManager: User;
+
+    @ApiProperty({ name: 'products', type: () => Product, nullable: true })
     @ManyToMany(() => Product, (p: Product) => p.orders, {
         eager: true,
         cascade: true,
@@ -64,11 +109,8 @@ export class Order extends BaseEntity {
     })
     public products?: Product[];
 
+    @ApiProperty({ name: 'deliveredBy', type: () => User, nullable: true })
+    @ManyToOne(() => User, { eager: true, cascade: true, nullable: true })
     @JoinColumn({ name: 'delivered_by' })
-    @ManyToOne(() => User, {
-        eager: true,
-        cascade: true,
-        nullable: true
-    })
-    public delivered_by: User;
+    public deliveredBy: User;
 }

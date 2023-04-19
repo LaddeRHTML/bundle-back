@@ -31,10 +31,10 @@ export class MotherboardService {
                 createMotherboardDto.socket
             );
 
-            createMotherboardDto.last_changed_by = userId;
-            createMotherboardDto.created_by = userId;
-            createMotherboardDto.create_date = new Date();
-            createMotherboardDto.last_change_date = new Date();
+            createMotherboardDto.lastChangedBy = userId;
+            createMotherboardDto.createdBy = userId;
+            createMotherboardDto.createDate = new Date();
+            createMotherboardDto.lastChangeDate = new Date();
             createMotherboardDto.name = dto.name;
 
             return await this.motherboardRepository.save(createMotherboardDto);
@@ -100,7 +100,7 @@ export class MotherboardService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${Motherboard.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${Motherboard.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -121,8 +121,8 @@ export class MotherboardService {
         userId: string
     ): Promise<SuccessfullyUpdatedEntityResponse<Motherboard>> {
         try {
-            updateMotherboardDto.last_change_date = new Date();
-            updateMotherboardDto.last_changed_by = userId;
+            updateMotherboardDto.lastChangeDate = new Date();
+            updateMotherboardDto.lastChangedBy = userId;
 
             const result = await this.motherboardRepository.save({ id, ...updateMotherboardDto });
 

@@ -39,18 +39,18 @@ export class OrdersService {
                 });
             }
 
-            if (createOrderDto.current_manager) {
+            if (createOrderDto.currentManager) {
                 const manager = await this.userService.findOne({ where: { id: userId } });
 
                 if (!manager) {
                     throw new NotFoundException('Order not found!');
                 }
 
-                createOrderDto.current_manager = manager;
+                createOrderDto.currentManager = manager;
             }
 
-            createOrderDto.last_changed_by = userId;
-            createOrderDto.created_by = userId;
+            createOrderDto.lastChangedBy = userId;
+            createOrderDto.createdBy = userId;
 
             return await this.orderRepository.save(createOrderDto);
         } catch (error) {
@@ -68,15 +68,16 @@ export class OrdersService {
             const includedInClientSearchFields = [
                 'address',
                 'name',
-                'family_name',
+                'familyName',
                 'patronymic',
                 'iin',
-                'phone_number',
+                'phoneNumber',
                 'email'
             ];
-            const includedInProductSearchFields = ['name', 'maker', 'model', 'vendor_code'];
+            const includedInProductSearchFields = ['name'];
+            const entityName = Order.name.toLowerCase();
 
-            const queryBuilder = this.orderRepository.createQueryBuilder(Order.name.toLowerCase());
+            const queryBuilder = this.orderRepository.createQueryBuilder(entityName);
 
             if (filter) {
                 queryBuilder.where(filter);
@@ -95,16 +96,13 @@ export class OrdersService {
             }
 
             queryBuilder
-                .orderBy(`${Order.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${entityName}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
             if (relations.length > 0) {
                 relations.forEach((relation) => {
-                    queryBuilder.leftJoinAndSelect(
-                        `${Order.name.toLowerCase()}.${relation}`,
-                        relation
-                    );
+                    queryBuilder.leftJoinAndSelect(`${entityName}.${relation}`, relation);
                 });
             }
 
@@ -135,8 +133,8 @@ export class OrdersService {
                 throw new NotFoundException('Order not found!');
             }
 
-            updateOrderDto.last_change_date = new Date();
-            updateOrderDto.last_changed_by = userId;
+            updateOrderDto.lastChangeDate = new Date();
+            updateOrderDto.lastChangedBy = userId;
 
             if (updateOrderDto.products && updateOrderDto.products?.length > 0) {
                 const orderedProducts =
@@ -151,14 +149,14 @@ export class OrdersService {
                 });
             }
 
-            if (updateOrderDto.current_manager) {
+            if (updateOrderDto.currentManager) {
                 const manager = await this.userService.findOne({ where: { id: userId } });
 
                 if (!manager) {
                     throw new NotFoundException('Order not found!');
                 }
 
-                updateOrderDto.current_manager = manager;
+                updateOrderDto.currentManager = manager;
             }
 
             return await this.orderRepository.save({ ...updateOrderDto, id });
@@ -176,7 +174,7 @@ export class OrdersService {
             return await this.orderRepository
                 .createQueryBuilder()
                 .update(Order)
-                .set({ ...updateOrderDto, last_change_date: new Date(), last_changed_by: userId })
+                .set({ ...updateOrderDto, lastChangeDate: new Date(), lastChangedBy: userId })
                 .whereInIds(orderIds)
                 .execute();
         } catch (error) {

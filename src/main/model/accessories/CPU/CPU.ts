@@ -301,7 +301,7 @@ export class CPU extends BaseAccessory {
     public price: number;
 
     @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.CPU, {
+    @OneToMany(() => Product, (p: Product) => p.cpu, {
         nullable: true
     })
     public products: Product[];

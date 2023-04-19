@@ -27,10 +27,10 @@ export class CPUService {
                 createCPUDto.socket
             );
 
-            createCPUDto.last_changed_by = userId;
-            createCPUDto.created_by = userId;
-            createCPUDto.create_date = new Date();
-            createCPUDto.last_change_date = new Date();
+            createCPUDto.lastChangedBy = userId;
+            createCPUDto.createdBy = userId;
+            createCPUDto.createDate = new Date();
+            createCPUDto.lastChangeDate = new Date();
             createCPUDto.name = dto.name;
 
             return await this.CPUrepository.save(createCPUDto);
@@ -72,7 +72,7 @@ export class CPUService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${CPU.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${CPU.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -102,8 +102,8 @@ export class CPUService {
         userId: string
     ): Promise<SuccessfullyUpdatedEntityResponse<CPU>> {
         try {
-            updateCPUDto.last_change_date = new Date();
-            updateCPUDto.last_changed_by = userId;
+            updateCPUDto.lastChangeDate = new Date();
+            updateCPUDto.lastChangedBy = userId;
 
             const result = await this.CPUrepository.save({ id, ...updateCPUDto });
             return {

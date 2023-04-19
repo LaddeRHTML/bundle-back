@@ -380,7 +380,7 @@ export class PowerUnit extends BaseAccessory {
     public price: number;
 
     @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.power_unit, {
+    @OneToMany(() => Product, (p: Product) => p.powerUnit, {
         nullable: true
     })
     public products: Product[];
