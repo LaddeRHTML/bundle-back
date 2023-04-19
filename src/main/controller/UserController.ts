@@ -17,7 +17,7 @@ import {
 import { Req } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InsertResult } from 'typeorm';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
@@ -47,7 +47,7 @@ export class UsersController {
         private readonly filesService: FilesService
     ) {}
 
-    @ApiOperation({description: "Отношения между продуктом и файлом"})
+    @ApiOperation({ description: 'Создание юзера в базе' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post()
@@ -57,7 +57,8 @@ export class UsersController {
     ): Promise<InsertResult> {
         return this.usersService.createOne(createUserDto, role);
     }
-    @ApiOperation({description: ""})
+
+    @ApiOperation({ description: 'Получение всех юзеров' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
@@ -65,7 +66,7 @@ export class UsersController {
         return this.usersService.findAll();
     }
 
-    @ApiOperation({description: ""})
+    @ApiOperation({ description: 'Получение юзеров порционно' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/filter?')
@@ -85,7 +86,7 @@ export class UsersController {
         return await this.usersService.findSome(pageOptionsDto, relations);
     }
 
-    @ApiOperation({description: ""})
+    @ApiOperation({ description: 'Получить одного юзера' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get(':id')
@@ -105,6 +106,7 @@ export class UsersController {
         return this.usersService.findOne({ where: { id }, relations });
     }
 
+    @ApiOperation({ description: 'Получить одного юзера по почте' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/email/:email')
@@ -112,6 +114,7 @@ export class UsersController {
         return await this.usersService.findOne({ where: { email } });
     }
 
+    @ApiOperation({ description: 'Обновить одного юзера' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @UseGuards(JwtAuthGuard)
@@ -120,6 +123,7 @@ export class UsersController {
         return this.usersService.updateOne(id, updateUserDto);
     }
 
+    @ApiOperation({ description: 'Обновить пароль по айди из токена' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/password/update')
@@ -130,6 +134,7 @@ export class UsersController {
         return await this.usersService.updatePassword(id, passwords);
     }
 
+    @ApiOperation({ description: 'Загрузить аватар' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @UseInterceptors(FileInterceptor('image'))
@@ -140,20 +145,23 @@ export class UsersController {
         @Request() { user: { id } }: RequestWithUser
     ): Promise<File> {
         const avatar = await this.filesService.uploadFile(file, id);
-        await this.usersService.updateOne(id, { avatar, avatar_id: avatar.id });
+        await this.usersService.updateOne(id, { avatar_id: avatar.id });
         return avatar;
     }
 
+    @ApiOperation({ description: 'Удалить аватар' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/avatar/remove')
     async removeAvatar(@Request() { user: { id } }: RequestWithUser): Promise<User> {
+        const user = await this.usersService.findOne({ where: { id }, select: ['avatar_id'] });
+        await this.filesService.deleteFile(user?.avatar_id ?? '');
         return await this.usersService.updateOne(id, {
-            avatar: null,
             avatar_id: null
         });
     }
 
+    @ApiOperation({ description: 'Удалить одного юзера' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Delete(':id')

@@ -1,17 +1,12 @@
 import { IsDate, IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Order } from 'model/order/Order';
-import { File } from 'model/file/File';
 
 import { Gender, Role } from './UserEnums';
-import { ApiHeader, ApiProperty, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Controller } from '@nestjs/common';
 
-// @ApiHeader({
-//     name: 'Users',
-//     description: 'Пользователи',
-// })
 @Entity()
 @Controller('/users')
 export class User {
@@ -27,7 +22,7 @@ export class User {
     @ApiProperty({
         minimum: 13,
         maximum: 30,
-        uniqueItems: true,
+        uniqueItems: true
     })
     @Column({
         unique: true
@@ -40,7 +35,7 @@ export class User {
 
     @ApiProperty({
         minimum: 6,
-        maximum: 30,
+        maximum: 30
     })
     @Column({ type: 'varchar', select: false })
     @MaxLength(30)
@@ -55,10 +50,6 @@ export class User {
     @ApiProperty()
     @Column({ type: 'smallint', default: 0 })
     public age: number;
-
-    @ApiProperty()
-    @Column({ name: 'avatar_id', type: 'varchar', nullable: true })
-    public avatar_id: string | null;
 
     @ApiProperty()
     @Column({ type: 'enum', enum: Gender, default: Gender.Unknown })
@@ -116,11 +107,8 @@ export class User {
     public registration_date: Date;
 
     @ApiProperty()
-    @JoinColumn({ name: 'avatar_id' })
-    @OneToOne(() => File, {
-        nullable: true
-    })
-    public avatar?: File | null;
+    @Column({ name: 'avatar_id', type: 'varchar', nullable: true })
+    public avatar_id: string | null;
 
     @ApiProperty()
     @JoinColumn({ name: 'orders' })

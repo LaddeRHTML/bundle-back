@@ -143,8 +143,36 @@ export class ProductsController {
         return this.productsService.updateOne(
             id,
             {
-                pictures_id: uploadedPictures.map((p) => p.id),
-                pictures: uploadedPictures
+                pictures_id: uploadedPictures.map((p) => p.id)
+            },
+            userId
+        );
+    }
+
+    @HasRoles(Role.Manager, Role.Admin)
+    @UseGuards(RoleGuard)
+    @Patch('/pictures/remove/:id')
+    async removePictures(
+        @Query(
+            'pictures',
+            new DefaultValuePipe([]),
+            new ParseArrayPipe({
+                items: String,
+                separator: ',',
+                optional: true
+            })
+        )
+        pictures: string[],
+        @Param('id') id: string,
+        @Req() { user: { id: userId } }: RequestWithUser
+    ): Promise<Product> {
+        const product = await this.productsService.findOne({ where: { id }, relations: [] });
+        await this.filesService.deleteFiles(pictures);
+
+        return this.productsService.updateOne(
+            id,
+            {
+                pictures_id: product?.pictures_id.filter((p) => !pictures.includes(p))
             },
             userId
         );
