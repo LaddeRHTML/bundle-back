@@ -76,14 +76,14 @@ export class HDD extends BaseAccessory {
         minimum: 1000
     })
     @Column({
-        name: 'disk_capacity_Gb',
+        name: 'disk_capacity',
         type: 'smallint',
         nullable: false
     })
     @Max(30000)
     @Min(1000)
     @IsNotEmpty()
-    public diskCapacityGb: number;
+    public diskCapacity: number;
 
     @ApiProperty({
         maximum: 15000,

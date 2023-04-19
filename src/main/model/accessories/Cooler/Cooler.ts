@@ -194,14 +194,14 @@ export class Cooler extends BaseAccessory {
         minimum: 6
     })
     @Column({
-        name: 'supply_voltage_w',
+        name: 'supply_voltage',
         type: 'text',
         nullable: false
     })
     @MaxLength(255)
     @MinLength(6)
     @IsNotEmpty()
-    public supplyVoltageW: string;
+    public supplyVoltage: string;
 
     @ApiProperty()
     @Column({
@@ -282,7 +282,8 @@ export class Cooler extends BaseAccessory {
     @ApiProperty({
         maximum: 12,
         minimum: 0,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'power_consumption_wt',

@@ -22,7 +22,7 @@ export class PowerUnitService {
             const dto = new CreatePowerUnitDto(
                 createPowerUnitDto.maker,
                 createPowerUnitDto.model,
-                createPowerUnitDto.form_factor,
+                createPowerUnitDto.formFactor,
                 createPowerUnitDto.power
             );
 

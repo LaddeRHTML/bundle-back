@@ -23,7 +23,7 @@ export class GPUService {
             const dto = new CreateGPUDto(
                 createGPUDto.maker,
                 createGPUDto.model,
-                createGPUDto.graphics_ram_size_Gb
+                createGPUDto.graphicsRamSize
             );
 
             createGPUDto.lastChangedBy = userId;

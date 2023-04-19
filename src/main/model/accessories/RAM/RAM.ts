@@ -16,7 +16,7 @@ export class RAM extends BaseAccessory {
         memoryGb: number,
         memoryClockMHz: number,
         supplyVoltage: number,
-        timings: number[]
+        timings: string
     ) {
         super();
         this.name = `${maker} ${model} ${memoryType} ${memoryGb} ${memoryClockMHz} ${supplyVoltage} ${timings}`;

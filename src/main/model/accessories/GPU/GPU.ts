@@ -9,7 +9,7 @@ import {
     Connectors,
     Cooling,
     GPUMaker,
-    GPUManufacturer,
+    Manufacturer,
     GraphicsCardSeries,
     GraphicsRam,
     GraphicsRamSize,
@@ -41,12 +41,12 @@ export class GPU extends BaseAccessory {
 
     @ApiProperty()
     @Column({
-        name: 'GPU_manufacturer',
+        name: 'manufacturer',
         type: 'enum',
-        enum: GPUManufacturer,
+        enum: Manufacturer,
         nullable: false
     })
-    public GPUManufacturer: GPUManufacturer;
+    public manufacturer: Manufacturer;
 
     @ApiProperty({
         maximum: 30,
@@ -115,12 +115,12 @@ export class GPU extends BaseAccessory {
 
     @ApiProperty()
     @Column({
-        name: 'graphics_ram_size_Gb',
+        name: 'graphics_ram_size',
         type: 'enum',
         enum: GraphicsRamSize,
         nullable: false
     })
-    public graphicsRamSizeGb: GraphicsRamSize;
+    public graphicsRamSize: GraphicsRamSize;
 
     @ApiProperty({
         maximum: 512,
@@ -338,13 +338,13 @@ export class GPU extends BaseAccessory {
         required: false
     })
     @Column({
-        name: 'power_unit_length_mm',
+        name: 'length_mm',
         type: 'smallint',
         nullable: true
     })
     @Max(500)
     @Min(0)
-    public GPULengthMm: number;
+    public lengthMm: number;
 
     @ApiProperty()
     @Column({
