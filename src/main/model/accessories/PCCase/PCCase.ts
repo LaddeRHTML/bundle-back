@@ -68,12 +68,13 @@ export class PCCase extends BaseAccessory {
 
     @ApiProperty({
         maximum: 300,
-        minimum: 10
+        minimum: 10,
+        required: false
     })
     @Column({
         name: 'peculiarities',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(300)
     @MinLength(10)
@@ -91,14 +92,16 @@ export class PCCase extends BaseAccessory {
     @IsNotEmpty()
     public power_unit_location: PowerUnitLocation;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'hdd_mount',
         type: 'enum',
         enum: HDDMount,
         array: true,
         default: [],
-        nullable: false
+        nullable: true
     })
     @IsNotEmpty()
     public hdd_mount: HDDMount[];
@@ -131,52 +134,59 @@ export class PCCase extends BaseAccessory {
     @IsNotEmpty()
     public count_internal_compartments_3_5: number;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'buttons',
         type: 'enum',
         enum: Buttons,
         array: true,
         default: [],
-        nullable: false
+        nullable: true
     })
     @IsNotEmpty()
     public buttons: Buttons[];
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'indicators',
         type: 'enum',
         enum: Indicators,
         array: true,
         default: [],
-        nullable: false
+        nullable: true
     })
     @IsNotEmpty()
     public indicators: Indicators[];
 
     @ApiProperty({
         maximum: 35,
-        minimum: 6
+        minimum: 6,
+        required: false
     })
     @Column({
         name: 'count_expansion_slots',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(35)
     @MinLength(6)
     @IsNotEmpty()
     public count_expansion_slots: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'GPU_installation_type',
         type: 'enum',
         enum: GPUInstallationType,
         array: true,
         default: [],
-        nullable: false
+        nullable: true
     })
     @IsNotEmpty()
     public GPU_installation_type: GPUInstallationType[];
@@ -211,12 +221,13 @@ export class PCCase extends BaseAccessory {
 
     @ApiProperty({
         maximum: 255,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'installed_cooling',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(255)
     @MinLength(1)
@@ -237,12 +248,13 @@ export class PCCase extends BaseAccessory {
 
     @ApiProperty({
         maximum: 255,
-        minimum: 6
+        minimum: 6,
+        required: false
     })
     @Column({
         name: 'fan_installation_support',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(255)
     @MinLength(6)
@@ -261,16 +273,17 @@ export class PCCase extends BaseAccessory {
     @Max(800)
     @Min(50)
     @IsNotEmpty()
-    public max_lengtht_WCS_radiator_mm: number;
+    public max_length_WCS_radiator_mm: number;
 
     @ApiProperty({
         maximum: 255,
-        minimum: 6
+        minimum: 6,
+        required: false
     })
     @Column({
         name: 'places_mounting_WCS_radiator',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(255)
     @MinLength(6)
@@ -348,13 +361,13 @@ export class PCCase extends BaseAccessory {
         required: false
     })
     @Column({
-        name: 'size_volume_cm',
+        name: 'size_volume_mm',
         type: 'text',
         nullable: true
     })
     @MaxLength(100)
     @MinLength(6)
-    public size_volume_cm: string;
+    public size_volume_mm: string;
 
     @ApiProperty({
         maximum: 2000000,
