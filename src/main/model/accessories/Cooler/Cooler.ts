@@ -308,32 +308,18 @@ export class Cooler extends BaseAccessory {
     public more: string;
 
     @ApiProperty({
-        maximum: 30,
+        maximum: 300,
         minimum: 0,
         required: false
     })
     @Column({
-        name: 'pump_size_cm',
-        type: 'double precision',
+        name: 'pump_size_mm',
+        type: 'smallint',
         nullable: true
     })
-    @Max(30)
+    @Max(300)
     @Min(0)
-    public pump_size_cm: number;
-
-    @ApiProperty({
-        maximum: 40,
-        minimum: 0,
-        required: false
-    })
-    @Column({
-        name: 'radiator_size_cm',
-        type: 'double precision',
-        nullable: true
-    })
-    @Max(40)
-    @Min(0)
-    public radiator_size_cm: number;
+    public pump_size_mm: number;
 
     @ApiProperty({
         maximum: 6,
@@ -355,13 +341,13 @@ export class Cooler extends BaseAccessory {
         required: false
     })
     @Column({
-        name: 'size_volume_cm',
+        name: 'size_volume_mm',
         type: 'text',
         nullable: true
     })
     @MaxLength(100)
     @MinLength(6)
-    public size_volume_cm: string;
+    public size_volume_mm: string;
 
     @ApiProperty()
     @Column({

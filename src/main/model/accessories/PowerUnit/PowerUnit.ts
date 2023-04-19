@@ -252,18 +252,18 @@ export class PowerUnit extends BaseAccessory {
     public line_output_current_12V_A: number;
 
     @ApiProperty({
-        maximum: 20,
+        maximum: 200,
         minimum: 1
     })
     @Column({
-        name: 'fan_size_cm',
-        type: 'double precision',
+        name: 'fan_size_mm',
+        type: 'smallint',
         nullable: false
     })
-    @Max(20)
+    @Max(200)
     @Min(1)
     @IsNotEmpty()
-    public fan_size_cm: number;
+    public fan_size_mm: number;
 
     @ApiProperty({
         maximum: 255,
@@ -331,13 +331,13 @@ export class PowerUnit extends BaseAccessory {
         required: false
     })
     @Column({
-        name: 'size_volume_cm',
+        name: 'size_volume_mm',
         type: 'text',
         nullable: true
     })
     @MaxLength(100)
     @MinLength(6)
-    public size_volume_cm: string;
+    public size_volume_mm: string;
 
     @ApiProperty({
         maximum: 5,

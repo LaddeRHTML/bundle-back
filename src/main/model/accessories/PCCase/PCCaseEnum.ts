@@ -32,7 +32,7 @@ export enum FormFactor {
     Mid_Tower = 'Mid Tower',
     Big_Tower = 'Big Tower',
     Ultra_Tower = 'Ultra Tower',
-    Case_Table = 'Корпус-стол'
+    Case_Table = 'Case Table'
 }
 
 export enum MotherboardCompatibleFormFactor {

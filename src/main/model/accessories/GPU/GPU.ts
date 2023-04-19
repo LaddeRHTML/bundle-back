@@ -325,18 +325,18 @@ export class GPU extends BaseAccessory {
     public more: string;
 
     @ApiProperty({
-        maximum: 50,
+        maximum: 500,
         minimum: 0,
         required: false
     })
     @Column({
         name: 'power_unit_length_mm',
-        type: 'double precision',
+        type: 'smallint',
         nullable: true
     })
-    @Max(50)
+    @Max(500)
     @Min(0)
-    public GPU_length_cm: number;
+    public GPU_length_mm: number;
 
     @ApiProperty()
     @Column({

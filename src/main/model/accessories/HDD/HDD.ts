@@ -221,12 +221,13 @@ export class HDD extends BaseAccessory {
 
     @ApiProperty({
         maximum: 10,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'power_consumption_idle_mode_wt',
         type: 'double precision',
-        nullable: false
+        nullable: true
     })
     @Max(10)
     @Min(1)
@@ -272,13 +273,13 @@ export class HDD extends BaseAccessory {
         required: false
     })
     @Column({
-        name: 'size_volume_cm',
+        name: 'size_volume_mm',
         type: 'text',
         nullable: true
     })
     @MaxLength(100)
     @MinLength(6)
-    public size_volume_cm: string;
+    public size_volume_mm: string;
 
     @ApiProperty({
         maximum: 1000000,

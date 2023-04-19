@@ -156,11 +156,13 @@ export class CPU extends BaseAccessory {
     @IsNotEmpty()
     public max_ram_gb: number;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'support_ess',
         type: 'boolean',
-        nullable: false
+        nullable: true
     })
     @IsNotEmpty()
     public support_ess: boolean;
@@ -233,11 +235,13 @@ export class CPU extends BaseAccessory {
     })
     public instruction_set: string[];
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'support_hyper_threading',
         type: 'boolean',
-        nullable: false
+        nullable: true
     })
     @IsNotEmpty()
     public support_hyper_threading: boolean;

@@ -9,9 +9,15 @@ import { BaseAccessory } from '../BaseAccessory';
 
 @Entity()
 export class RAM extends BaseAccessory {
-    constructor(maker: string, model: string, memory_type: string, memory_Gb: number) {
+    constructor(
+        maker: string,
+        model: string,
+        memory_type: string,
+        memory_Gb: number,
+        memory_clock_MHz: number
+    ) {
         super();
-        this.name = `${maker} ${model} ${memory_type} ${memory_Gb}`;
+        this.name = `${maker} ${model} ${memory_type} ${memory_Gb} ${memory_clock_MHz}`;
     }
 
     @ApiProperty()
@@ -111,18 +117,18 @@ export class RAM extends BaseAccessory {
     public package: Package;
 
     @ApiProperty({
-        maximum: 15,
+        maximum: 150,
         minimum: 1
     })
     @Column({
-        name: 'ram_height_cm',
-        type: 'double precision',
+        name: 'ram_height_mm',
+        type: 'smallint',
         nullable: false
     })
-    @Max(15)
+    @Max(150)
     @Min(1)
     @IsNotEmpty()
-    public ram_height_cm: number;
+    public ram_height_mm: number;
 
     @ApiProperty({
         maximum: 8,
