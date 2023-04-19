@@ -3,7 +3,7 @@ export enum Package {
     RTL = 'RTL'
 }
 
-export enum GPUManufacturer {
+export enum Manufacturer {
     AMD = 'AMD',
     NVIDIA = 'NVIDIA'
 }
@@ -84,7 +84,6 @@ export enum Technologies {
 }
 
 export enum SupportedMulti_GPU {
-    Does_not_support = 'Не поддерживает',
     NVIDIA_SLI = 'NVIDIA_SLI',
     AMD_CrossFire = 'AMD_CrossFire'
 }
@@ -111,19 +110,18 @@ export enum Connectors {
 }
 
 export enum Cooling {
-    Passive = 'Пассивное',
-    Active = 'Активное',
-    Automatic_passive_mode = 'Автоматический пассивный режим',
-    fan1 = '1 вентилятор',
-    fans2 = '2 вентилятора',
-    fans3 = '3 вентилятора',
-    fans4 = '4 вентилятора',
-    heat_pipes = 'Тепловые трубки',
-    Water = 'Водяное'
+    Passive = 'Passive',
+    Active = 'Active',
+    AutomaticPassiveMode = 'Automatic Passive Mode',
+    Fan1 = '1 Fan',
+    Fans2 = '2 Fans',
+    Fans3 = '3 Fans',
+    Fans4 = '4 Fans',
+    HeatPipes = 'Heat Pipes',
+    Water = 'Water'
 }
 
 export enum PowerConnectors {
-    missing = 'Отсутствуют',
     pin6 = '6-pin',
     pin8 = '8-pin',
     pin8_x2 = '2 х 8-pin',

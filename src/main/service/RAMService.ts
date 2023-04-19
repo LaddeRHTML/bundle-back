@@ -22,8 +22,11 @@ export class RAMService {
             const dto = new CreateRAMDto(
                 createRAMDto.maker,
                 createRAMDto.model,
-                createRAMDto.memory_type,
-                createRAMDto.memory_Gb
+                createRAMDto.memoryType,
+                createRAMDto.memoryGb,
+                createRAMDto.memoryClockMHz,
+                createRAMDto.supplyVoltage,
+                createRAMDto.timings.join(',')
             );
 
             createRAMDto.lastChangedBy = userId;

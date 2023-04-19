@@ -21,9 +21,9 @@ export class HDDService {
         try {
             const dto = new CreateHDDDto(
                 createHDDDto.maker,
-                createHDDDto.disk_capacity_Gb,
+                createHDDDto.diskCapacity,
                 createHDDDto.model,
-                createHDDDto.form_factor
+                createHDDDto.formFactor
             );
 
             createHDDDto.lastChangedBy = userId;

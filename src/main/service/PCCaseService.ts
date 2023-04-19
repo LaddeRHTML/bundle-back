@@ -23,7 +23,7 @@ export class PCCaseService {
                 createPCCaseDto.maker,
                 createPCCaseDto.model,
                 createPCCaseDto.color,
-                createPCCaseDto.form_factor
+                createPCCaseDto.formFactor
             );
 
             createPCCaseDto.lastChangedBy = userId;

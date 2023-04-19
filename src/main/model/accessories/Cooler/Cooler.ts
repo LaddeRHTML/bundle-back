@@ -41,7 +41,7 @@ export class Cooler extends BaseAccessory {
     })
     @Max(500)
     @Min(1)
-    public max_TDP_wt: number;
+    public maxTDPWt: number;
 
     @ApiProperty({})
     @Column({
@@ -66,7 +66,7 @@ export class Cooler extends BaseAccessory {
     @Max(250)
     @Min(1)
     @IsNotEmpty()
-    public fan_diameter_mm: number;
+    public fanDiameterMm: number;
 
     @ApiProperty({
         maximum: 1000,
@@ -80,7 +80,7 @@ export class Cooler extends BaseAccessory {
     @Max(1000)
     @Min(100)
     @IsNotEmpty()
-    public min_rotation_speed_rpm: number;
+    public minRotationSpeedRpm: number;
 
     @ApiProperty({
         maximum: 6000,
@@ -94,7 +94,7 @@ export class Cooler extends BaseAccessory {
     @Max(6000)
     @Min(100)
     @IsNotEmpty()
-    public max_rotation_speed_rpm: number;
+    public maxRotationSpeedRpm: number;
 
     @ApiProperty()
     @Column({
@@ -103,7 +103,7 @@ export class Cooler extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    public possibility_speed_regulation: boolean;
+    public possibilitySpeedRegulation: boolean;
 
     @ApiProperty({
         maximum: 250,
@@ -117,7 +117,7 @@ export class Cooler extends BaseAccessory {
     })
     @Max(250)
     @Min(1)
-    public cooler_height_mm: number;
+    public coolerHeightMm: number;
 
     @ApiProperty({
         maximum: 100,
@@ -131,7 +131,7 @@ export class Cooler extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    public min_noise_leve_dB: number;
+    public minNoiseLeveDb: number;
 
     @ApiProperty({
         maximum: 200,
@@ -145,7 +145,7 @@ export class Cooler extends BaseAccessory {
     @Max(200)
     @Min(1)
     @IsNotEmpty()
-    public max_noise_leve_dB: number;
+    public maxNoiseLeveDb: number;
 
     @ApiProperty({
         maximum: 255,
@@ -173,7 +173,7 @@ export class Cooler extends BaseAccessory {
     @Max(150)
     @Min(1)
     @IsNotEmpty()
-    public air_flow_CFM: number;
+    public airFlowCFM: number;
 
     @ApiProperty({
         maximum: 400000,
@@ -187,7 +187,7 @@ export class Cooler extends BaseAccessory {
     @Max(400000)
     @Min(1)
     @IsNotEmpty()
-    public MTBF_hours: number;
+    public MTBFHours: number;
 
     @ApiProperty({
         maximum: 255,
@@ -201,7 +201,7 @@ export class Cooler extends BaseAccessory {
     @MaxLength(255)
     @MinLength(6)
     @IsNotEmpty()
-    public supply_voltage_w: string;
+    public supplyVoltage: string;
 
     @ApiProperty()
     @Column({
@@ -224,7 +224,7 @@ export class Cooler extends BaseAccessory {
     })
     @MaxLength(100)
     @MinLength(6)
-    public backlight_color: string;
+    public backlightColor: string;
 
     @ApiProperty({
         maximum: 500,
@@ -238,7 +238,7 @@ export class Cooler extends BaseAccessory {
     })
     @Max(500)
     @Min(1)
-    public length_tubes_mm: number;
+    public lengthTubesMm: number;
 
     @ApiProperty({
         maximum: 500,
@@ -252,7 +252,7 @@ export class Cooler extends BaseAccessory {
     })
     @Max(500)
     @Min(1)
-    public radiator_size_mm: number;
+    public radiatorSizeMm: number;
 
     @ApiProperty({
         required: false
@@ -263,7 +263,7 @@ export class Cooler extends BaseAccessory {
         nullable: true
     })
     @IsNotEmpty()
-    public bearing_type: string;
+    public bearingType: string;
 
     @ApiProperty({
         maximum: 12,
@@ -277,12 +277,13 @@ export class Cooler extends BaseAccessory {
     })
     @Max(12)
     @Min(1)
-    public number_heat_pipes: number;
+    public numberHeatPipes: number;
 
     @ApiProperty({
         maximum: 12,
         minimum: 0,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'power_consumption_wt',
@@ -291,7 +292,7 @@ export class Cooler extends BaseAccessory {
     })
     @Max(12)
     @Min(0)
-    public power_consumption_wt: number;
+    public powerConsumptionWt: number;
 
     @ApiProperty({
         maximum: 455,
@@ -308,32 +309,18 @@ export class Cooler extends BaseAccessory {
     public more: string;
 
     @ApiProperty({
-        maximum: 30,
+        maximum: 300,
         minimum: 0,
         required: false
     })
     @Column({
-        name: 'pump_size_cm',
-        type: 'double precision',
+        name: 'pump_size_mm',
+        type: 'smallint',
         nullable: true
     })
-    @Max(30)
+    @Max(300)
     @Min(0)
-    public pump_size_cm: number;
-
-    @ApiProperty({
-        maximum: 40,
-        minimum: 0,
-        required: false
-    })
-    @Column({
-        name: 'radiator_size_cm',
-        type: 'double precision',
-        nullable: true
-    })
-    @Max(40)
-    @Min(0)
-    public radiator_size_cm: number;
+    public pumpSizeMm: number;
 
     @ApiProperty({
         maximum: 6,
@@ -347,7 +334,7 @@ export class Cooler extends BaseAccessory {
     @Max(6)
     @Min(0)
     @IsNotEmpty()
-    public weight_kg: number;
+    public weightKg: number;
 
     @ApiProperty({
         maximum: 100,
@@ -355,13 +342,13 @@ export class Cooler extends BaseAccessory {
         required: false
     })
     @Column({
-        name: 'size_volume_cm',
+        name: 'size_volume_mm',
         type: 'text',
         nullable: true
     })
     @MaxLength(100)
     @MinLength(6)
-    public size_volume_cm: string;
+    public sizeVolumeMm: string;
 
     @ApiProperty()
     @Column({

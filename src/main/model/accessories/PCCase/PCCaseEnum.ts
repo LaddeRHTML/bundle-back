@@ -26,13 +26,13 @@ export enum PCCaseMaker {
 }
 
 export enum FormFactor {
-    Min_ITX_desktop = 'Min-ITX desktop',
+    Min_ITXDesktop = 'Min-ITX Desktop',
     Slim_Desktop = 'Slim-Desktop',
-    Min_Tower = 'Min Tower',
-    Mid_Tower = 'Mid Tower',
-    Big_Tower = 'Big Tower',
-    Ultra_Tower = 'Ultra Tower',
-    Case_Table = 'Корпус-стол'
+    MiniTower = 'Mini Tower',
+    MidiTower = 'Midi (middle) Tower',
+    BigTower = 'Big (full) Tower',
+    UltraTower = 'Ultra Tower',
+    CaseTable = 'Case Table'
 }
 
 export enum MotherboardCompatibleFormFactor {
@@ -43,38 +43,38 @@ export enum MotherboardCompatibleFormFactor {
     ATX = 'ATX',
     XL_ATX = 'XL-ATX',
     E_ATX = 'E-ATX',
-    SSI_CEB = 'SSI CEB',
+    SSICEB = 'SSI CEB',
     Mini_DTX = 'Mini-DTX',
     CEB = 'CEB',
     EEB = 'EEB'
 }
 
 export enum PowerUnitLocation {
-    Upper = 'Верхнее',
-    Lower = 'Нижнее'
+    Upper = 'Upper',
+    Lower = 'Lower'
 }
 
 export enum HDDMount {
-    Screw = 'Винтовое',
-    Screwless = 'Безвинтовое'
+    Screw = 'Screw',
+    Screwless = 'Screwless'
 }
 
 export enum Buttons {
     Power = 'Power',
     Reset = 'Reset',
-    LED_Control = 'LED Control',
-    Fan_Speed = 'Fan Speed'
+    LEDControl = 'LED Control',
+    FanSpeed = 'Fan Speed'
 }
 
 export enum Indicators {
     Power = 'Power',
     HDD = 'HDD',
-    Integrated_display = 'Встроенный дисплей'
+    IntegratedDisplay = 'Integrated Display'
 }
 
 export enum GPUInstallationType {
-    Horizontal = 'Горизонтальная',
-    Vertical = 'Вертикальная'
+    Horizontal = 'Horizontal',
+    Vertical = 'Vertical'
 }
 
 export enum SupportedFanDiameters {
@@ -85,23 +85,23 @@ export enum SupportedFanDiameters {
 }
 
 export enum DustFilter {
-    Front_Panel = 'Передняя панель',
-    The_bottom_panel = 'Нижняя панель',
-    Top_panel = 'Верхняя панель',
-    Side_panel = 'Боковая панель'
+    FrontPanel = 'Front Panel',
+    BottomPanel = 'Bottom Panel',
+    TopPanel = 'Top Panel',
+    SidePanel = 'Side Panel'
 }
 
 export enum AdditionalConnectors {
     FireWire = 'FireWire',
     HDMI = 'HDMI',
-    Headphones = 'Наушники',
-    Микрофон = 'Микрофон',
-    Headphones_microphone = 'Наушники/микрофон',
-    Protective_shutter_ports = 'Защитная заслонка для портов',
+    Headphones = 'Headphones',
+    Microphone = 'Microphone',
+    HeadphonesMicrophone = 'Headphones/Microphone',
+    ProtectiveShutterPorts = 'Protective Shutter Ports',
     E_Sata = 'E-Sata',
-    Docking_station_SATA_drives = 'Док-станция для SATA-накопителей',
-    Wireless_Qi_charging = 'Беспроводная Qi зарядка',
-    USBx1_Quick_Charging = '1 x USB Quick Charging',
+    DockingStationSATA_Drives = 'Docking Station SATA_Drives',
+    WirelessQiCharging = 'Wireless Qi Charging',
+    USBx1QuickCharging = '1 x USB Quick Charging',
     USBx1_2 = '1 x USB 2.0',
     USBx2_2 = '2 x USB 2.0',
     USBx3_2 = '3 x USB 2.0',
@@ -110,22 +110,22 @@ export enum AdditionalConnectors {
     USBx2_3 = '2 x USB 3.0',
     USBx3_3 = '3 x USB 3.0',
     USBx4_3 = '4 x USB 3.0',
-    USBx1_TypeC = '1 x USB Type-C',
-    card_reader_1 = '1 x card reader',
+    USBx1TypeC = '1 x USB Type-C',
+    CardReader1 = '1 x Card Reader',
     IEEE_1394a_1 = '1 x 1394a'
 }
 
 export enum Color {
-    White = 'Белый',
-    Silver = 'Серебристый',
-    Golden = 'Золотистый',
-    Black = 'Черный',
-    Turquoise = 'Бирюзовый',
-    Red = 'Красный',
-    Pink = 'Розовый',
-    Grey = 'Серый',
-    Blue = 'Синий',
-    Orange = 'Оранжевый',
-    Green = 'Зеленый',
-    Violet = 'Фиолетовый'
+    White = 'White',
+    Silver = 'Silver',
+    Golden = 'Golden',
+    Black = 'Black',
+    Turquoise = 'Turquoise',
+    Red = 'Red',
+    Pink = 'Pink',
+    Grey = 'Grey',
+    Blue = 'Blue',
+    Orange = 'Orange',
+    Green = 'Green',
+    Violet = 'Violet'
 }

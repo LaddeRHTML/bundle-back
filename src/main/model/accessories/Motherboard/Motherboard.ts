@@ -51,12 +51,12 @@ export class Motherboard extends BaseAccessory {
     @ApiProperty({
         maximum: 255,
         minimum: 6,
-        required: true
+        required: false
     })
     @Column({
         name: 'technologies',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(255)
     @MinLength(6)
@@ -71,7 +71,7 @@ export class Motherboard extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    public form_factor: FormFactor;
+    public formFactor: FormFactor;
 
     @ApiProperty()
     @Column({
@@ -82,7 +82,7 @@ export class Motherboard extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    public supported_memory_frequencies: number[];
+    public supportedMemoryFrequencies: number[];
 
     @ApiProperty()
     @Column({
@@ -90,7 +90,7 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         nullable: true
     })
-    public memory_slots_count: number;
+    public memorySlotsCount: number;
 
     @ApiProperty({
         maximum: 256,
@@ -104,7 +104,7 @@ export class Motherboard extends BaseAccessory {
     @Max(256)
     @Min(1)
     @IsNotEmpty()
-    public max_ram_gb: number;
+    public maxRamGb: number;
 
     @ApiProperty({
         maximum: 8,
@@ -118,7 +118,7 @@ export class Motherboard extends BaseAccessory {
     @Max(8)
     @Min(1)
     @IsNotEmpty()
-    public max_sata_count: number;
+    public maxSataCount: number;
 
     @ApiProperty({
         maximum: 5,
@@ -132,7 +132,7 @@ export class Motherboard extends BaseAccessory {
     @Max(5)
     @Min(0)
     @IsNotEmpty()
-    public connectors_for_ssd: number;
+    public connectorsForSSD: number;
 
     @ApiProperty({
         maximum: 255,
@@ -146,7 +146,7 @@ export class Motherboard extends BaseAccessory {
     })
     @MaxLength(255)
     @MinLength(1)
-    public interface_m2_slot: string;
+    public interfaceM2Slot: string;
 
     @ApiProperty({
         maximum: 4,
@@ -160,7 +160,7 @@ export class Motherboard extends BaseAccessory {
     })
     @Max(4)
     @Min(1)
-    public pci_express_x16_count: number;
+    public pciExpressx16Count: number;
 
     @ApiProperty({
         maximum: 4,
@@ -174,7 +174,7 @@ export class Motherboard extends BaseAccessory {
     })
     @Max(4)
     @Min(1)
-    public pci_express_x1_count: number;
+    public pciExpressx1Count: number;
 
     @ApiProperty({
         maximum: 6,
@@ -188,7 +188,7 @@ export class Motherboard extends BaseAccessory {
     })
     @Max(6)
     @Min(1)
-    public pci_express_standard: number;
+    public pciExpressStandard: number;
 
     @ApiProperty({
         maximum: 255,
@@ -202,7 +202,7 @@ export class Motherboard extends BaseAccessory {
     })
     @MaxLength(255)
     @MinLength(1)
-    public pci_express_workflow: string;
+    public pciExpressWorkflow: string;
 
     @ApiProperty({
         maximum: 35,
@@ -230,7 +230,7 @@ export class Motherboard extends BaseAccessory {
     @Max(8)
     @Min(1)
     @IsNotEmpty()
-    public channel_count: number;
+    public channelCount: number;
 
     @ApiProperty({
         required: false
@@ -243,7 +243,7 @@ export class Motherboard extends BaseAccessory {
         default: [],
         nullable: true
     })
-    public video_cabel_type: VideoCabel[];
+    public videoCabelType: VideoCabel[];
 
     @ApiProperty({
         maximum: 550,
@@ -257,7 +257,7 @@ export class Motherboard extends BaseAccessory {
     })
     @MaxLength(550)
     @MinLength(1)
-    public internal_connectors: string;
+    public internalConnectors: string;
 
     @ApiProperty({
         maximum: 55,
@@ -271,7 +271,7 @@ export class Motherboard extends BaseAccessory {
     @MaxLength(55)
     @MinLength(1)
     @IsNotEmpty()
-    public power_connectors: string;
+    public powerConnectors: string;
 
     @ApiProperty({
         maximum: 255,
@@ -281,12 +281,12 @@ export class Motherboard extends BaseAccessory {
     @Column({
         name: 'backpanel_connectors',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(255)
     @MinLength(1)
     @IsNotEmpty()
-    public backpanel_connectors: string;
+    public backpanelConnectors: string;
 
     @ApiProperty({
         maximum: 10,
@@ -301,7 +301,7 @@ export class Motherboard extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public usb_30: number;
+    public usb30: number;
 
     @ApiProperty({
         maximum: 10,
@@ -316,7 +316,7 @@ export class Motherboard extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public usb_31_gen1: number;
+    public usb31Gen1: number;
 
     @ApiProperty({
         maximum: 10,
@@ -331,7 +331,7 @@ export class Motherboard extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public usb_31_gen2: number;
+    public usb31Gen2: number;
 
     @ApiProperty({
         maximum: 2,
@@ -346,7 +346,7 @@ export class Motherboard extends BaseAccessory {
     @Max(2)
     @Min(1)
     @IsNotEmpty()
-    public usb_31_gen2_type_c: number;
+    public usb31Gen2TypeC: number;
 
     @ApiProperty({
         maximum: 2,
@@ -361,7 +361,7 @@ export class Motherboard extends BaseAccessory {
     @Max(2)
     @Min(1)
     @IsNotEmpty()
-    public usb_32_gen2x2_type_c: number;
+    public usb32Gen2x2TypeC: number;
 
     @ApiProperty({
         maximum: 10,
@@ -376,7 +376,7 @@ export class Motherboard extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public usb_32_gen1: number;
+    public usb32Gen1: number;
 
     @ApiProperty({
         maximum: 255,
@@ -390,7 +390,7 @@ export class Motherboard extends BaseAccessory {
     })
     @MaxLength(255)
     @MinLength(1)
-    public included_buttons: string;
+    public includedButtons: string;
 
     @ApiProperty({
         maximum: 50,
@@ -403,21 +403,22 @@ export class Motherboard extends BaseAccessory {
     })
     @MaxLength(50)
     @MinLength(1)
-    public network_controller: string;
+    public networkController: string;
 
     @ApiProperty({
         maximum: 100,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'network_communications',
         type: 'text',
-        nullable: false
+        nullable: true
     })
     @MaxLength(100)
     @MinLength(1)
     @IsNotEmpty()
-    public network_communications: string;
+    public networkCommunications: string;
 
     @ApiProperty({
         maximum: 100,
@@ -449,20 +450,20 @@ export class Motherboard extends BaseAccessory {
     })
     @MaxLength(4)
     @MinLength(0)
-    RAID_sata_array: [];
+    public RAIDSataArray: [];
 
     @ApiProperty({
         maxLength: 20,
         minLength: 1
     })
     @Column({
-        name: 'size_w_h',
+        name: 'size_w_h_mm',
         type: 'text',
         nullable: true
     })
     @MaxLength(20)
     @MinLength(0)
-    size_w_h: string;
+    sizeWHMm: string;
 
     @ApiProperty({
         maximum: 455,

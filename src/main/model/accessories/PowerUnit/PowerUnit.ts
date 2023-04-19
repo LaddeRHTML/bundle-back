@@ -16,9 +16,9 @@ import {
 import { BaseAccessory } from '../BaseAccessory';
 @Entity()
 export class PowerUnit extends BaseAccessory {
-    constructor(maker: string, model: string, form_factor: FormFactor, power: number) {
+    constructor(maker: string, model: string, formFactor: FormFactor, power: number) {
         super();
-        this.name = `${maker} ${model} ${form_factor} ${power}`;
+        this.name = `${maker} ${model} ${formFactor} ${power}`;
     }
 
     @ApiProperty()
@@ -27,7 +27,7 @@ export class PowerUnit extends BaseAccessory {
 
     @ApiProperty()
     @Column({ name: 'form_factor', type: 'enum', enum: FormFactor, nullable: false })
-    public form_factor: FormFactor;
+    public formFactor: FormFactor;
 
     @ApiProperty({
         maximum: 1600,
@@ -61,7 +61,7 @@ export class PowerUnit extends BaseAccessory {
         nullable: true
     })
     @IsNotEmpty()
-    public compliance_with_standard: ComplianceMarking;
+    public complianceWithStandard: ComplianceMarking;
 
     @ApiProperty({
         maximum: 200,
@@ -85,7 +85,7 @@ export class PowerUnit extends BaseAccessory {
         enum: MPC,
         nullable: false
     })
-    public motherboard_power_connectors: MPC[];
+    public motherboardPowerConnectors: MPC[];
 
     @ApiProperty()
     @Column({
@@ -96,7 +96,7 @@ export class PowerUnit extends BaseAccessory {
         enum: SVCCS,
         nullable: false
     })
-    public support_video_card_connection_schemas: SVCCS[];
+    public supportVideoCardConnectionSchemas: SVCCS[];
 
     @ApiProperty({
         maximum: 10,
@@ -110,7 +110,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public count_PCI_E_connectors_2pin: number;
+    public countPCIEConnectors2pin: number;
 
     @ApiProperty({
         maximum: 10,
@@ -124,7 +124,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public count_PCI_E_connectors_6pin: number;
+    public countPCIEConnectors6pin: number;
 
     @ApiProperty({
         maximum: 2,
@@ -137,7 +137,7 @@ export class PowerUnit extends BaseAccessory {
     })
     @Max(2)
     @Min(1)
-    public count_PCI_E_connectors_16pin: number;
+    public countPCIEConnectors16pin: number;
 
     @ApiProperty({
         maximum: 8,
@@ -151,7 +151,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(8)
     @Min(1)
     @IsNotEmpty()
-    public count_Molex_connectors_4pin: number;
+    public countMolexConnectors4pin: number;
 
     @ApiProperty({
         maximum: 14,
@@ -165,7 +165,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(14)
     @Min(1)
     @IsNotEmpty()
-    public count_SATA_connectors: number;
+    public countSATAConnectors: number;
 
     @ApiProperty({
         required: false
@@ -191,7 +191,7 @@ export class PowerUnit extends BaseAccessory {
     @MaxLength(300)
     @MinLength(1)
     @IsNotEmpty()
-    public input_voltage_range_w: number[];
+    public inputVoltageRangeW: number[];
 
     @ApiProperty({
         maximum: 100,
@@ -207,7 +207,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    public input_frequency_hz: number[];
+    public inputFrequencyHz: number[];
 
     @ApiProperty({
         maximum: 100,
@@ -221,7 +221,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    public line_output_current_3_3V_A: number;
+    public lineOutputCurrent33VA: number;
 
     @ApiProperty({
         maximum: 100,
@@ -235,7 +235,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    public line_output_current_5V_A: number;
+    public lineOutputCurrent5VA: number;
 
     @ApiProperty({
         maximum: 100,
@@ -249,21 +249,21 @@ export class PowerUnit extends BaseAccessory {
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    public line_output_current_12V_A: number;
+    public lineOutputCurrent12VA: number;
 
     @ApiProperty({
-        maximum: 20,
+        maximum: 200,
         minimum: 1
     })
     @Column({
-        name: 'fan_size_cm',
-        type: 'double precision',
+        name: 'fan_size_mm',
+        type: 'smallint',
         nullable: false
     })
-    @Max(20)
+    @Max(200)
     @Min(1)
     @IsNotEmpty()
-    public fan_size_cm: number;
+    public fanSizeMm: number;
 
     @ApiProperty({
         maximum: 255,
@@ -277,7 +277,7 @@ export class PowerUnit extends BaseAccessory {
     })
     @MaxLength(255)
     @MinLength(6)
-    public fan_bearing_type: string;
+    public fanDearingType: string;
 
     @ApiProperty()
     @Column({
@@ -309,7 +309,7 @@ export class PowerUnit extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    public protection_systems: string;
+    public protectionSystems: string;
 
     @ApiProperty({
         maximum: 455,
@@ -326,18 +326,18 @@ export class PowerUnit extends BaseAccessory {
     public more: string;
 
     @ApiProperty({
-        maximum: 100,
+        maximum: 500,
         minimum: 1,
         required: false
     })
     @Column({
-        name: 'size_volume_cm',
+        name: 'size_volume_mm',
         type: 'text',
         nullable: true
     })
-    @MaxLength(100)
+    @MaxLength(500)
     @MinLength(6)
-    public size_volume_cm: string;
+    public sizeVolumeMm: string;
 
     @ApiProperty({
         maximum: 5,
@@ -351,7 +351,7 @@ export class PowerUnit extends BaseAccessory {
     @Max(5)
     @Min(1)
     @IsNotEmpty()
-    public weight_Kg: number;
+    public weightKg: number;
 
     @ApiProperty()
     @Column({
