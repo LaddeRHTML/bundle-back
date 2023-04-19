@@ -8,9 +8,9 @@ import { FormFactor, HDDMaker } from './HDDEnums';
 
 @Entity()
 export class HDD extends BaseAccessory {
-    constructor(maker: string, disk_capacity_Gb: number, model: string, form_factor: string) {
+    constructor(maker: string, diskCapacityGb: number, model: string, formFactor: string) {
         super();
-        this.name = `${maker} ${disk_capacity_Gb} ${model} ${form_factor}`;
+        this.name = `${maker} ${diskCapacityGb} ${model} ${formFactor}`;
     }
 
     @ApiProperty()
@@ -39,7 +39,7 @@ export class HDD extends BaseAccessory {
         default: FormFactor.FormFactor_3
     })
     @IsNotEmpty()
-    public form_factor: FormFactor;
+    public formFactor: FormFactor;
 
     @ApiProperty({
         maximum: 100,
@@ -58,31 +58,32 @@ export class HDD extends BaseAccessory {
 
     @ApiProperty({
         maximum: 12,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'interface_baud_rate_Gbps',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(12)
     @Min(1)
     @IsNotEmpty()
-    public interface_baud_rate_Gbps: number;
+    public interfaceBaudRateGbps: number;
 
     @ApiProperty({
         maximum: 30000,
         minimum: 1000
     })
     @Column({
-        name: 'disk_capacity',
+        name: 'disk_capacity_Gb',
         type: 'smallint',
         nullable: false
     })
     @Max(30000)
     @Min(1000)
     @IsNotEmpty()
-    public disk_capacity_Gb: number;
+    public diskCapacityGb: number;
 
     @ApiProperty({
         maximum: 15000,
@@ -96,7 +97,7 @@ export class HDD extends BaseAccessory {
     })
     @Max(15000)
     @Min(100)
-    public sequential_read_mb_s: number;
+    public sequentialReadMbS: number;
 
     @ApiProperty({
         maximum: 15000,
@@ -110,7 +111,7 @@ export class HDD extends BaseAccessory {
     })
     @Max(15000)
     @Min(100)
-    public sequential_write_mb_s: number;
+    public sequentialWriteMbS: number;
 
     @ApiProperty({
         required: false
@@ -120,7 +121,7 @@ export class HDD extends BaseAccessory {
         type: 'text',
         nullable: true
     })
-    public memory_chip_layout: string;
+    public memoryChipLayout: string;
 
     @ApiProperty({
         maximum: 1000,
@@ -134,7 +135,7 @@ export class HDD extends BaseAccessory {
     })
     @Max(1000)
     @Min(1)
-    public total_data_volume_TBW: number;
+    public totalDataVolumeTBW: number;
 
     @ApiProperty({
         maximum: 1024,
@@ -148,7 +149,7 @@ export class HDD extends BaseAccessory {
     })
     @Max(1024)
     @Min(1)
-    public buffer_mb: number;
+    public bufferMb: number;
 
     @ApiProperty({
         maximum: 7200,
@@ -162,39 +163,42 @@ export class HDD extends BaseAccessory {
     })
     @Max(7200)
     @Min(1)
-    public spindle_speed_rpm: number;
+    public spindleSpeedRpm: number;
 
     @ApiProperty({
         maximum: 110,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'noise_level_dB',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(110)
     @Min(1)
     @IsNotEmpty()
-    public noise_level_dB: number;
+    public noiseLevelDb: number;
 
     @ApiProperty({
         maximum: 100,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'max_overload_during_operation_G',
         type: 'smallint',
-        nullable: false
+        nullable: true
     })
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    public max_overload_during_operation_G: number;
+    public maxOverloadDuringOperationG: number;
 
     @ApiProperty({
         maximum: 500,
-        minimum: 1
+        minimum: 1,
+        required: false
     })
     @Column({
         name: 'max_overloads_in_the_off_state',
@@ -203,7 +207,7 @@ export class HDD extends BaseAccessory {
     })
     @Max(500)
     @Min(1)
-    public max_overloads_off_state_G: number;
+    public maxOverloadsOffStateG: number;
 
     @ApiProperty({
         maximum: 10,
@@ -217,7 +221,7 @@ export class HDD extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public power_consumption_active_mode_wt: number;
+    public powerConsumptionActiveModeWt: number;
 
     @ApiProperty({
         maximum: 10,
@@ -232,16 +236,18 @@ export class HDD extends BaseAccessory {
     @Max(10)
     @Min(1)
     @IsNotEmpty()
-    public power_consumption_idle_mode_wt: number;
+    public powerConsumptionIdleModeWt: number;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false
+    })
     @Column({
         name: 'MTBF_hours',
         type: 'int',
         nullable: true
     })
     @IsNotEmpty()
-    public MTBF_hours: number;
+    public MTBFHours: number;
 
     @ApiProperty({
         required: false
@@ -251,7 +257,7 @@ export class HDD extends BaseAccessory {
         type: 'text',
         nullable: true
     })
-    public additional_technologies: string;
+    public additionalTechnologies: string;
 
     @ApiProperty({
         maximum: 455,
@@ -279,7 +285,7 @@ export class HDD extends BaseAccessory {
     })
     @MaxLength(100)
     @MinLength(6)
-    public size_volume_mm: string;
+    public sizeVolumeMm: string;
 
     @ApiProperty({
         maximum: 1000000,

@@ -58,7 +58,7 @@ export class CPU extends BaseAccessory {
     @Max(256)
     @Min(2)
     @IsNotEmpty()
-    public core_count: number;
+    public coreCount: number;
 
     @ApiProperty({
         maximum: 100000,
@@ -72,7 +72,7 @@ export class CPU extends BaseAccessory {
     @Max(100000)
     @Min(1)
     @IsNotEmpty()
-    public thread_count: number;
+    public threadCount: number;
 
     @ApiProperty({
         maximum: 7,
@@ -86,7 +86,7 @@ export class CPU extends BaseAccessory {
     @Max(7)
     @Min(1.8)
     @IsNotEmpty()
-    public clock_frequency_max_ghz: number;
+    public clockFrequencyMaxGhz: number;
 
     @ApiProperty({
         maximum: 7,
@@ -100,7 +100,7 @@ export class CPU extends BaseAccessory {
     @Max(7)
     @Min(1.8)
     @IsNotEmpty()
-    public clock_frequency_min_ghz: number;
+    public clockFrequencyMinGhz: number;
 
     @ApiProperty()
     @Column({
@@ -120,7 +120,7 @@ export class CPU extends BaseAccessory {
     @Max(30)
     @Min(0.5)
     @IsNotEmpty()
-    public cache_size_l2: number;
+    public cacheSizeL2: number;
 
     @ApiProperty()
     @Column({
@@ -131,7 +131,7 @@ export class CPU extends BaseAccessory {
     @Max(30)
     @Min(0.5)
     @IsNotEmpty()
-    public cache_size_l3: number;
+    public cacheSizeL3: number;
 
     @ApiProperty()
     @Column({
@@ -140,7 +140,7 @@ export class CPU extends BaseAccessory {
         default: () => "'[]'"
     })
     @IsNotEmpty()
-    public support_ram: Ram[];
+    public supportRam: Ram[];
 
     @ApiProperty({
         maximum: 256,
@@ -154,7 +154,7 @@ export class CPU extends BaseAccessory {
     @Max(256)
     @Min(1)
     @IsNotEmpty()
-    public max_ram_gb: number;
+    public maxRamGb: number;
 
     @ApiProperty({
         required: false
@@ -165,7 +165,7 @@ export class CPU extends BaseAccessory {
         nullable: true
     })
     @IsNotEmpty()
-    public support_ess: boolean;
+    public supportEss: boolean;
 
     @ApiProperty({
         maximum: 40,
@@ -179,7 +179,7 @@ export class CPU extends BaseAccessory {
     @MaxLength(40)
     @MinLength(4)
     @IsNotEmpty()
-    public integrated_graphics_system: string;
+    public integratedGraphicsSystem: string;
 
     @ApiProperty({
         maximum: 256,
@@ -193,7 +193,7 @@ export class CPU extends BaseAccessory {
     @Max(256)
     @Min(1)
     @IsNotEmpty()
-    public techproccess_nm: number;
+    public techproccessNm: number;
 
     @ApiProperty({
         maximum: 1000,
@@ -207,7 +207,7 @@ export class CPU extends BaseAccessory {
     })
     @Max(1000)
     @Min(1)
-    public TDP_wt: number;
+    public TDPWt: number;
 
     @ApiProperty({
         maximum: 1000,
@@ -221,7 +221,7 @@ export class CPU extends BaseAccessory {
     })
     @Max(1000)
     @Min(1)
-    public max_TDP_wt: number;
+    public maxTDPWt: number;
 
     @ApiProperty({
         required: false
@@ -233,7 +233,7 @@ export class CPU extends BaseAccessory {
         default: [],
         nullable: true
     })
-    public instruction_set: string[];
+    public instructionSet: string[];
 
     @ApiProperty({
         required: false
@@ -244,7 +244,7 @@ export class CPU extends BaseAccessory {
         nullable: true
     })
     @IsNotEmpty()
-    public support_hyper_threading: boolean;
+    public supportHyperThreading: boolean;
 
     @ApiProperty()
     @Column({
@@ -253,7 +253,7 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    public support_64_b: boolean;
+    public support64B: boolean;
 
     @ApiProperty()
     @Column({
@@ -272,7 +272,7 @@ export class CPU extends BaseAccessory {
         nullable: false
     })
     @IsNotEmpty()
-    public critical_temperature_c: number;
+    public criticalTemperatureC: number;
 
     @ApiProperty({
         maximum: 455,

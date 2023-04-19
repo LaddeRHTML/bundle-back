@@ -12,12 +12,14 @@ export class RAM extends BaseAccessory {
     constructor(
         maker: string,
         model: string,
-        memory_type: string,
-        memory_Gb: number,
-        memory_clock_MHz: number
+        memoryType: string,
+        memoryGb: number,
+        memoryClockMHz: number,
+        supplyVoltage: number,
+        timings: number[]
     ) {
         super();
-        this.name = `${maker} ${model} ${memory_type} ${memory_Gb} ${memory_clock_MHz}`;
+        this.name = `${maker} ${model} ${memoryType} ${memoryGb} ${memoryClockMHz} ${supplyVoltage} ${timings}`;
     }
 
     @ApiProperty()
@@ -26,7 +28,7 @@ export class RAM extends BaseAccessory {
 
     @ApiProperty()
     @Column({ name: 'memory_type', type: 'enum', enum: MemoryType })
-    public memory_type: MemoryType;
+    public memoryType: MemoryType;
 
     @ApiProperty({
         maximum: 512,
@@ -40,7 +42,7 @@ export class RAM extends BaseAccessory {
     @Max(512)
     @Min(1)
     @IsNotEmpty()
-    public memory_Gb: number;
+    public memoryGb: number;
 
     @ApiProperty({
         maximum: 10000,
@@ -54,7 +56,7 @@ export class RAM extends BaseAccessory {
     @Max(10000)
     @Min(1)
     @IsNotEmpty()
-    public memory_clock_MHz: number;
+    public memoryClockMHz: number;
 
     @ApiProperty({
         maximum: 10,
@@ -68,7 +70,7 @@ export class RAM extends BaseAccessory {
     @Max(10)
     @Min(0.5)
     @IsNotEmpty()
-    public supply_voltage: number;
+    public supplyVoltage: number;
 
     @ApiProperty({
         maximum: 100,
@@ -128,7 +130,7 @@ export class RAM extends BaseAccessory {
     @Max(150)
     @Min(1)
     @IsNotEmpty()
-    public ram_height_mm: number;
+    public ramHeightMm: number;
 
     @ApiProperty({
         maximum: 8,
@@ -144,7 +146,7 @@ export class RAM extends BaseAccessory {
     @Max(8)
     @Min(1)
     @IsNotEmpty()
-    public count_included: number;
+    public countIncluded: number;
 
     @ApiProperty({
         maximum: 1000000,

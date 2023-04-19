@@ -84,7 +84,6 @@ export enum Technologies {
 }
 
 export enum SupportedMulti_GPU {
-    Does_not_support = 'Не поддерживает',
     NVIDIA_SLI = 'NVIDIA_SLI',
     AMD_CrossFire = 'AMD_CrossFire'
 }
@@ -123,7 +122,6 @@ export enum Cooling {
 }
 
 export enum PowerConnectors {
-    missing = 'Отсутствуют',
     pin6 = '6-pin',
     pin8 = '8-pin',
     pin8_x2 = '2 х 8-pin',
