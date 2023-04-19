@@ -26,10 +26,10 @@ export class GPUService {
                 createGPUDto.graphics_ram_size_Gb
             );
 
-            createGPUDto.last_changed_by = userId;
-            createGPUDto.created_by = userId;
-            createGPUDto.create_date = new Date();
-            createGPUDto.last_change_date = new Date();
+            createGPUDto.lastChangedBy = userId;
+            createGPUDto.createdBy = userId;
+            createGPUDto.createDate = new Date();
+            createGPUDto.lastChangeDate = new Date();
             createGPUDto.name = dto.name;
 
             return await this.GPUrepository.save(createGPUDto);
@@ -71,7 +71,7 @@ export class GPUService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${GPU.name.toLowerCase()}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${GPU.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -92,8 +92,8 @@ export class GPUService {
         userId: string
     ): Promise<SuccessfullyUpdatedEntityResponse<GPU>> {
         try {
-            updateGPUDto.last_change_date = new Date();
-            updateGPUDto.last_changed_by = userId;
+            updateGPUDto.lastChangeDate = new Date();
+            updateGPUDto.lastChangedBy = userId;
 
             const result = await this.GPUrepository.save({ id, ...updateGPUDto });
             return {

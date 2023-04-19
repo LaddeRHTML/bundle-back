@@ -20,18 +20,18 @@ export class FilesService {
 
     async uploadFile(file: MulterFile, userId: string): Promise<File> {
         try {
-            const fileName = file.filename || file.originalname;
+            const fileName = file.filename ?? file.originalname;
             const isExists = await this.isFileExists({
-                size_in_bytes: file.size,
-                file_name: fileName
+                sizeInBytes: file.size,
+                fileName
             });
 
             if (isExists) {
                 return await this.getFile(
                     {
-                        original_name: file.originalname,
-                        size_in_bytes: file.size,
-                        mime_type: file.mimetype
+                        originalName: file.originalname,
+                        sizeInBytes: file.size,
+                        mimeType: file.mimetype
                     },
                     ['id'] as unknown as FindOptionsSelect<File>
                 );
@@ -39,10 +39,10 @@ export class FilesService {
 
             const newFile = this.fileRepository.create({
                 ...file,
-                file_name: fileName,
-                original_name: file.originalname,
-                mime_type: file.mimetype,
-                size_in_bytes: file.size,
+                fileName: fileName,
+                originalName: file.originalname,
+                mimeType: file.mimetype,
+                sizeInBytes: file.size,
                 data: file.buffer
             });
 
@@ -70,13 +70,13 @@ export class FilesService {
 
                     return {
                         ...f,
-                        file_name: fileName,
-                        original_name: f.originalname,
-                        mime_type: f.mimetype,
-                        size_in_bytes: f.size,
+                        fileName: fileName,
+                        originalName: f.originalname,
+                        mimeType: f.mimetype,
+                        sizeInBytes: f.size,
                         data: f.buffer,
-                        created_by: userId,
-                        last_changed_by: userId
+                        createdBy: userId,
+                        lastChangedBy: userId
                     };
                 })
             );

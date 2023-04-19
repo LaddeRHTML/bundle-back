@@ -35,14 +35,14 @@ import { GetPricesResponse, ProductsService } from 'service/ProductService';
 
 export type AllowedProductRelations = [
     'orders',
-    'CPU',
-    'GPU',
+    'cpu',
+    'gpu',
     'motherboard',
-    'RAM',
-    'HDD',
+    'ram',
+    'hdd',
     'cooler',
-    'power_unit',
-    'PCCase'
+    'powerUnit',
+    'pccase'
 ];
 
 @ApiTags('Products')
@@ -143,7 +143,7 @@ export class ProductsController {
         return this.productsService.updateOne(
             id,
             {
-                pictures_id: uploadedPictures.map((p) => p.id)
+                picturesId: uploadedPictures.map((p) => p.id)
             },
             userId
         );
@@ -166,13 +166,19 @@ export class ProductsController {
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser
     ): Promise<Product> {
-        const product = await this.productsService.findOne({ where: { id }, relations: [] });
+        const product = await this.productsService.findOne({ where: { id } });
         await this.filesService.deleteFiles(pictures);
+
+        const previewPictureId =
+            product.previewPictureId && pictures.includes(product.previewPictureId)
+                ? null
+                : product.previewPictureId;
 
         return this.productsService.updateOne(
             id,
             {
-                pictures_id: product?.pictures_id.filter((p) => !pictures.includes(p))
+                picturesId: product?.picturesId.filter((p) => !pictures.includes(p)),
+                previewPictureId
             },
             userId
         );

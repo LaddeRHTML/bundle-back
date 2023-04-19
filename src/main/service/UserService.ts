@@ -60,32 +60,30 @@ export class UsersService {
             const includedInSearchFields = [
                 'address',
                 'name',
-                'family_name',
+                'familyName',
                 'patronymic',
                 'iin',
-                'phone_number',
+                'phoneNumber',
                 'email'
             ];
+            const entityName = User.name.toLowerCase();
 
-            const queryBuilder = this.usersRepository.createQueryBuilder(User.name.toLowerCase());
+            const queryBuilder = this.usersRepository.createQueryBuilder(entityName);
 
             if (pageOptionsDto.searchBy) {
-                queryBuilder.where(getSQLSearch(includedInSearchFields, User.name.toLowerCase()), {
+                queryBuilder.where(getSQLSearch(includedInSearchFields, entityName), {
                     s: `%${pageOptionsDto.searchBy}%`
                 });
             }
 
             queryBuilder
-                .orderBy(`${User.name.toLowerCase()}.registration_date`, pageOptionsDto.order)
+                .orderBy(`${entityName}.registrationDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
             if (relations.length > 0) {
                 relations.forEach((relation) => {
-                    queryBuilder.leftJoinAndSelect(
-                        `${User.name.toLowerCase()}.${relation}`,
-                        relation
-                    );
+                    queryBuilder.leftJoinAndSelect(`${entityName}.${relation}`, relation);
                 });
             }
 
@@ -114,7 +112,7 @@ export class UsersService {
                 updateUserDto.age = calcRelToCurrentDate(updateUserDto.birthday, true);
             }
 
-            updateUserDto.update_date = new Date();
+            updateUserDto.updateDate = new Date();
 
             return await this.usersRepository.save({ id, ...updateUserDto });
         } catch (error) {
@@ -162,7 +160,7 @@ export class UsersService {
             return await this.usersRepository
                 .createQueryBuilder()
                 .update(User)
-                .set({ ...user, update_date: new Date() })
+                .set({ ...user, updateDate: new Date() })
                 .whereInIds(userIds)
                 .execute();
         } catch (error) {

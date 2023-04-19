@@ -39,10 +39,10 @@ export class AuthService {
         private readonly configService: ConfigurationService
     ) {}
 
-    async validateUser(phone_number: string, password: string): Promise<Partial<User>> {
+    async validateUser(phoneNumber: string, password: string): Promise<Partial<User>> {
         try {
             const user = await this.userService.findOne({
-                where: { phone_number },
+                where: { phoneNumber },
                 select: ['id', 'role', 'password']
             });
 
@@ -78,7 +78,7 @@ export class AuthService {
 
     async register(userDto: CreateUserDto, role: Role): Promise<InsertResult> {
         const isExists = await this.userService.isUserExists({
-            phone_number: userDto.phone_number
+            phoneNumber: userDto.phoneNumber
         });
 
         if (isExists) {

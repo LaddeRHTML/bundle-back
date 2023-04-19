@@ -80,7 +80,7 @@ export class FilesController {
         const stream = Readable.from(file.data);
 
         response.set({
-            'Content-Disposition': `inline; filename="${file.file_name}"`,
+            'Content-Disposition': `inline; filename="${file.fileName}"`,
             'Content-Type': 'image'
         });
 

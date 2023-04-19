@@ -8,31 +8,59 @@ import {
 } from 'typeorm';
 
 export abstract class BaseEntity {
-    @ApiProperty()
+    @ApiProperty({
+        name: 'id',
+        uniqueItems: true
+    })
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ type: 'boolean', default: true })
-    is_active: boolean;
+    @ApiProperty({ name: 'isActive', type: 'boolean', default: true, required: false })
+    @Column({ name: 'is_active', type: 'boolean', default: true })
+    isActive: boolean;
 
-    @Column({ type: 'boolean', default: false })
-    is_archived: boolean;
+    @ApiProperty({ name: 'isArchived', type: 'boolean', default: true, required: false })
+    @Column({ name: 'is_archived', type: 'boolean', default: false })
+    isArchived: boolean;
 
-    @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-    create_date: Date;
+    @ApiProperty({
+        name: 'createDate',
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP',
+        required: false
+    })
+    @CreateDateColumn({
+        name: 'create_date',
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP'
+    })
+    createDate: Date;
 
-    @Column({ type: 'varchar', length: 300 })
-    created_by: string;
+    @ApiProperty({ name: 'createdBy', type: 'varchar', maxLength: 300 })
+    @Column({ name: 'created_by', type: 'varchar', length: 300 })
+    createdBy: string;
 
-    @DeleteDateColumn({ type: 'timestamptz' })
-    delete_date: Date;
+    @ApiProperty({ name: 'deleteDate', type: 'timestamptz' })
+    @DeleteDateColumn({ name: 'delete_date', type: 'timestamptz' })
+    deleteDate: Date;
 
-    @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-    last_change_date: Date;
+    @ApiProperty({
+        name: 'lastChangeDate',
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP'
+    })
+    @UpdateDateColumn({
+        name: 'last_change_date',
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP'
+    })
+    lastChangeDate: Date;
 
-    @Column({ type: 'varchar', length: 300 })
-    last_changed_by: string;
+    @ApiProperty({ name: 'lastChangedBy', type: 'varchar', maxLength: 300 })
+    @Column({ name: 'last_changed_by', type: 'varchar', length: 300 })
+    lastChangedBy: string;
 
-    @Column({ type: 'varchar', length: 300, nullable: true })
-    internal_comment: string | null;
+    @ApiProperty({ name: 'internalComment', type: 'varchar', maxLength: 300, required: false })
+    @Column({ name: 'internal_comment', type: 'varchar', length: 300, nullable: true })
+    internalComment: string | null;
 }

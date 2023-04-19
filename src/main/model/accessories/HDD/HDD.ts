@@ -298,7 +298,7 @@ export class HDD extends BaseAccessory {
     public price: number;
 
     @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.HDD, {
+    @OneToMany(() => Product, (p: Product) => p.hdd, {
         nullable: true
     })
     public products: Product[];

@@ -1,119 +1,144 @@
-import { IsDate, IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
+import { IsBoolean, IsDate, IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { Order } from 'model/order/Order';
 
 import { Gender, Role } from './UserEnums';
-import { ApiProperty } from '@nestjs/swagger';
-import { Controller } from '@nestjs/common';
 
 @Entity()
-@Controller('/users')
 export class User {
-    @ApiProperty()
+    @ApiProperty({ name: 'id', uniqueItems: true })
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @ApiProperty()
-    @Column({ type: 'varchar' })
+    @ApiProperty({ name: 'name', type: 'varchar', required: true })
+    @Column({ name: 'name', type: 'varchar' })
     @IsNotEmpty()
     public name: string;
 
-    @ApiProperty({
-        minimum: 13,
-        maximum: 30,
-        uniqueItems: true
-    })
-    @Column({
-        unique: true
-    })
+    @ApiProperty({ maximum: 30, minimum: 13, uniqueItems: true, required: true })
+    @Column({ name: 'email', type: 'varchar', unique: true })
     @MaxLength(30)
     @MinLength(13)
     @IsEmail()
     @IsNotEmpty()
     public email: string;
 
-    @ApiProperty({
-        minimum: 6,
-        maximum: 30
-    })
-    @Column({ type: 'varchar', select: false })
+    @ApiProperty({ type: 'varchar', maxLength: 30, minLength: 6, required: true })
+    @Column({ name: 'password', type: 'varchar', select: false })
     @MaxLength(30)
     @MinLength(6)
     @IsNotEmpty()
     public password: string;
 
-    @ApiProperty()
-    @Column({ type: 'enum', enum: Role, default: Role.User })
+    @ApiProperty({ name: 'role', enum: Role, default: Role.User, required: false })
+    @Column({ name: 'role', type: 'enum', enum: Role, default: Role.User })
     public role: Role;
 
-    @ApiProperty()
-    @Column({ type: 'smallint', default: 0 })
+    @ApiProperty({ name: 'age', type: 'smallint', default: 0, required: true })
+    @Column({ name: 'age', type: 'smallint', default: 0 })
     public age: number;
 
-    @ApiProperty()
-    @Column({ type: 'enum', enum: Gender, default: Gender.Unknown })
+    @ApiProperty({
+        name: 'gender',
+        type: 'enum',
+        enum: Gender,
+        default: Gender.Unknown,
+        required: false
+    })
+    @Column({ name: 'gender', type: 'enum', enum: Gender, default: Gender.Unknown })
     public gender: string;
 
-    @ApiProperty()
-    @Column({ default: true })
-    public allowed_to_login: boolean;
+    @ApiProperty({ name: 'allowedToLogin', type: 'boolean', default: true, required: false })
+    @Column({ name: 'allowed_to_login', type: 'boolean', default: true })
+    @IsBoolean()
+    public allowedToLogin: boolean;
 
-    @ApiProperty()
-    @Column({ type: 'varchar' })
-    public family_name: string;
+    @ApiProperty({ name: 'familyName', type: 'varchar', required: true })
+    @Column({ name: 'family_name', type: 'varchar' })
+    public familyName: string;
 
-    @ApiProperty()
-    @Column({ type: 'varchar', nullable: true })
+    @ApiProperty({ name: 'patronymic', type: 'varchar', maxLength: 40, required: false })
+    @Column({ name: 'patronymic', type: 'varchar', nullable: true })
+    @MaxLength(40)
     public patronymic: string;
 
-    @ApiProperty()
-    @Column({ type: 'timestamptz', default: new Date() })
+    @ApiProperty({ name: 'birthday', type: 'timestamptz', default: new Date(), required: false })
+    @Column({ name: 'birthday', type: 'timestamptz', default: new Date() })
     @IsDate()
     public birthday: Date;
 
-    @ApiProperty()
-    @Column({ type: 'varchar', unique: true })
+    @ApiProperty({
+        name: 'phoneNumber',
+        type: 'varchar',
+        maxLength: 11,
+        minLength: 11,
+        uniqueItems: true
+    })
+    @Column({ name: 'phone_number', type: 'varchar', unique: true })
     @MaxLength(11)
     @MinLength(11)
     @IsNotEmpty()
-    public phone_number: string;
+    public phoneNumber: string;
 
-    @ApiProperty()
-    @Column({ type: 'varchar', default: 'Kazakhstan' })
+    @ApiProperty({
+        name: 'country',
+        type: 'varchar',
+        default: 'Kazakhstan',
+        maxLength: 30,
+        required: false
+    })
+    @Column({ name: 'country', type: 'varchar', default: 'Kazakhstan' })
+    @MaxLength(30)
     public country: string;
 
-    @ApiProperty()
-    @Column({ type: 'varchar', default: 'Almaty' })
+    @ApiProperty({
+        name: 'city',
+        type: 'varchar',
+        default: 'Almaty',
+        maxLength: 30,
+        required: false
+    })
+    @Column({ name: 'city', type: 'varchar', default: 'Almaty' })
+    @MaxLength(30)
     public city: string;
 
-    @ApiProperty()
-    @Column({ type: 'varchar', default: '' })
+    @ApiProperty({ name: 'address', type: 'varchar', maxLength: 70, required: false })
+    @Column({ name: 'address', type: 'varchar', nullable: true })
+    @MaxLength(70)
     public address: string;
 
-    @ApiProperty()
-    @Column({ type: 'boolean', default: false })
-    public is_legal_entity: boolean;
+    @ApiProperty({ name: 'isLegalEntity', type: 'boolean', default: false, required: false })
+    @Column({ name: 'is_legal_entity', type: 'boolean', default: false })
+    @IsBoolean()
+    public isLegalEntity: boolean;
 
-    @Column({ type: 'varchar', default: '', nullable: true })
+    @ApiProperty({ name: 'iin', type: 'varchar', required: false })
+    @Column({ name: 'iin', type: 'varchar', nullable: true })
     public iin: string;
 
-    @Column({ type: 'timestamptz', default: new Date() })
+    @ApiProperty({ name: 'updateDate', type: 'timestamptz', default: new Date(), required: false })
+    @Column({ name: 'update_date', type: 'timestamptz', default: new Date() })
     @IsDate()
-    public update_date: Date;
+    public updateDate: Date;
 
-    @Column({ type: 'timestamptz', default: new Date() })
-    @IsDate()
-    public registration_date: Date;
-
-    @ApiProperty()
-    @Column({ name: 'avatar_id', type: 'varchar', nullable: true })
-    public avatar_id: string | null;
-
-    @ApiProperty()
-    @JoinColumn({ name: 'orders' })
-    @OneToMany(() => Order, (o: Order) => o.client, {
-        nullable: true
+    @ApiProperty({
+        name: 'registrationDate',
+        type: 'timestamptz',
+        default: new Date(),
+        required: false
     })
+    @Column({ name: 'registration_date', type: 'timestamptz', default: new Date() })
+    @IsDate()
+    public registrationDate: Date;
+
+    @ApiProperty({ name: 'avatarId', type: 'varchar', required: false })
+    @Column({ name: 'avatar_id', type: 'varchar', nullable: true })
+    public avatarId: string | null;
+
+    @ApiProperty({ name: 'orders', type: () => [Order], required: false })
+    @JoinColumn({ name: 'orders' })
+    @OneToMany(() => Order, (o: Order) => o.client, { nullable: true })
     public orders: Order[];
 }

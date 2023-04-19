@@ -159,7 +159,7 @@ export class RAM extends BaseAccessory {
     public price: number;
 
     @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.RAM, {
+    @OneToMany(() => Product, (p: Product) => p.ram, {
         nullable: true
     })
     public products: Product[];

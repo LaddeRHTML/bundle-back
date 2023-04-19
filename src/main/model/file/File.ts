@@ -1,27 +1,56 @@
 import { Column, Entity, Unique } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { BaseEntity } from 'model/base';
 
 @Entity()
-@Unique(['size_in_bytes', 'original_name', 'mime_type'])
+@Unique(['sizeInBytes', 'originalName', 'mimeType'])
 export class File extends BaseEntity {
-    @Column({ type: 'int' })
-    public size_in_bytes: number;
-
-    @Column({ type: 'varchar' })
-    public file_name: string;
-
-    @Column({
-        type: 'bytea'
+    @ApiProperty({
+        name: 'sizeInBytes',
+        type: 'int',
+        uniqueItems: true,
+        nullable: false,
+        required: true
     })
+    @Column({ name: 'size_in_bytes', type: 'int' })
+    public sizeInBytes: number;
+
+    @ApiProperty({
+        name: 'fileName',
+        type: 'varchar',
+        uniqueItems: true,
+        nullable: false,
+        required: true
+    })
+    @Column({ name: 'file_name', type: 'varchar' })
+    public fileName: string;
+
+    @ApiProperty({ name: 'data', type: 'varchar', nullable: false, required: true })
+    @Column({ name: 'data', type: 'bytea' })
     public data: Uint8Array;
 
-    @Column({ type: 'varchar' })
+    @ApiProperty({ name: 'encoding', type: 'varchar', nullable: false, required: true })
+    @Column({ name: 'encoding', type: 'varchar' })
     public encoding: string;
 
-    @Column({ type: 'varchar' })
-    public original_name: string;
+    @ApiProperty({
+        name: 'originalName',
+        type: 'varchar',
+        uniqueItems: true,
+        nullable: false,
+        required: true
+    })
+    @Column({ name: 'original_name', type: 'varchar' })
+    public originalName: string;
 
-    @Column({ type: 'varchar' })
-    public mime_type: string;
+    @ApiProperty({
+        name: 'mimeType',
+        type: 'varchar',
+        uniqueItems: true,
+        nullable: false,
+        required: true
+    })
+    @Column({ name: 'mime_type', type: 'varchar' })
+    public mimeType: string;
 }

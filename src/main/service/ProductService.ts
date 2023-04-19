@@ -38,10 +38,10 @@ export class ProductsService {
 
     async createOne(createProductDto: CreateProductDto, userId: string): Promise<Product> {
         try {
-            createProductDto.last_changed_by = userId;
-            createProductDto.created_by = userId;
-            createProductDto.create_date = new Date();
-            createProductDto.last_change_date = new Date();
+            createProductDto.lastChangedBy = userId;
+            createProductDto.createdBy = userId;
+            createProductDto.createDate = new Date();
+            createProductDto.lastChangeDate = new Date();
 
             return await this.productRepository.save(createProductDto);
         } catch (error) {
@@ -103,7 +103,7 @@ export class ProductsService {
             queryBuilder.andWhere(options);
 
             queryBuilder
-                .orderBy(`${entityName}.last_change_date`, pageOptionsDto.order)
+                .orderBy(`${entityName}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -146,8 +146,8 @@ export class ProductsService {
         userId: string
     ): Promise<Product> {
         try {
-            updateProductDto.last_change_date = new Date();
-            updateProductDto.last_changed_by = userId;
+            updateProductDto.lastChangeDate = new Date();
+            updateProductDto.lastChangedBy = userId;
 
             return await this.productRepository.save({ id, ...updateProductDto });
         } catch (error) {
@@ -161,8 +161,8 @@ export class ProductsService {
         userId: string
     ): Promise<UpdateResult> {
         try {
-            updateProductDto.last_change_date = new Date();
-            updateProductDto.last_changed_by = userId;
+            updateProductDto.lastChangeDate = new Date();
+            updateProductDto.lastChangedBy = userId;
 
             return this.productRepository.update(where, updateProductDto);
         } catch (error) {

@@ -1,19 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-    Column,
-    Entity,
-    Index,
-    JoinColumn,
-    ManyToMany,
-    ManyToOne,
-    OneToOne,
-    Unique
-} from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne, Unique } from 'typeorm';
 import { IsArray, Max, Min } from 'class-validator';
 
 import { BaseEntity } from 'model/base';
 import { Order } from 'model/order/Order';
-import { File } from 'model/file/File';
 import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
 import { CPU } from 'model/accessories/CPU/CPU';
 import { RAM } from 'model/accessories/RAM/RAM';
@@ -32,18 +22,20 @@ export class Product extends BaseEntity {
         this.price = sumArray(prices);
     }
 
-    @ApiProperty()
+    @ApiProperty({ name: 'discount_price', type: 'integer', default: 0 })
     @Column({ name: 'discount_price', type: 'integer', default: 0 })
-    public discount_price: number;
+    public discountPrice: number;
 
-    @ApiProperty()
+    @ApiProperty({ name: 'name', type: 'varchar', required: true })
     @Index({ unique: true })
     @Column({ name: 'name', type: 'varchar' })
     public name: string;
 
+    @ApiProperty({ name: 'preview_picture_id', type: 'varchar', required: false })
     @Column({ name: 'preview_picture_id', type: 'varchar', nullable: true })
-    public preview_picture_id: string;
+    public previewPictureId: string | null;
 
+    @ApiProperty({ name: 'price', type: 'numeric', required: false })
     @Column({
         name: 'price',
         type: 'numeric',
@@ -56,82 +48,70 @@ export class Product extends BaseEntity {
     @Min(300000)
     public price: number;
 
+    @ApiProperty({ name: 'warrantyDays', type: 'smallint', required: false })
     @Column({ name: 'warranty_days', type: 'smallint', nullable: true })
-    public warranty_days: number;
+    public warrantyDays: number;
 
+    @ApiProperty({ name: 'weight', type: 'varchar', required: false })
     @Column({ name: 'weight', type: 'varchar', default: '', nullable: true })
     public weight: string;
 
-    @ManyToOne(() => CPU, (c: CPU) => c, {
-        cascade: true,
-        eager: true
-    })
-    public CPU: CPU;
+    @ApiProperty({ name: 'cpu', type: () => CPU, required: true })
+    @ManyToOne(() => CPU, (c: CPU) => c, { cascade: true, eager: true })
+    @JoinColumn({ name: 'cpu' })
+    public cpu: CPU;
 
-    @ManyToOne(() => Motherboard, (m: Motherboard) => m, {
-        cascade: true,
-        eager: true
-    })
+    @ApiProperty({ name: 'motherboard', type: () => Motherboard, required: true })
+    @ManyToOne(() => Motherboard, (m: Motherboard) => m, { cascade: true, eager: true })
+    @JoinColumn({ name: 'motherboard' })
     public motherboard: Motherboard;
 
+    @ApiProperty({ name: 'ram_count', type: 'smallint', maximum: 8, required: true })
     @Column({ name: 'ram_count', type: 'smallint', nullable: true })
     @Max(8)
-    public ram_count: number;
+    public ramCount: number;
 
-    @ManyToOne(() => RAM, (r: RAM) => r, {
-        cascade: true,
-        eager: true
-    })
-    public RAM: RAM;
+    @ApiProperty({ name: 'ram', type: () => RAM, required: true })
+    @ManyToOne(() => RAM, (r: RAM) => r, { cascade: true, eager: true })
+    @JoinColumn({ name: 'ram' })
+    public ram: RAM;
 
+    @ApiProperty({ name: 'hdd_count', type: 'smallint', maximum: 8, required: true })
     @Column({ name: 'hdd_count', type: 'smallint', nullable: true })
     @Max(8)
-    public hdd_count: number;
+    public hddCount: number;
 
-    @ManyToOne(() => HDD, (h: HDD) => h, {
-        cascade: true,
-        eager: true
-    })
-    public HDD: HDD;
+    @ApiProperty({ name: 'HDD', type: () => HDD, required: true })
+    @ManyToOne(() => HDD, (h: HDD) => h, { cascade: true, eager: true })
+    @JoinColumn({ name: 'hdd' })
+    public hdd: HDD;
 
-    @ManyToOne(() => Cooler, (c: Cooler) => c, {
-        cascade: true,
-        eager: true
-    })
+    @ApiProperty({ name: 'cooler', type: () => Cooler, required: true })
+    @ManyToOne(() => Cooler, (c: Cooler) => c, { cascade: true, eager: true })
+    @JoinColumn({ name: 'cooler' })
     public cooler: Cooler;
 
-    @ManyToOne(() => PowerUnit, (p: PowerUnit) => p, {
-        cascade: true,
-        eager: true
-    })
-    public power_unit: PowerUnit;
+    @ApiProperty({ name: 'powerUnit', type: () => PowerUnit, required: true })
+    @ManyToOne(() => PowerUnit, (p: PowerUnit) => p, { cascade: true, eager: true })
+    @JoinColumn({ name: 'powerUnit' })
+    public powerUnit: PowerUnit;
 
-    @ManyToOne(() => GPU, (g: GPU) => g, {
-        cascade: true,
-        eager: true
-    })
-    public GPU: GPU;
+    @ApiProperty({ name: 'gpu', type: () => GPU, required: true })
+    @ManyToOne(() => GPU, (g: GPU) => g, { cascade: true, eager: true })
+    @JoinColumn({ name: 'gpu' })
+    public gpu: GPU;
 
-    @ManyToOne(() => PCCase, (p: PCCase) => p, {
-        cascade: true,
-        eager: true
-    })
-    public PCCase: PCCase;
+    @ApiProperty({ name: 'pccase', type: () => PCCase, required: true })
+    @ManyToOne(() => PCCase, (p: PCCase) => p, { cascade: true, eager: true })
+    @JoinColumn({ name: 'pccase' })
+    public pccase: PCCase;
 
-    @Column('simple-array', { nullable: true })
+    @ApiProperty({ name: 'pictures_id', isArray: true, type: 'string', required: false })
+    @Column({ name: 'pictures_id', type: 'simple-array', nullable: true })
     @IsArray()
-    public pictures_id: string[];
+    public picturesId: string[];
 
-    @ManyToMany(() => Order, (o: Order) => o.products, {
-        nullable: true
-    })
+    @ApiProperty({ name: 'orders', isArray: true, required: false })
+    @ManyToMany(() => Order, (o: Order) => o.products, { nullable: true })
     public orders: Order[];
-
-    @JoinColumn({ name: 'preview_picture' })
-    @OneToOne(() => File, {
-        eager: true,
-        cascade: true,
-        nullable: true
-    })
-    public preview_picture?: File;
 }
