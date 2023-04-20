@@ -1,4 +1,3 @@
-import { UpdateRAMDto } from 'dto/RAM/UpdateRAMDto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
@@ -6,12 +5,14 @@ import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
 import { CreateRAMDto } from 'dto/RAM/CreateRAMDto';
+import { UpdateRAMDto } from 'dto/RAM/UpdateRAMDto';
 
 import { RAM } from 'model/accessories/RAM/RAM';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
+import checkProvidedFields from 'common/utils/array/checkProvidedFields';
 
 @Injectable()
 export class RAMService {
@@ -20,13 +21,14 @@ export class RAMService {
     async createOne(createRAMDto: CreateRAMDto, userId: string): Promise<RAM> {
         try {
             const dto = new CreateRAMDto(
-                createRAMDto.maker,
-                createRAMDto.model,
                 createRAMDto.memoryType,
                 createRAMDto.memoryGb,
                 createRAMDto.memoryClockMHz,
+                createRAMDto.timings[0],
+                createRAMDto.model,
+                createRAMDto.maker,
                 createRAMDto.supplyVoltage,
-                createRAMDto.timings.join(',')
+                createRAMDto.package
             );
 
             createRAMDto.lastChangedBy = userId;
@@ -93,6 +95,34 @@ export class RAMService {
         try {
             updateRAMDto.lastChangeDate = new Date();
             updateRAMDto.lastChangedBy = userId;
+
+            const ram = await this.findOne({ where: { id } });
+
+            if (
+                checkProvidedFields<CreateRAMDto>([
+                    updateRAMDto.memoryType,
+                    updateRAMDto.memoryGb,
+                    updateRAMDto.memoryClockMHz,
+                    updateRAMDto.timings,
+                    updateRAMDto.model,
+                    updateRAMDto.maker,
+                    updateRAMDto.supplyVoltage,
+                    updateRAMDto.package
+                ])
+            ) {
+                const dto = new CreateRAMDto(
+                    updateRAMDto.memoryType ?? ram.memoryType,
+                    updateRAMDto.memoryGb ?? ram.memoryGb,
+                    updateRAMDto.memoryClockMHz ?? ram.memoryClockMHz,
+                    updateRAMDto.timings?.[0] ?? ram.timings[0],
+                    updateRAMDto.model ?? ram.model,
+                    updateRAMDto.maker ?? ram.maker,
+                    updateRAMDto.supplyVoltage ?? ram.supplyVoltage,
+                    updateRAMDto.package ?? ram.package
+                );
+
+                return await this.RAMrepository.save({ ...dto, ...updateRAMDto, id });
+            }
 
             return await this.RAMrepository.save({ id, ...updateRAMDto });
         } catch (error) {

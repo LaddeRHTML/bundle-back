@@ -10,7 +10,7 @@ export enum CoolerMaker {
     Alseye = 'Alseye',
     beQuiet = 'be quiet!',
     Corsair = 'Corsair',
-    CoolerMaster = ' Cooler Master',
+    CoolerMaster = 'Cooler Master',
     Cougar = 'Cougar',
     DeepCool = 'DeepCool',
     EVGA = 'EVGA',
