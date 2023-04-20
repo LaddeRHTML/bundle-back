@@ -31,3 +31,8 @@ export enum CoolerMaker {
     TeamGroup = 'Team Group',
     Zalman = 'Zalman'
 }
+
+export enum CoolerType {
+    ACS = 'ACS',
+    WCS = 'WCS'
+}

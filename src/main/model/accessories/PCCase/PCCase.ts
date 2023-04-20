@@ -23,7 +23,7 @@ import { BaseAccessory } from '../BaseAccessory';
 export class PCCase extends BaseAccessory {
     constructor(maker: string, model: string, color: string, formFactor: string) {
         super();
-        this.name = `${maker} ${model} ${color} ${formFactor}`;
+        this.name = `Case ${maker} ${model}, ${color}, ${formFactor}`;
     }
 
     @ApiProperty()

@@ -12,6 +12,8 @@ import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageDto } from 'common/pagination/dtos/page.dto';
+import checkProvidedFields from 'common/utils/array/checkProvidedFields';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 
 @Injectable()
 export class PCCaseService {
@@ -91,12 +93,50 @@ export class PCCaseService {
         }
     }
 
-    async updateOne(id: string, updatePCCaseDto: UpdatePCCaseDto, userId: string): Promise<PCCase> {
+    async updateOne(
+        id: string,
+        updatePCCaseDto: UpdatePCCaseDto,
+        userId: string
+    ): Promise<SuccessfullyUpdatedEntityResponse<PCCase>> {
         try {
             updatePCCaseDto.lastChangeDate = new Date();
             updatePCCaseDto.lastChangedBy = userId;
 
-            return await this.PCCaseRepository.save({ id, ...updatePCCaseDto });
+            const pccase = await this.findOne({ where: { id } });
+
+            if (
+                checkProvidedFields<CreatePCCaseDto>([
+                    updatePCCaseDto.maker,
+                    updatePCCaseDto.model,
+                    updatePCCaseDto.color,
+                    updatePCCaseDto.formFactor
+                ])
+            ) {
+                const dto = new CreatePCCaseDto(
+                    updatePCCaseDto?.maker ?? pccase.maker,
+                    updatePCCaseDto?.model ?? pccase.model,
+                    updatePCCaseDto?.color ?? pccase.color,
+                    updatePCCaseDto?.formFactor ?? pccase.formFactor
+                );
+
+                const result = await this.PCCaseRepository.save({
+                    ...dto,
+                    ...updatePCCaseDto,
+                    id
+                });
+                return {
+                    success: true,
+                    message: 'Successfully updated',
+                    newFields: result
+                };
+            }
+
+            const result = await this.PCCaseRepository.save({ id, ...updatePCCaseDto });
+            return {
+                success: true,
+                message: 'Successfully updated',
+                newFields: result
+            };
         } catch (error) {
             throw new Error(`PCCase.service | updateOne error: ${getErrorMessage(error)}`);
         }

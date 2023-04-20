@@ -12,6 +12,7 @@ import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from './../common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from './../common/pagination/dtos/page-meta.dto';
+import checkProvidedFields from 'common/utils/array/checkProvidedFields';
 
 @Injectable()
 export class CoolerService {
@@ -19,7 +20,11 @@ export class CoolerService {
 
     async createOne(createCoolerDto: CreateCoolerDto, userId: string): Promise<Cooler> {
         try {
-            const dto = new CreateCoolerDto(createCoolerDto.maker, createCoolerDto.model);
+            const dto = new CreateCoolerDto(
+                createCoolerDto.type,
+                createCoolerDto.maker,
+                createCoolerDto.model
+            );
 
             createCoolerDto.lastChangedBy = userId;
             createCoolerDto.createdBy = userId;
@@ -90,6 +95,24 @@ export class CoolerService {
         try {
             updateCoolerDto.lastChangeDate = new Date();
             updateCoolerDto.lastChangedBy = userId;
+
+            const cooler = await this.findOne({ where: { id } });
+
+            if (
+                checkProvidedFields<CreateCoolerDto>([
+                    updateCoolerDto.type,
+                    updateCoolerDto.maker,
+                    updateCoolerDto.model
+                ])
+            ) {
+                const dto = new CreateCoolerDto(
+                    updateCoolerDto?.type ?? cooler.type,
+                    updateCoolerDto?.maker ?? cooler.maker,
+                    updateCoolerDto?.model ?? cooler.model
+                );
+
+                return await this.coolerRepository.save({ ...dto, ...updateCoolerDto, id });
+            }
 
             return await this.coolerRepository.save({ id, ...updateCoolerDto });
         } catch (error) {

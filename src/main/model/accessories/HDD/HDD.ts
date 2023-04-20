@@ -4,18 +4,33 @@ import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
 import { Product } from 'model/product/Product';
 import { BaseAccessory } from '../BaseAccessory';
-import { FormFactor, HDDMaker } from './HDDEnums';
+import { FormFactor, HDDMaker, HDDType } from './HDDEnums';
 
 @Entity()
 export class HDD extends BaseAccessory {
-    constructor(maker: string, diskCapacityGb: number, model: string, formFactor: string) {
+    constructor(
+        type: HDDType,
+        maker: string,
+        diskCapacityGb: number,
+        model: string,
+        formFactor: string,
+        hddinterface: string
+    ) {
         super();
-        this.name = `${maker} ${diskCapacityGb} ${model} ${formFactor}`;
+        this.name = `${type} ${diskCapacityGb}GB ${maker} ${model}, ${formFactor}, ${hddinterface}`;
     }
 
     @ApiProperty()
     @Column({ name: 'maker', type: 'enum', enum: HDDMaker })
     maker: HDDMaker;
+
+    @ApiProperty({
+        name: 'type',
+        type: 'enum',
+        enum: HDDType
+    })
+    @Column({ name: 'type', type: 'enum', enum: HDDType })
+    public type: HDDType;
 
     @ApiProperty({
         maximum: 35,
@@ -35,8 +50,7 @@ export class HDD extends BaseAccessory {
     @Column({
         name: 'form_factor',
         type: 'enum',
-        enum: FormFactor,
-        default: FormFactor.FormFactor_3
+        enum: FormFactor
     })
     @IsNotEmpty()
     public formFactor: FormFactor;

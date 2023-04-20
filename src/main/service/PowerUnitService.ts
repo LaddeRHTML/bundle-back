@@ -12,6 +12,8 @@ import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
+import checkProvidedFields from 'common/utils/array/checkProvidedFields';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 
 @Injectable()
 export class PowerUnitService {
@@ -20,10 +22,10 @@ export class PowerUnitService {
     async createOne(createPowerUnitDto: CreatePowerUnitDto, userId: string): Promise<PowerUnit> {
         try {
             const dto = new CreatePowerUnitDto(
-                createPowerUnitDto.maker,
-                createPowerUnitDto.model,
                 createPowerUnitDto.formFactor,
-                createPowerUnitDto.power
+                createPowerUnitDto.power,
+                createPowerUnitDto.model,
+                createPowerUnitDto.maker
             );
 
             createPowerUnitDto.lastChangedBy = userId;
@@ -98,12 +100,47 @@ export class PowerUnitService {
         id: string,
         updatePowerUnitDto: UpdatePowerUnitDto,
         userId: string
-    ): Promise<PowerUnit> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<PowerUnit>> {
         try {
             updatePowerUnitDto.lastChangeDate = new Date();
             updatePowerUnitDto.lastChangedBy = userId;
 
-            return await this.PowerUnitrepository.save({ id, ...updatePowerUnitDto });
+            const powerUnit = await this.findOne({ where: { id } });
+
+            if (
+                checkProvidedFields<CreatePowerUnitDto>([
+                    updatePowerUnitDto.formFactor,
+                    updatePowerUnitDto.power,
+                    updatePowerUnitDto.model,
+                    updatePowerUnitDto.maker
+                ])
+            ) {
+                const dto = new CreatePowerUnitDto(
+                    updatePowerUnitDto?.formFactor ?? powerUnit.formFactor,
+                    updatePowerUnitDto?.power ?? powerUnit.power,
+                    updatePowerUnitDto?.model ?? powerUnit.model,
+                    updatePowerUnitDto?.maker ?? powerUnit.maker
+                );
+
+                const result = await this.PowerUnitrepository.save({
+                    ...dto,
+                    ...updatePowerUnitDto,
+                    id
+                });
+                return {
+                    success: true,
+                    message: 'Successfully updated',
+                    newFields: result
+                };
+            }
+
+            const result = await this.PowerUnitrepository.save({ id, ...updatePowerUnitDto });
+
+            return {
+                success: true,
+                message: 'Successfully updated',
+                newFields: result
+            };
         } catch (error) {
             throw new Error(`PowerUnit.service | updateOne error: ${getErrorMessage(error)}`);
         }

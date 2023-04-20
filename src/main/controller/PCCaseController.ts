@@ -14,6 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import { CreatePCCaseDto } from 'dto/PCCase/CreatePCCaseDto';
@@ -28,7 +29,6 @@ import { PCCaseService } from 'service/PCCaseService';
 export class PCCaseController {
     constructor(private readonly pcCaseService: PCCaseService) {}
 
-    
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
@@ -63,7 +63,7 @@ export class PCCaseController {
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
         @Body() updatePCCaseDto: UpdatePCCaseDto
-    ): Promise<PCCase> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<PCCase>> {
         return await this.pcCaseService.updateOne(id, updatePCCaseDto, userId);
     }
 

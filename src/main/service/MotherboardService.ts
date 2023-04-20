@@ -13,6 +13,7 @@ import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import checkProvidedFields from 'common/utils/array/checkProvidedFields';
 
 @Injectable()
 export class MotherboardService {
@@ -123,6 +124,33 @@ export class MotherboardService {
         try {
             updateMotherboardDto.lastChangeDate = new Date();
             updateMotherboardDto.lastChangedBy = userId;
+
+            const motherboard = await this.findOne({ where: { id } });
+
+            if (
+                checkProvidedFields<CreateMotherboardDto>([
+                    updateMotherboardDto.maker,
+                    updateMotherboardDto.model,
+                    updateMotherboardDto.socket
+                ])
+            ) {
+                const dto = new CreateMotherboardDto(
+                    updateMotherboardDto?.maker ?? motherboard.maker,
+                    updateMotherboardDto?.model ?? motherboard.model,
+                    updateMotherboardDto?.socket ?? motherboard.socket
+                );
+
+                const result = await this.motherboardRepository.save({
+                    ...dto,
+                    ...updateMotherboardDto,
+                    id
+                });
+                return {
+                    success: true,
+                    message: 'Successfully updated',
+                    newFields: result
+                };
+            }
 
             const result = await this.motherboardRepository.save({ id, ...updateMotherboardDto });
 

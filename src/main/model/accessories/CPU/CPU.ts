@@ -13,9 +13,15 @@ interface Ram {
 
 @Entity()
 export class CPU extends BaseAccessory {
-    constructor(maker: string, type: string, model: string, socket: CPUSocket) {
+    constructor(
+        maker: string,
+        type: string,
+        model: string,
+        socket: CPUSocket,
+        cpupackage: Package
+    ) {
         super();
-        this.name = `${maker} ${type} ${model} ${socket}`;
+        this.name = `CPU ${maker} ${type} ${model}, ${socket}, ${cpupackage}`;
     }
 
     @ApiProperty()
