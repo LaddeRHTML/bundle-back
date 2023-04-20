@@ -13,6 +13,7 @@ import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import checkProvidedFields from 'common/utils/array/checkProvidedFields';
 
 @Injectable()
 export class CPUService {
@@ -24,7 +25,8 @@ export class CPUService {
                 createCPUDto.maker,
                 createCPUDto.type,
                 createCPUDto.model,
-                createCPUDto.socket
+                createCPUDto.socket,
+                createCPUDto.package
             );
 
             createCPUDto.lastChangedBy = userId;
@@ -104,6 +106,33 @@ export class CPUService {
         try {
             updateCPUDto.lastChangeDate = new Date();
             updateCPUDto.lastChangedBy = userId;
+
+            const cpu = await this.findOne({ where: { id } });
+
+            if (
+                checkProvidedFields<CreateCPUDto>([
+                    updateCPUDto.maker,
+                    updateCPUDto.type,
+                    updateCPUDto.model,
+                    updateCPUDto.socket,
+                    updateCPUDto.package
+                ])
+            ) {
+                const dto = new CreateCPUDto(
+                    updateCPUDto?.maker ?? cpu.maker,
+                    updateCPUDto?.type ?? cpu.type,
+                    updateCPUDto?.model ?? cpu.model,
+                    updateCPUDto?.socket ?? cpu.socket,
+                    updateCPUDto?.package ?? cpu.package
+                );
+
+                const result = await this.CPUrepository.save({ ...dto, ...updateCPUDto, id });
+                return {
+                    success: true,
+                    message: 'Successfully updated',
+                    newFields: result
+                };
+            }
 
             const result = await this.CPUrepository.save({ id, ...updateCPUDto });
             return {

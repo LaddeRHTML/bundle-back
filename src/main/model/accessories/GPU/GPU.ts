@@ -21,9 +21,9 @@ import {
 
 @Entity()
 export class GPU extends BaseAccessory {
-    constructor(maker: string, model: string, graphicsRamSizeGb: number) {
+    constructor(maker: string, model: string, graphicsRamSizeGb: number, chipset: string) {
         super();
-        this.name = `${maker} ${model} ${graphicsRamSizeGb}`;
+        this.name = `GPU ${maker} ${model}, ${graphicsRamSizeGb}GB, ${chipset}`;
     }
 
     @ApiProperty()

@@ -14,6 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 
@@ -25,7 +26,6 @@ import { Role } from 'model/user/UserEnums';
 
 import { RequestWithUser } from 'service/AuthService';
 import { PowerUnitService } from 'service/PowerUnitService';
-
 
 @ApiTags('Power-unit')
 @Controller('/power-unit')
@@ -66,7 +66,7 @@ export class PowerUnitController {
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
         @Body() updatePowerUnitDto: UpdatePowerUnitDto
-    ): Promise<PowerUnit> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<PowerUnit>> {
         return await this.powerUnitService.updateOne(id, updatePowerUnitDto, userId);
     }
 

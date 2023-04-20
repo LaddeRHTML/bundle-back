@@ -13,7 +13,7 @@ import { CPUSocket, VideoCabel } from '../CPU/CPUEnums';
 export class Motherboard extends BaseAccessory {
     constructor(maker: string, model: string, socket: CPUSocket) {
         super();
-        this.name = `${maker} ${model} ${socket}`;
+        this.name = `Motherboard ${maker} ${model}, ${socket}`;
     }
 
     @ApiProperty()

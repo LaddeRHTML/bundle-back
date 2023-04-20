@@ -57,12 +57,16 @@ export class Product extends BaseEntity {
     public weight: string;
 
     @ApiProperty({ name: 'cpu', type: () => CPU, required: true })
-    @ManyToOne(() => CPU, (c: CPU) => c, { cascade: true, eager: true })
+    @ManyToOne(() => CPU, (c: CPU) => c, { cascade: true, eager: true, nullable: false })
     @JoinColumn({ name: 'cpu' })
     public cpu: CPU;
 
     @ApiProperty({ name: 'motherboard', type: () => Motherboard, required: true })
-    @ManyToOne(() => Motherboard, (m: Motherboard) => m, { cascade: true, eager: true })
+    @ManyToOne(() => Motherboard, (m: Motherboard) => m, {
+        cascade: true,
+        eager: true,
+        nullable: false
+    })
     @JoinColumn({ name: 'motherboard' })
     public motherboard: Motherboard;
 
@@ -72,9 +76,9 @@ export class Product extends BaseEntity {
     public ramCount: number;
 
     @ApiProperty({ name: 'ram', type: () => RAM, required: true })
-    @ManyToOne(() => RAM, (r: RAM) => r, { cascade: true, eager: true })
+    @ManyToOne(() => RAM, (r: RAM) => r, { cascade: true, eager: true, nullable: false })
     @JoinColumn({ name: 'ram' })
-    public ram: RAM;
+    public ram: RAM[];
 
     @ApiProperty({ name: 'hdd_count', type: 'smallint', maximum: 8, required: true })
     @Column({ name: 'hdd_count', type: 'smallint', nullable: true })
@@ -82,27 +86,31 @@ export class Product extends BaseEntity {
     public hddCount: number;
 
     @ApiProperty({ name: 'HDD', type: () => HDD, required: true })
-    @ManyToOne(() => HDD, (h: HDD) => h, { cascade: true, eager: true })
+    @ManyToOne(() => HDD, (h: HDD) => h, { cascade: true, eager: true, nullable: false })
     @JoinColumn({ name: 'hdd' })
-    public hdd: HDD;
+    public hdd: HDD[];
 
-    @ApiProperty({ name: 'cooler', type: () => Cooler, required: true })
-    @ManyToOne(() => Cooler, (c: Cooler) => c, { cascade: true, eager: true })
+    @ApiProperty({ name: 'cooler', type: () => Cooler, required: true, nullable: false })
+    @ManyToOne(() => Cooler, (c: Cooler) => c, { cascade: true, eager: true, nullable: false })
     @JoinColumn({ name: 'cooler' })
     public cooler: Cooler;
 
     @ApiProperty({ name: 'powerUnit', type: () => PowerUnit, required: true })
-    @ManyToOne(() => PowerUnit, (p: PowerUnit) => p, { cascade: true, eager: true })
+    @ManyToOne(() => PowerUnit, (p: PowerUnit) => p, {
+        cascade: true,
+        eager: true,
+        nullable: false
+    })
     @JoinColumn({ name: 'powerUnit' })
     public powerUnit: PowerUnit;
 
     @ApiProperty({ name: 'gpu', type: () => GPU, required: true })
-    @ManyToOne(() => GPU, (g: GPU) => g, { cascade: true, eager: true })
+    @ManyToOne(() => GPU, (g: GPU) => g, { cascade: true, eager: true, nullable: false })
     @JoinColumn({ name: 'gpu' })
     public gpu: GPU;
 
     @ApiProperty({ name: 'pccase', type: () => PCCase, required: true })
-    @ManyToOne(() => PCCase, (p: PCCase) => p, { cascade: true, eager: true })
+    @ManyToOne(() => PCCase, (p: PCCase) => p, { cascade: true, eager: true, nullable: false })
     @JoinColumn({ name: 'pccase' })
     public pccase: PCCase;
 

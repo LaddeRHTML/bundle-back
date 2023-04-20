@@ -36,3 +36,8 @@ export enum HDDMaker {
     Transcend = 'Transcend',
     Dahua = 'Dahua'
 }
+
+export enum HDDType {
+    HDD = 'HDD',
+    SSD = 'SSD'
+}

@@ -16,9 +16,9 @@ import {
 import { BaseAccessory } from '../BaseAccessory';
 @Entity()
 export class PowerUnit extends BaseAccessory {
-    constructor(maker: string, model: string, formFactor: FormFactor, power: number) {
+    constructor(formFactor: FormFactor, power: number, model: string, maker: string) {
         super();
-        this.name = `${maker} ${model} ${formFactor} ${power}`;
+        this.name = `Power Unit ${formFactor} ${power}W ${maker} ${model}`;
     }
 
     @ApiProperty()

@@ -14,6 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 
@@ -65,7 +66,7 @@ export class HDDController {
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
         @Body() updateHDDDto: UpdateHDDDto
-    ): Promise<HDD> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<HDD>> {
         return await this.hddService.updateOne(id, updateHDDDto, userId);
     }
 

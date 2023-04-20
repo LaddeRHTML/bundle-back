@@ -4,15 +4,16 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { Product } from 'model/product/Product';
 import { BaseAccessory } from '../BaseAccessory';
-import { CoolerMaker, Package } from './CoolerEnums';
+import { CoolerMaker, CoolerType, Package } from './CoolerEnums';
 import { CPUSocket } from '../CPU/CPUEnums';
 
 @Entity()
 export class Cooler extends BaseAccessory {
-    constructor(maker: string, model: string) {
+    constructor(type: CoolerType, maker: string, model: string) {
         super();
-        this.name = `${maker} ${model}`;
+        this.name = `${type} ${maker} ${model}`;
     }
+
     @ApiProperty()
     @Column({ type: 'enum', enum: CoolerMaker })
     public maker: CoolerMaker;
@@ -30,18 +31,26 @@ export class Cooler extends BaseAccessory {
     public socket: CPUSocket[];
 
     @ApiProperty({
+        name: 'type',
+        type: 'enum',
+        enum: CoolerType
+    })
+    @Column({ name: 'type', type: 'enum', enum: CoolerType })
+    public type: CoolerType;
+
+    @ApiProperty({
         maximum: 500,
         minimum: 1,
         required: false
     })
     @Column({
-        name: 'max_TDP_wt',
+        name: 'max_TDP',
         type: 'smallint',
         nullable: true
     })
     @Max(500)
     @Min(1)
-    public maxTDPWt: number;
+    public maxTDP: number;
 
     @ApiProperty({})
     @Column({
@@ -73,28 +82,28 @@ export class Cooler extends BaseAccessory {
         minimum: 100
     })
     @Column({
-        name: 'min_rotation_speed_rpm',
+        name: 'min_rotation_speed',
         type: 'smallint',
         nullable: false
     })
     @Max(1000)
     @Min(100)
     @IsNotEmpty()
-    public minRotationSpeedRpm: number;
+    public minRotationSpeed: number;
 
     @ApiProperty({
         maximum: 6000,
         minimum: 100
     })
     @Column({
-        name: 'max_rotation_speed_rpm',
+        name: 'max_rotation_speed',
         type: 'smallint',
         nullable: false
     })
     @Max(6000)
     @Min(100)
     @IsNotEmpty()
-    public maxRotationSpeedRpm: number;
+    public maxRotationSpeed: number;
 
     @ApiProperty()
     @Column({

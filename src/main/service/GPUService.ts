@@ -13,6 +13,7 @@ import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import checkProvidedFields from 'common/utils/array/checkProvidedFields';
 
 @Injectable()
 export class GPUService {
@@ -23,7 +24,8 @@ export class GPUService {
             const dto = new CreateGPUDto(
                 createGPUDto.maker,
                 createGPUDto.model,
-                createGPUDto.graphicsRamSize
+                createGPUDto.graphicsRamSize,
+                createGPUDto.chipsetModel
             );
 
             createGPUDto.lastChangedBy = userId;
@@ -94,6 +96,31 @@ export class GPUService {
         try {
             updateGPUDto.lastChangeDate = new Date();
             updateGPUDto.lastChangedBy = userId;
+
+            const gpu = await this.findOne({ where: { id } });
+
+            if (
+                checkProvidedFields<CreateGPUDto>([
+                    updateGPUDto.maker,
+                    updateGPUDto.model,
+                    updateGPUDto.graphicsRamSize,
+                    updateGPUDto.chipsetModel
+                ])
+            ) {
+                const dto = new CreateGPUDto(
+                    updateGPUDto?.maker ?? gpu.maker,
+                    updateGPUDto?.model ?? gpu.model,
+                    updateGPUDto?.graphicsRamSize ?? gpu.graphicsRamSize,
+                    updateGPUDto?.chipsetModel ?? gpu.chipsetModel
+                );
+
+                const result = await this.GPUrepository.save({ ...dto, ...updateGPUDto, id });
+                return {
+                    success: true,
+                    message: 'Successfully updated',
+                    newFields: result
+                };
+            }
 
             const result = await this.GPUrepository.save({ id, ...updateGPUDto });
             return {

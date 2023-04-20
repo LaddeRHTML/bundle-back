@@ -12,6 +12,8 @@ import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
+import checkProvidedFields from 'common/utils/array/checkProvidedFields';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 
 @Injectable()
 export class HDDService {
@@ -20,10 +22,12 @@ export class HDDService {
     async createOne(createHDDDto: CreateHDDDto, userId: string): Promise<HDD> {
         try {
             const dto = new CreateHDDDto(
+                createHDDDto.type,
                 createHDDDto.maker,
                 createHDDDto.diskCapacity,
                 createHDDDto.model,
-                createHDDDto.formFactor
+                createHDDDto.formFactor,
+                createHDDDto.interface
             );
 
             createHDDDto.lastChangedBy = userId;
@@ -86,12 +90,51 @@ export class HDDService {
         }
     }
 
-    async updateOne(id: string, updateHDDDto: UpdateHDDDto, userId: string): Promise<HDD> {
+    async updateOne(
+        id: string,
+        updateHDDDto: UpdateHDDDto,
+        userId: string
+    ): Promise<SuccessfullyUpdatedEntityResponse<HDD>> {
         try {
             updateHDDDto.lastChangeDate = new Date();
             updateHDDDto.lastChangedBy = userId;
 
-            return await this.HDDrepository.save({ id, ...updateHDDDto });
+            const hdd = await this.findOne({ where: { id } });
+
+            if (
+                checkProvidedFields<CreateHDDDto>([
+                    updateHDDDto.type,
+                    updateHDDDto.maker,
+                    updateHDDDto.diskCapacity,
+                    updateHDDDto.model,
+                    updateHDDDto.formFactor,
+                    updateHDDDto.interface
+                ])
+            ) {
+                const dto = new CreateHDDDto(
+                    updateHDDDto?.type ?? hdd.type,
+                    updateHDDDto?.maker ?? hdd.maker,
+                    updateHDDDto?.diskCapacity ?? hdd.diskCapacity,
+                    updateHDDDto?.model ?? hdd.model,
+                    updateHDDDto?.formFactor ?? hdd.formFactor,
+                    updateHDDDto?.interface ?? hdd.interface
+                );
+
+                const result = await this.HDDrepository.save({ ...dto, ...updateHDDDto, id });
+                return {
+                    success: true,
+                    message: 'Successfully updated',
+                    newFields: result
+                };
+            }
+
+            const result = await this.HDDrepository.save({ id, ...updateHDDDto });
+
+            return {
+                success: true,
+                message: 'Successfully updated',
+                newFields: result
+            };
         } catch (error) {
             throw new Error(`HDD.service | updateOne error: ${getErrorMessage(error)}`);
         }
