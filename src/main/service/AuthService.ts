@@ -17,7 +17,7 @@ import { PASSWORD_HASH_ROUNDS } from 'common/constants';
 import { UsersService } from './UserService';
 
 export interface AccessToken {
-    access_token: string;
+    accessToken: string;
 }
 
 export interface UserPayload {
@@ -69,8 +69,8 @@ export class AuthService {
 
     async login({ id, role }: UserPayload): Promise<AccessToken> {
         try {
-            const access_token = this.signJwt({ id, role });
-            return { access_token };
+            const accessToken = this.signJwt({ id, role });
+            return { accessToken };
         } catch (error) {
             throw error;
         }
