@@ -10,16 +10,17 @@ import { BaseAccessory } from '../BaseAccessory';
 @Entity()
 export class RAM extends BaseAccessory {
     constructor(
-        maker: string,
-        model: string,
         memoryType: string,
         memoryGb: number,
         memoryClockMHz: number,
+        firstTiming: number,
+        model: string,
+        maker: string,
         supplyVoltage: number,
-        timings: string
+        rpackage: Package
     ) {
         super();
-        this.name = `${maker} ${model} ${memoryType} ${memoryGb} ${memoryClockMHz} ${supplyVoltage} ${timings}`;
+        this.name = `${memoryType} DIMM ${memoryGb}GB/${memoryClockMHz}MHz/CL${firstTiming} ${model} ${maker}, ${supplyVoltage}V ${rpackage}`;
     }
 
     @ApiProperty()

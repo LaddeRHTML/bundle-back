@@ -35,8 +35,7 @@ export abstract class BaseAccessory extends BaseEntity {
     @Column({
         name: 'model',
         type: 'text',
-        nullable: false,
-        unique: true
+        nullable: false
     })
     @MaxLength(35)
     @MinLength(2)

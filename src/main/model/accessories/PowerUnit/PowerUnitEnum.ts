@@ -28,12 +28,12 @@ export enum SVCCS {
     connectorPin8 = '8 pin',
     connectorPin6_6 = '6+6 pin',
     connectorPin6_8 = '6+8 pin',
-    connectorPin8_8 = ' 8+8 pin',
-    connectorPin8_8_9 = ' 8+8+8 pin'
+    connectorPin8_8 = '8+8 pin',
+    connectorPin8_8_9 = '8+8+8 pin'
 }
 
 export enum PowerUnitMaker {
-    ASUS = ' ASUS',
+    ASUS = 'ASUS',
     Antec = 'Antec',
     Aerocool = 'Aerocool',
     beQuiet = 'be quiet!',
