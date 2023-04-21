@@ -9,7 +9,7 @@ import { FANDiameter, FANMaker, Package } from './FANEnums';
 export class FAN extends BaseAccessory {
     constructor(maker: string, model: string, diameter: number, color: string) {
         super();
-        this.name = `${maker} ${model}, ${diameter}mm, ${color}`;
+        this.name = `FAN ${maker} ${model}, ${diameter}mm, ${color}`;
     }
 
     @ApiProperty({ name: 'maker', type: 'enum', enum: FANMaker, required: true })
@@ -68,21 +68,38 @@ export class FAN extends BaseAccessory {
     public possibilitySpeedRegulation: boolean;
 
     @ApiProperty({
-        name: 'maxNoiseLeveDb',
+        name: 'minNoiseLevelDb',
+        type: 'smallint',
+        maximum: 100,
+        minimum: 1,
+        required: false
+    })
+    @Column({
+        name: 'min_noise_level_dB',
+        type: 'smallint',
+        nullable: true
+    })
+    @Max(100)
+    @Min(1)
+    @IsNotEmpty()
+    public minNoiseLevelDb: number;
+
+    @ApiProperty({
+        name: 'maxNoiseLevelDb',
         type: 'smallint',
         maximum: 200,
         minimum: 1,
         required: true
     })
     @Column({
-        name: 'max_noise_leve_dB',
+        name: 'max_noise_level_dB',
         type: 'smallint',
         nullable: false
     })
     @Max(200)
     @Min(1)
     @IsNotEmpty()
-    public maxNoiseLeveDb: number;
+    public maxNoiseLevelDb: number;
 
     @ApiProperty({
         name: 'connector',
