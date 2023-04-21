@@ -212,6 +212,34 @@ export class FAN extends BaseAccessory {
     public backlight: boolean;
 
     @ApiProperty({
+        name: 'backlight_connector',
+        type: 'text',
+        required: false
+    })
+    @Column({
+        name: 'backlight_connector',
+        type: 'text',
+        nullable: true
+    })
+    @IsNotEmpty()
+    public backlightConnector: string;
+
+    @ApiProperty({
+        name: 'controller',
+        type: 'text',
+        required: false
+    })
+    @Column({
+        name: 'controller',
+        type: 'text',
+        nullable: true
+    })
+    @MaxLength(255)
+    @MinLength(6)
+    @IsNotEmpty()
+    public controller: string;
+
+    @ApiProperty({
         name: 'more',
         type: 'text',
         maximum: 455,
@@ -323,8 +351,8 @@ export class FAN extends BaseAccessory {
     @ApiProperty({
         name: 'price',
         type: 'numeric',
-        maximum: 1000000,
-        minimum: 6000,
+        maximum: 150000,
+        minimum: 800,
         required: false
     })
     @Column({
