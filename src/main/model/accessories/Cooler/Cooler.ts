@@ -105,7 +105,11 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public maxRotationSpeed: number;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'possibility_speed_regulation',
+        type: 'boolean',
+        required: true
+    })
     @Column({
         name: 'possibility_speed_regulation',
         type: 'boolean',
