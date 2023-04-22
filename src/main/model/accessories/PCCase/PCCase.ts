@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Product } from 'model/product/Product';
 import {
@@ -14,10 +14,11 @@ import {
     Indicators,
     MotherboardCompatibleFormFactor,
     PCCaseMaker,
-    PowerUnitLocation,
-    SupportedFanDiameters
+    PowerUnitLocation
 } from './PCCaseEnum';
 import { BaseAccessory } from '../BaseAccessory';
+import { Fan } from '../Fan/Fan';
+import { FanDiameter } from '../Fan/FanEnums';
 
 @Entity()
 export class PCCase extends BaseAccessory {
@@ -265,7 +266,7 @@ export class PCCase extends BaseAccessory {
     @Max(600)
     @Min(100)
     @IsNotEmpty()
-    public maxGPULengthMm: number;
+    public maxGPULength: number;
 
     @ApiProperty({
         name: 'maxCPUCoolerHeightMm',
@@ -282,7 +283,7 @@ export class PCCase extends BaseAccessory {
     @Max(300)
     @Min(50)
     @IsNotEmpty()
-    public maxCPUCoolerHeightMm: number;
+    public maxCPUCoolerHeight: number;
 
     @ApiProperty({
         name: 'installedCooling',
@@ -312,13 +313,13 @@ export class PCCase extends BaseAccessory {
     @Column({
         name: 'supported_fan_diameters_mm',
         type: 'enum',
-        enum: SupportedFanDiameters,
+        enum: FanDiameter,
         array: true,
         default: [],
         nullable: false
     })
     @IsNotEmpty()
-    public supportedFanDiametersMm: SupportedFanDiameters[];
+    public supportedFanDiameters: FanDiameter[];
 
     @ApiProperty({
         name: 'fanInstallationSupport',
@@ -352,7 +353,7 @@ export class PCCase extends BaseAccessory {
     @Max(800)
     @Min(50)
     @IsNotEmpty()
-    public maxLengthWCSRadiatorMm: number;
+    public maxLengthWCSRadiator: number;
 
     @ApiProperty({
         name: 'placesMountingWCSRadiator',
@@ -454,7 +455,7 @@ export class PCCase extends BaseAccessory {
     @Max(30)
     @Min(1)
     @IsNotEmpty()
-    public weightKg: number;
+    public weight: number;
 
     @ApiProperty({
         name: 'sizeVolumeMm',
@@ -470,7 +471,32 @@ export class PCCase extends BaseAccessory {
     })
     @MaxLength(100)
     @MinLength(6)
-    public sizeVolumeMm: string;
+    public sizeVolume: string;
+
+    @ApiProperty({ name: 'fans', type: () => Fan, nullable: false })
+    @ManyToMany(() => Fan, (f: Fan) => f.cases, {
+        eager: true,
+        cascade: true,
+        nullable: false
+    })
+    @JoinTable({
+        name: 'fans_in_pc_case',
+        joinColumn: {
+            name: 'pc_case_id',
+            referencedColumnName: 'id'
+        },
+        inverseJoinColumn: {
+            name: 'fan_id',
+            referencedColumnName: 'id'
+        }
+    })
+    public fans: Fan[];
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.pccase, {
+        nullable: true
+    })
+    public products: Product[];
 
     @ApiProperty({
         name: 'price',
@@ -491,10 +517,4 @@ export class PCCase extends BaseAccessory {
     @Min(5000)
     @IsNotEmpty()
     public price: number;
-
-    @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.pccase, {
-        nullable: true
-    })
-    public products: Product[];
 }

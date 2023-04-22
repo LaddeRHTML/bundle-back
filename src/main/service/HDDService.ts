@@ -1,7 +1,7 @@
 import { UpdateHDDDto } from 'dto/HDD/UpdateHDDDto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
@@ -54,6 +54,10 @@ export class HDDService {
         } catch (error) {
             throw new Error(`HDD.service | findOne error: ${getErrorMessage(error)}`);
         }
+    }
+
+    async findAllBy(options: FindManyOptions<HDD>): Promise<HDD[]> {
+        return await this.HDDrepository.find(options);
     }
 
     async findSome(pageOptionsDto: PageOptionsDto, filters: HDD): Promise<PageDto<HDD>> {

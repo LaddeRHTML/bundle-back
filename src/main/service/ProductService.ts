@@ -1,8 +1,10 @@
+import { HDDService } from './HDDService';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import {
     FindManyOptions,
     FindOneOptions,
     FindOptionsWhere,
+    In,
     Repository,
     UpdateResult
 } from 'typeorm';
@@ -20,6 +22,8 @@ import { UpdateProductDto } from 'dto/Product/UpdateProductDto';
 import { Product } from 'model/product/Product';
 import { AllowedProductRelations } from 'controller/ProductController';
 import { SqlSearch } from 'common/utils/array/SqlSearch';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import { FormFactor, HDDType } from 'model/accessories/HDD/HDDEnums';
 
 interface Price {
     max: number;
@@ -34,7 +38,10 @@ export interface GetPricesResponse {
 
 @Injectable()
 export class ProductsService {
-    constructor(@InjectRepository(Product) private productRepository: Repository<Product>) {}
+    constructor(
+        @InjectRepository(Product) private productRepository: Repository<Product>,
+        private readonly hddService: HDDService
+    ) {}
 
     async createOne(createProductDto: CreateProductDto, userId: string): Promise<Product> {
         try {
@@ -42,6 +49,14 @@ export class ProductsService {
             createProductDto.createdBy = userId;
             createProductDto.createDate = new Date();
             createProductDto.lastChangeDate = new Date();
+
+            if (createProductDto.hdd && createProductDto.hdd?.length > 0) {
+                createProductDto.hdd = await this.hddService.findAllBy({
+                    where: {
+                        id: In([...createProductDto.hdd])
+                    }
+                });
+            }
 
             return await this.productRepository.save(createProductDto);
         } catch (error) {
@@ -144,12 +159,74 @@ export class ProductsService {
         id: string,
         updateProductDto: UpdateProductDto,
         userId: string
-    ): Promise<Product> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<Product>> {
         try {
             updateProductDto.lastChangeDate = new Date();
             updateProductDto.lastChangedBy = userId;
 
-            return await this.productRepository.save({ id, ...updateProductDto });
+            const product = await this.findOne({ where: { id } });
+            let message = 'Successfully updated!';
+
+            if (updateProductDto.hdd && updateProductDto.hdd?.length > 0) {
+                const disksMap = new Map();
+                const hddInProduct =
+                    product.hdd && product.hdd.length > 0 ? product.hdd.map((p) => p.id) : [];
+                const newHddsEntityExemplar = await this.hddService.findAllBy({
+                    where: {
+                        id: In([...updateProductDto.hdd, ...hddInProduct])
+                    }
+                });
+
+                newHddsEntityExemplar.forEach((disk) => disksMap.set(disk.id, disk));
+
+                const newHdds = updateProductDto.hdd
+                    .map((diskId) => {
+                        if (disksMap.has(diskId)) {
+                            return disksMap.get(diskId);
+                        }
+
+                        return undefined;
+                    })
+                    .filter((disk) => !!disk);
+
+                const sataGroup = newHdds.filter(
+                    (disk) =>
+                        disk.formFactor.includes(FormFactor.FormFactor_2) ||
+                        disk.formFactor.includes(FormFactor.FormFactor_3)
+                );
+
+                const m2Group = newHdds.filter(
+                    (disk) =>
+                        disk.type === HDDType.SSD &&
+                        disk.formFactor !== FormFactor.FormFactor_2 &&
+                        disk.formFactor !== FormFactor.FormFactor_3
+                );
+
+                if (sataGroup.length <= product.motherboard.maxSataCount) {
+                    updateProductDto.hdd = sataGroup;
+                }
+
+                if (m2Group.length <= product.motherboard.connectorsForSSD) {
+                    m2Group.forEach((disk) => updateProductDto.hdd?.push(disk));
+                }
+
+                updateProductDto.hdd = [...product.hdd, ...updateProductDto.hdd];
+
+                if (updateProductDto.hdd.length === 0) {
+                    message = 'All fields updated except HDDs!';
+                } else {
+                    const fansName = updateProductDto.hdd.map((h) => h.name);
+                    message = `HDDs ${fansName.join(', ')} were successfully added to product!`;
+                }
+            }
+
+            const result = await this.productRepository.save({ id, ...updateProductDto });
+
+            return {
+                success: true,
+                message,
+                newFields: result
+            };
         } catch (error) {
             throw new Error(`product.service | updateOne error: ${getErrorMessage(error)}`);
         }
