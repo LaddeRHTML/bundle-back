@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToMany } from 'typeorm';
 
 import { BaseAccessory } from '../BaseAccessory';
 import { FanDiameter, FanMaker, Package } from './FanEnums';
+import { PCCase } from '../PCCase/PCCase';
 
 @Entity()
 export class Fan extends BaseAccessory {
@@ -68,38 +69,38 @@ export class Fan extends BaseAccessory {
     public possibilitySpeedRegulation: boolean;
 
     @ApiProperty({
-        name: 'minNoiseLevelDb',
+        name: 'minNoiseLevel',
         type: 'smallint',
         maximum: 100,
         minimum: 1,
         required: false
     })
     @Column({
-        name: 'min_noise_level_dB',
+        name: 'min_noise_level_db',
         type: 'smallint',
         nullable: true
     })
     @Max(100)
     @Min(1)
     @IsNotEmpty()
-    public minNoiseLevelDb: number;
+    public minNoiseLevel: number;
 
     @ApiProperty({
-        name: 'maxNoiseLevelDb',
-        type: 'smallint',
+        name: 'maxNoiseLevel',
+        type: 'double precision',
         maximum: 200,
         minimum: 1,
         required: true
     })
     @Column({
-        name: 'max_noise_level_dB',
-        type: 'smallint',
+        name: 'max_noise_level_db',
+        type: 'double precision',
         nullable: false
     })
     @Max(200)
     @Min(1)
     @IsNotEmpty()
-    public maxNoiseLevelDb: number;
+    public maxNoiseLevel: number;
 
     @ApiProperty({
         name: 'connector',
@@ -166,7 +167,7 @@ export class Fan extends BaseAccessory {
     public MTBFHours: number;
 
     @ApiProperty({
-        name: 'powerConsumptionWt',
+        name: 'powerConsumption',
         type: 'double precision',
         maximum: 12,
         minimum: 0,
@@ -179,7 +180,7 @@ export class Fan extends BaseAccessory {
     })
     @Max(12)
     @Min(0)
-    public powerConsumptionWt: number;
+    public powerConsumption: number;
 
     @ApiProperty({
         name: 'supplyVoltage',
@@ -256,7 +257,7 @@ export class Fan extends BaseAccessory {
     public more: string;
 
     @ApiProperty({
-        name: 'sizeVolumeMm',
+        name: 'sizeVolume',
         type: 'text',
         maximum: 100,
         minimum: 6,
@@ -269,10 +270,10 @@ export class Fan extends BaseAccessory {
     })
     @MaxLength(100)
     @MinLength(6)
-    public sizeVolumeMm: string;
+    public sizeVolume: string;
 
     @ApiProperty({
-        name: 'weightKg',
+        name: 'weight',
         type: 'double precision',
         maximum: 2,
         minimum: 0,
@@ -286,7 +287,7 @@ export class Fan extends BaseAccessory {
     @Max(2)
     @Min(0)
     @IsNotEmpty()
-    public weightKg: number;
+    public weight: number;
 
     @ApiProperty({
         name: 'package',
@@ -347,6 +348,10 @@ export class Fan extends BaseAccessory {
     })
     @IsNotEmpty()
     public color: string;
+
+    @ApiProperty({ name: 'cases', isArray: true, nullable: true, required: false })
+    @ManyToMany(() => PCCase, (p: PCCase) => p.fans, { nullable: true })
+    public cases: PCCase[];
 
     @ApiProperty({
         name: 'price',

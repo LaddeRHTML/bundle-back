@@ -1,7 +1,7 @@
 import { UpdateFanDto } from 'dto/Fan/UpdateFanDto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
@@ -13,6 +13,7 @@ import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import checkProvidedFields from 'common/utils/array/checkProvidedFields';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 
 @Injectable()
 export class FanService {
@@ -53,6 +54,10 @@ export class FanService {
         }
     }
 
+    async findAllBy(options: FindManyOptions<Fan>): Promise<Fan[]> {
+        return await this.fanRepository.find(options);
+    }
+
     async findSome(pageOptionsDto: PageOptionsDto, filters: Fan): Promise<PageDto<Fan>> {
         try {
             const includedInSearchFields = ['more', 'name'];
@@ -87,7 +92,11 @@ export class FanService {
         }
     }
 
-    async updateOne(id: string, updateFanDto: UpdateFanDto, userId: string): Promise<Fan> {
+    async updateOne(
+        id: string,
+        updateFanDto: UpdateFanDto,
+        userId: string
+    ): Promise<SuccessfullyUpdatedEntityResponse<Fan>> {
         try {
             updateFanDto.lastChangeDate = new Date();
             updateFanDto.lastChangedBy = userId;
@@ -103,16 +112,26 @@ export class FanService {
                 ])
             ) {
                 const dto = new CreateFanDto(
-                    updateFanDto.maker ?? fan.maker,
-                    updateFanDto.model ?? fan.model,
-                    updateFanDto.diameter ?? fan.diameter,
-                    updateFanDto.color ?? fan.color
+                    updateFanDto?.maker ?? fan.maker,
+                    updateFanDto?.model ?? fan.model,
+                    updateFanDto?.diameter ?? fan.diameter,
+                    updateFanDto?.color ?? fan.color
                 );
 
-                return await this.fanRepository.save({ ...dto, ...updateFanDto, id });
+                const result = await this.fanRepository.save({ ...dto, ...updateFanDto, id });
+                return {
+                    success: true,
+                    message: 'Successfully updated',
+                    newFields: result
+                };
             }
 
-            return await this.fanRepository.save({ id, ...updateFanDto });
+            const result = await this.fanRepository.save({ id, ...updateFanDto });
+            return {
+                success: true,
+                message: 'Successfully updated',
+                newFields: result
+            };
         } catch (error) {
             throw new Error(`Fan.service | updateOne error: ${getErrorMessage(error)}`);
         }

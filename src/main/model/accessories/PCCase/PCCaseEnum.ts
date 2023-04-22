@@ -77,13 +77,6 @@ export enum GPUInstallationType {
     Vertical = 'Vertical'
 }
 
-export enum SupportedFanDiameters {
-    FamDiamet80 = 80,
-    FamDiamet92 = 92,
-    FamDiamet120 = 120,
-    FamDiamet140 = 140
-}
-
 export enum DustFilter {
     FrontPanel = 'Front Panel',
     BottomPanel = 'Bottom Panel',

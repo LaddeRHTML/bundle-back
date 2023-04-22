@@ -1,7 +1,7 @@
 import { UpdatePCCaseDto } from 'dto/PCCase/UpdatePCCaseDto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { FindOneOptions, FindOptionsWhere, In, Repository } from 'typeorm';
 
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
@@ -14,10 +14,16 @@ import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import checkProvidedFields from 'common/utils/array/checkProvidedFields';
 import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import { FanService } from './FanService';
+import { AllowedPcCaseRelations } from 'controller/PCCaseController';
+import { SqlSearch } from 'common/utils/array/SqlSearch';
 
 @Injectable()
 export class PCCaseService {
-    constructor(@InjectRepository(PCCase) private PCCaseRepository: Repository<PCCase>) {}
+    constructor(
+        @InjectRepository(PCCase) private PCCaseRepository: Repository<PCCase>,
+        private readonly fanService: FanService
+    ) {}
 
     async createOne(createPCCaseDto: CreatePCCaseDto, userId: string): Promise<PCCase> {
         try {
@@ -27,6 +33,18 @@ export class PCCaseService {
                 createPCCaseDto.color,
                 createPCCaseDto.formFactor
             );
+
+            if (createPCCaseDto.fans && createPCCaseDto.fans?.length > 0) {
+                const fans = await this.fanService.findAllBy({
+                    where: {
+                        id: In([...createPCCaseDto.fans])
+                    }
+                });
+
+                createPCCaseDto.fans = fans.filter((fan) =>
+                    createPCCaseDto.supportedFanDiameters.includes(fan.diameter)
+                );
+            }
 
             createPCCaseDto.lastChangedBy = userId;
             createPCCaseDto.createdBy = userId;
@@ -54,33 +72,57 @@ export class PCCaseService {
         }
     }
 
-    async findSome(pageOptionsDto: PageOptionsDto, filters: PCCase): Promise<PageDto<PCCase>> {
+    async findSome(
+        pageOptionsDto: PageOptionsDto,
+        filters: PCCase,
+        relations: AllowedPcCaseRelations
+    ): Promise<PageDto<PCCase>> {
         try {
-            const includedInSearchFields = ['more', 'power_unit_location', 'name'];
+            const includedInSearchFields = [
+                'more',
+                'installedCooling',
+                'fanInstallationSupport',
+                'placesMountingWCSRadiator',
+                'peculiarities',
+                'name'
+            ];
+            const entityName = PCCase.name.toLowerCase();
+            const sqlSearch = new SqlSearch();
 
             const options = {
                 ...(filters && filters)
             };
 
-            const queryBuilder = this.PCCaseRepository.createQueryBuilder(
-                PCCase.name.toLowerCase()
-            );
+            const queryBuilder = this.PCCaseRepository.createQueryBuilder(entityName);
 
             if (pageOptionsDto.searchBy) {
-                queryBuilder.where(
-                    getSQLSearch(includedInSearchFields, PCCase.name.toLowerCase()),
-                    {
-                        s: `%${pageOptionsDto.searchBy}%`
-                    }
-                );
+                queryBuilder.where(getSQLSearch(includedInSearchFields, entityName), {
+                    s: `%${pageOptionsDto.searchBy}%`
+                });
             }
 
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${PCCase.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
+                .orderBy(`${entityName}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
+
+            if (relations.length > 0) {
+                relations.forEach((relation) => {
+                    queryBuilder.leftJoin(`${entityName}.${relation}`, relation);
+                    queryBuilder.addSelect([`${relation}.name`, `${relation}.id`]);
+                });
+
+                if (pageOptionsDto.searchBy) {
+                    queryBuilder.orWhere(
+                        sqlSearch.getSearchableRelationFieldsSql(relations, 'name'),
+                        {
+                            s: `%${pageOptionsDto.searchBy}%`
+                        }
+                    );
+                }
+            }
 
             const total = await queryBuilder.getCount();
             const { entities } = await queryBuilder.getRawAndEntities();
@@ -103,6 +145,29 @@ export class PCCaseService {
             updatePCCaseDto.lastChangedBy = userId;
 
             const pccase = await this.findOne({ where: { id } });
+            let message = 'Successfully updated!';
+
+            if (updatePCCaseDto.fans && updatePCCaseDto.fans?.length > 0) {
+                const fansIsPcCase =
+                    pccase.fans && pccase.fans.length > 0 ? pccase.fans.map((p) => p.id) : [];
+
+                const fans = await this.fanService.findAllBy({
+                    where: {
+                        id: In([...updatePCCaseDto.fans, ...fansIsPcCase])
+                    }
+                });
+
+                updatePCCaseDto.fans = fans.filter((fan) =>
+                    pccase.supportedFanDiameters.includes(fan.diameter)
+                );
+
+                if (updatePCCaseDto.fans.length === 0) {
+                    message = 'All fields updated except fans!';
+                } else {
+                    const fansName = updatePCCaseDto.fans.map((f) => f.name);
+                    message = `Fans ${fansName.join(', ')} were successfully added to pccase!`;
+                }
+            }
 
             if (
                 checkProvidedFields<CreatePCCaseDto>([
@@ -124,17 +189,21 @@ export class PCCaseService {
                     ...updatePCCaseDto,
                     id
                 });
+
+                message = 'Successfully updated!';
+
                 return {
                     success: true,
-                    message: 'Successfully updated',
+                    message,
                     newFields: result
                 };
             }
 
             const result = await this.PCCaseRepository.save({ id, ...updatePCCaseDto });
+
             return {
                 success: true,
-                message: 'Successfully updated',
+                message,
                 newFields: result
             };
         } catch (error) {
