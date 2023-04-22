@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne, Unique } from 'typeorm';
+import {
+    Column,
+    Entity,
+    Index,
+    JoinColumn,
+    JoinTable,
+    ManyToMany,
+    ManyToOne,
+    Unique
+} from 'typeorm';
 import { IsArray, Max, Min } from 'class-validator';
 
 import { BaseEntity } from 'model/base';
@@ -80,14 +89,19 @@ export class Product extends BaseEntity {
     @JoinColumn({ name: 'ram' })
     public ram: RAM[];
 
-    @ApiProperty({ name: 'hdd_count', type: 'smallint', maximum: 8, required: true })
-    @Column({ name: 'hdd_count', type: 'smallint', nullable: true })
-    @Max(8)
-    public hddCount: number;
-
-    @ApiProperty({ name: 'HDD', type: () => HDD, required: true })
-    @ManyToOne(() => HDD, (h: HDD) => h, { cascade: true, eager: true, nullable: false })
-    @JoinColumn({ name: 'hdd' })
+    @ApiProperty({ name: 'hdd', type: () => HDD, nullable: false })
+    @ManyToMany(() => HDD, (h: HDD) => h, { cascade: true, eager: true, nullable: false })
+    @JoinTable({
+        name: 'hdd_in_products',
+        joinColumn: {
+            name: 'product_id',
+            referencedColumnName: 'id'
+        },
+        inverseJoinColumn: {
+            name: 'hdd_id',
+            referencedColumnName: 'id'
+        }
+    })
     public hdd: HDD[];
 
     @ApiProperty({ name: 'cooler', type: () => Cooler, required: true, nullable: false })

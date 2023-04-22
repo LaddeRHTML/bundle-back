@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Max, Min, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany } from 'typeorm';
 
 import { Product } from 'model/product/Product';
 import { BaseAccessory } from '../BaseAccessory';
@@ -22,7 +22,7 @@ export class HDD extends BaseAccessory {
 
     @ApiProperty()
     @Column({ name: 'maker', type: 'enum', enum: HDDMaker })
-    maker: HDDMaker;
+    public maker: HDDMaker;
 
     @ApiProperty({
         name: 'type',
@@ -44,7 +44,7 @@ export class HDD extends BaseAccessory {
     })
     @MaxLength(35)
     @MinLength(2)
-    line: string;
+    public line: string;
 
     @ApiProperty()
     @Column({
@@ -318,9 +318,7 @@ export class HDD extends BaseAccessory {
     @IsNotEmpty()
     public price: number;
 
-    @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.hdd, {
-        nullable: true
-    })
+    @ApiProperty({ name: 'products', isArray: true, nullable: true, required: false })
+    @ManyToMany(() => Product, (p: Product) => p.hdd, { nullable: true })
     public products: Product[];
 }

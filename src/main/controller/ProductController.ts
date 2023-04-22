@@ -19,6 +19,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
+import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
@@ -124,7 +125,7 @@ export class ProductsController {
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
         @Body() updateProductDto: UpdateProductDto
-    ): Promise<Product> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<Product>> {
         return await this.productsService.updateOne(id, updateProductDto, userId);
     }
 
@@ -137,7 +138,7 @@ export class ProductsController {
         files: MulterFile[],
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser
-    ): Promise<Product> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<Product>> {
         const uploadedPictures = await this.filesService.uploadFiles(files, userId);
 
         return this.productsService.updateOne(
@@ -165,7 +166,7 @@ export class ProductsController {
         pictures: string[],
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser
-    ): Promise<Product> {
+    ): Promise<SuccessfullyUpdatedEntityResponse<Product>> {
         const product = await this.productsService.findOne({ where: { id } });
         await this.filesService.deleteFiles(pictures);
 

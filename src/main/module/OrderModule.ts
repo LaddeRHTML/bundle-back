@@ -2,19 +2,22 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { OrdersController } from 'controller/OrderController';
-
+import { OrdersService } from 'service/OrderService';
 import { Order } from 'model/order/Order';
-import { Product } from 'model/product/Product';
+
+import { UsersService } from 'service/UserService';
 import { User } from 'model/user/User';
 
-import { OrdersService } from 'service/OrderService';
+import { HDDService } from 'service/HDDService';
+import { HDD } from 'model/accessories/HDD/HDD';
+
 import { ProductsService } from 'service/ProductService';
-import { UsersService } from 'service/UserService';
+import { Product } from 'model/product/Product';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Order, User, Product])],
+    imports: [TypeOrmModule.forFeature([Order, User, Product, HDD])],
     controllers: [OrdersController],
-    providers: [OrdersService, ProductsService, UsersService],
+    providers: [OrdersService, ProductsService, UsersService, HDDService],
     exports: [OrdersService]
 })
 export class OrdersModule {}
