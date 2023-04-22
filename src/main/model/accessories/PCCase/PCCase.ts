@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Product } from 'model/product/Product';
 import {
@@ -14,10 +14,11 @@ import {
     Indicators,
     MotherboardCompatibleFormFactor,
     PCCaseMaker,
-    PowerUnitLocation,
-    SupportedFanDiameters
+    PowerUnitLocation
 } from './PCCaseEnum';
 import { BaseAccessory } from '../BaseAccessory';
+import { Fan } from '../Fan/Fan';
+import { FanDiameter } from '../Fan/FanEnums';
 
 @Entity()
 export class PCCase extends BaseAccessory {
@@ -203,7 +204,7 @@ export class PCCase extends BaseAccessory {
     @Max(600)
     @Min(100)
     @IsNotEmpty()
-    public maxGPULengthMm: number;
+    public maxGPULength: number;
 
     @ApiProperty({
         maximum: 300,
@@ -217,7 +218,7 @@ export class PCCase extends BaseAccessory {
     @Max(300)
     @Min(50)
     @IsNotEmpty()
-    public maxCPUCoolerHeightMm: number;
+    public maxCPUCoolerHeight: number;
 
     @ApiProperty({
         maximum: 255,
@@ -238,13 +239,13 @@ export class PCCase extends BaseAccessory {
     @Column({
         name: 'supported_fan_diameters_mm',
         type: 'enum',
-        enum: SupportedFanDiameters,
+        enum: FanDiameter,
         array: true,
         default: [],
         nullable: false
     })
     @IsNotEmpty()
-    public supportedFanDiametersMm: SupportedFanDiameters[];
+    public supportedFanDiameters: FanDiameter[];
 
     @ApiProperty({
         maximum: 255,
@@ -274,7 +275,7 @@ export class PCCase extends BaseAccessory {
     @Max(800)
     @Min(50)
     @IsNotEmpty()
-    public maxLengthWCSRadiatorMm: number;
+    public maxLengthWCSRadiator: number;
 
     @ApiProperty({
         maximum: 255,
@@ -354,7 +355,7 @@ export class PCCase extends BaseAccessory {
     @Max(30)
     @Min(1)
     @IsNotEmpty()
-    public weightKg: number;
+    public weight: number;
 
     @ApiProperty({
         maximum: 100,
@@ -368,7 +369,32 @@ export class PCCase extends BaseAccessory {
     })
     @MaxLength(100)
     @MinLength(6)
-    public sizeVolumeMm: string;
+    public sizeVolume: string;
+
+    @ApiProperty({ name: 'fans', type: () => Fan, nullable: true })
+    @ManyToMany(() => Fan, (f: Fan) => f.cases, {
+        eager: true,
+        cascade: true,
+        nullable: false
+    })
+    @JoinTable({
+        name: 'fans_in_pc_case',
+        joinColumn: {
+            name: 'pc_case_id',
+            referencedColumnName: 'id'
+        },
+        inverseJoinColumn: {
+            name: 'fan_id',
+            referencedColumnName: 'id'
+        }
+    })
+    public fans: Fan[];
+
+    @JoinColumn({ name: 'product' })
+    @OneToMany(() => Product, (p: Product) => p.pccase, {
+        nullable: true
+    })
+    public products: Product[];
 
     @ApiProperty({
         maximum: 2000000,
@@ -386,10 +412,4 @@ export class PCCase extends BaseAccessory {
     @Min(5000)
     @IsNotEmpty()
     public price: number;
-
-    @JoinColumn({ name: 'product' })
-    @OneToMany(() => Product, (p: Product) => p.pccase, {
-        nullable: true
-    })
-    public products: Product[];
 }

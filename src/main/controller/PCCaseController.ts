@@ -1,9 +1,11 @@
 import {
     Body,
     Controller,
+    DefaultValuePipe,
     Delete,
     Get,
     Param,
+    ParseArrayPipe,
     Patch,
     Post,
     Query,
@@ -23,6 +25,8 @@ import { PCCase } from 'model/accessories/PCCase/PCCase';
 import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { PCCaseService } from 'service/PCCaseService';
+
+export type AllowedPcCaseRelations = ['fan'];
 
 @ApiTags('PC-Case')
 @Controller('/pc-case')
@@ -51,9 +55,19 @@ export class PCCaseController {
     @Post('/search?')
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
-        @Body() filters: PCCase
+        @Body() filters: PCCase,
+        @Query(
+            'relations',
+            new DefaultValuePipe([]),
+            new ParseArrayPipe({
+                items: String,
+                separator: ',',
+                optional: true
+            })
+        )
+        relations: AllowedPcCaseRelations
     ): Promise<PageDto<PCCase>> {
-        return await this.pcCaseService.findSome(pageOptionsDto, filters);
+        return await this.pcCaseService.findSome(pageOptionsDto, filters, relations);
     }
 
     @HasRoles(Role.Manager, Role.Admin)
