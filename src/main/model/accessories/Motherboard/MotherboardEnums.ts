@@ -13,3 +13,8 @@ export enum FormFactor {
     Mini_ITX = 'Mini-ITX',
     Mini_DTX = 'Mini-DTX'
 }
+export enum M2Slot {
+    PCI_3 = 'PCI-Express 3.0 х4',
+    PCI_4 = 'PCI-Express 4.0 x4',
+    PCI_5 = 'PCI-Express 5.0 x4'
+}

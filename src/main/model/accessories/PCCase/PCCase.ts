@@ -371,7 +371,7 @@ export class PCCase extends BaseAccessory {
     @MinLength(6)
     public sizeVolume: string;
 
-    @ApiProperty({ name: 'fans', type: () => Fan, nullable: true })
+    @ApiProperty({ name: 'fans', type: () => Fan, nullable: false })
     @ManyToMany(() => Fan, (f: Fan) => f.cases, {
         eager: true,
         cascade: true,
