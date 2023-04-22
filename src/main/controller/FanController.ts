@@ -17,34 +17,34 @@ import RoleGuard from 'auth/guards/role-auth.guard';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 
-import { CreateFANDto } from 'dto/FAN/CreateFANDto';
-import { UpdateFANDto } from 'dto/FAN/UpdateFANDto';
+import { CreateFanDto } from 'dto/Fan/CreateFanDto';
+import { UpdateFanDto } from 'dto/Fan/UpdateFanDto';
 
-import { FAN } from 'model/accessories/FAN/FAN';
+import { Fan } from 'model/accessories/Fan/Fan';
 import { Role } from 'model/user/UserEnums';
 
 import { RequestWithUser } from 'service/AuthService';
-import { FANService } from 'service/FANService';
+import { FanService } from 'service/FanService';
 
-@ApiTags('FAN')
+@ApiTags('Fan')
 @Controller('/fan')
-export class FANController {
-    constructor(private readonly fanService: FANService) {}
+export class FanController {
+    constructor(private readonly fanService: FanService) {}
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
     async createOne(
-        @Body() createFANDto: CreateFANDto,
+        @Body() createFanDto: CreateFanDto,
         @Req() { user: { id } }: RequestWithUser
-    ): Promise<FAN> {
-        return await this.fanService.createOne(createFANDto, id);
+    ): Promise<Fan> {
+        return await this.fanService.createOne(createFanDto, id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
-    findOne(@Param('id') id: string): Promise<FAN | null> {
+    findOne(@Param('id') id: string): Promise<Fan | null> {
         return this.fanService.findOne({ where: { id } });
     }
 
@@ -53,8 +53,8 @@ export class FANController {
     @Post('/search?')
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
-        @Body() filters: FAN
-    ): Promise<PageDto<FAN>> {
+        @Body() filters: Fan
+    ): Promise<PageDto<Fan>> {
         return await this.fanService.findSome(pageOptionsDto, filters);
     }
 
@@ -64,15 +64,15 @@ export class FANController {
     async updateById(
         @Param('id') id: string,
         @Req() { user: { id: userId } }: RequestWithUser,
-        @Body() updateFANDto: UpdateFANDto
-    ): Promise<FAN> {
-        return await this.fanService.updateOne(id, updateFANDto, userId);
+        @Body() updateFanDto: UpdateFanDto
+    ): Promise<Fan> {
+        return await this.fanService.updateOne(id, updateFanDto, userId);
     }
 
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')
-    async removedOneById(@Param('id') id: string): Promise<FAN> {
+    async removedOneById(@Param('id') id: string): Promise<Fan> {
         return await this.fanService.removeOneById(id);
     }
 }

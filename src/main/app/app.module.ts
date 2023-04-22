@@ -6,7 +6,7 @@ import { DatabaseModule } from 'database/database.module';
 import { AuthModule } from 'module/AuthModule';
 import { CPUModule } from 'module/CPUModule';
 import { CoolerModule } from 'module/CoolerModule';
-import { FANModule } from 'module/FANModule';
+import { FanModule } from 'module/FanModule';
 import { FilesModule } from 'module/FileModule';
 import { GPUModule } from 'module/GPUModule';
 import { HDDModule } from 'module/HDDModule';
@@ -33,7 +33,7 @@ import { UsersModule } from 'module/UserModule';
         RAMModule,
         HDDModule,
         CoolerModule,
-        FANModule,
+        FanModule,
         PowerUnitModule,
         PCCaseModule
     ],

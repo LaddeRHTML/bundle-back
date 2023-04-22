@@ -1,4 +1,4 @@
-export enum FANMaker {
+export enum FanMaker {
     Aerocool = 'Aerocool',
     ASUS = 'ASUS',
     Alseye = 'Alseye',
@@ -19,7 +19,7 @@ export enum FANMaker {
     Zalman = 'Zalman'
 }
 
-export enum FANDiameter {
+export enum FanDiameter {
     Diameter80 = 80,
     Diameter90 = 90,
     Diameter92 = 92,

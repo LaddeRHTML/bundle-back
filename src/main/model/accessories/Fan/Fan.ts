@@ -3,22 +3,22 @@ import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { Column, Entity } from 'typeorm';
 
 import { BaseAccessory } from '../BaseAccessory';
-import { FANDiameter, FANMaker, Package } from './FANEnums';
+import { FanDiameter, FanMaker, Package } from './FanEnums';
 
 @Entity()
-export class FAN extends BaseAccessory {
+export class Fan extends BaseAccessory {
     constructor(maker: string, model: string, diameter: number, color: string) {
         super();
-        this.name = `FAN ${maker} ${model}, ${diameter}mm, ${color}`;
+        this.name = `Fan ${maker} ${model}, ${diameter}mm, ${color}`;
     }
 
-    @ApiProperty({ name: 'maker', type: 'enum', enum: FANMaker, required: true })
-    @Column({ name: 'maker', type: 'enum', enum: FANMaker, nullable: false })
-    public maker: FANMaker;
+    @ApiProperty({ name: 'maker', type: 'enum', enum: FanMaker, required: true })
+    @Column({ name: 'maker', type: 'enum', enum: FanMaker, nullable: false })
+    public maker: FanMaker;
 
-    @ApiProperty({ name: 'diameter', type: 'enum', enum: FANDiameter, required: true })
-    @Column({ name: 'diameter', type: 'enum', enum: FANDiameter, nullable: false })
-    public diameter: FANDiameter;
+    @ApiProperty({ name: 'diameter', type: 'enum', enum: FanDiameter, required: true })
+    @Column({ name: 'diameter', type: 'enum', enum: FanDiameter, nullable: false })
+    public diameter: FanDiameter;
 
     @ApiProperty({
         name: 'minRotationSpeed',

@@ -2,7 +2,7 @@ import { DataSourceOptions } from 'typeorm';
 
 import { CPU } from 'model/accessories/CPU/CPU';
 import { Cooler } from 'model/accessories/Cooler/Cooler';
-import { FAN } from 'model/accessories/FAN/FAN';
+import { Fan } from 'model/accessories/Fan/Fan';
 import { GPU } from 'model/accessories/GPU/GPU';
 import { HDD } from 'model/accessories/HDD/HDD';
 import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
@@ -32,7 +32,7 @@ export const DatabaseCredentials: DataSourceOptions = {
         RAM,
         HDD,
         Cooler,
-        FAN,
+        Fan,
         PowerUnit,
         PCCase
     ],
