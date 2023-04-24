@@ -3,10 +3,12 @@ import {
     Controller,
     DefaultValuePipe,
     Delete,
+    FileTypeValidator,
     Get,
+    MaxFileSizeValidator,
     Param,
     ParseArrayPipe,
-    Patch,
+    ParseFilePipe,
     Post,
     Query,
     Request,
@@ -138,9 +140,16 @@ export class UsersController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @UseInterceptors(FileInterceptor('image'))
-    @Patch('/avatar/upload')
+    @Post('/avatar/upload')
     async updateAvatar(
-        @UploadedFile()
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: [
+                    new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 })
+                ]
+            })
+        )
         file: MulterFile,
         @Request() { user: { id } }: RequestWithUser
     ): Promise<File> {
@@ -152,7 +161,7 @@ export class UsersController {
     @ApiOperation({ description: 'Удалить аватар' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Patch('/avatar/remove')
+    @Post('/avatar/remove')
     async removeAvatar(@Request() { user: { id } }: RequestWithUser): Promise<User> {
         const user = await this.usersService.findOne({ where: { id }, select: ['avatarId'] });
         await this.filesService.deleteFile(user?.avatarId ?? '');

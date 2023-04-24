@@ -2,11 +2,12 @@ import {
     Body,
     Controller,
     Delete,
+    FileTypeValidator,
     Get,
-    HttpStatus,
+    MaxFileSizeValidator,
     NotFoundException,
     Param,
-    ParseFilePipeBuilder,
+    ParseFilePipe,
     Post,
     Req,
     Res,
@@ -29,8 +30,6 @@ import RoleGuard from 'auth/guards/role-auth.guard';
 import { RequestWithUser } from 'service/AuthService';
 import { FilesService, MulterFile } from 'service/FileService';
 
-import { MAX_FILE_SIZE_IN_B } from 'common/constants';
-
 import { Role } from 'model/user/UserEnums';
 import { File } from 'model/file/File';
 
@@ -45,13 +44,12 @@ export class FilesController {
     @Post()
     async uploadFile(
         @UploadedFile(
-            new ParseFilePipeBuilder()
-                .addMaxSizeValidator({
-                    maxSize: MAX_FILE_SIZE_IN_B
-                })
-                .build({
-                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
-                })
+            new ParseFilePipe({
+                validators: [
+                    new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 })
+                ]
+            })
         )
         file: MulterFile,
         @Req() { user: { id } }: RequestWithUser
@@ -64,7 +62,14 @@ export class FilesController {
     @UseInterceptors(FilesInterceptor('images'))
     @Post('/many')
     async uploadFiles(
-        @UploadedFiles()
+        @UploadedFiles(
+            new ParseFilePipe({
+                validators: [
+                    new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 })
+                ]
+            })
+        )
         files: MulterFile[],
         @Req() { user: { id } }: RequestWithUser
     ): Promise<Partial<File>[]> {
