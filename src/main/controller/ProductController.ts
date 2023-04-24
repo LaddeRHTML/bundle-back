@@ -12,7 +12,10 @@ import {
     Delete,
     UploadedFiles,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
+    ParseFilePipe,
+    FileTypeValidator,
+    MaxFileSizeValidator
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
@@ -132,19 +135,27 @@ export class ProductsController {
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @UseInterceptors(FilesInterceptor('images'))
-    @Patch('/pictures/upload/:id')
+    @Post('/pictures/upload/:id')
     async uploadPictures(
-        @UploadedFiles()
-        files: MulterFile[],
         @Param('id') id: string,
+        @UploadedFiles(
+            new ParseFilePipe({
+                validators: [
+                    new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 })
+                ]
+            })
+        )
+        files: MulterFile[],
         @Req() { user: { id: userId } }: RequestWithUser
     ): Promise<SuccessfullyUpdatedEntityResponse<Product>> {
+        const product = await this.productsService.findOne({ where: { id } });
         const uploadedPictures = await this.filesService.uploadFiles(files, userId);
 
         return this.productsService.updateOne(
             id,
             {
-                picturesId: uploadedPictures.map((p) => p.id)
+                picturesId: [...product.picturesId, ...uploadedPictures.map((p) => p.id)]
             },
             userId
         );
@@ -152,7 +163,7 @@ export class ProductsController {
 
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
-    @Patch('/pictures/remove/:id')
+    @Post('/pictures/remove/:id')
     async removePictures(
         @Query(
             'pictures',

@@ -46,10 +46,12 @@ export class FilesService {
                 data: file.buffer
             });
 
+            console.log({ newFile });
+
             const savedFile = await this.fileRepository.save({
                 ...newFile,
-                created_by: userId,
-                last_changed_by: userId
+                createdBy: userId,
+                lastChangedBy: userId
             });
 
             return deleteObjectProperty(savedFile, 'data');
@@ -82,8 +84,8 @@ export class FilesService {
             );
 
             const result = await this.fileRepository.upsert(filesEntities, {
-                conflictPaths: ['size_in_bytes', 'original_name', 'mime_type'],
-                skipUpdateIfNoValuesChanged: skipUpdateIfNoValuesChanged === true
+                conflictPaths: ['sizeInBytes', 'originalName', 'mimeType'],
+                skipUpdateIfNoValuesChanged: !!skipUpdateIfNoValuesChanged
             });
 
             if (result.raw.length === 0) return [];

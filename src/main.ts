@@ -15,13 +15,13 @@ async function bootstrap() {
     });
 
     const config = new DocumentBuilder()
-    .setTitle('Bundle API')
-    .setDescription('Bundle API for Bundle applications')
-    .setVersion('1.1')
-    // .addTag('PC')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+        .setTitle('Bundle API')
+        .setDescription('Bundle API for Bundle applications')
+        .setVersion('1.1')
+        .addTag('PC')
+        .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
 
     if (module.hot) {
         module.hot.accept();
