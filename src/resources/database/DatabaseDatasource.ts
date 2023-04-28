@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
 
-import { DatabaseCredentials } from './database.credentials';
+import { DatabaseCredentials } from './DatabaseCredentials';
 
 export const AppDataSource = new DataSource(DatabaseCredentials);

@@ -46,7 +46,7 @@ export class PowerUnitController {
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<PowerUnit | null> {
-        return this.powerUnitService.findOne({ where: { id } });
+        return this.powerUnitService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)

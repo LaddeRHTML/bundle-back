@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { Cache } from 'cache-manager';
 
 import { Motherboard } from 'model/accessories/Motherboard/Motherboard';
 
@@ -12,14 +13,27 @@ import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
-import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import { FindSomeCache, SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import checkProvidedFields from 'common/utils/array/checkProvidedFields';
+import compareObjects from 'common/utils/object/compareObjects';
+
+interface FindSomeArgs {
+    pageOptionsDto: PageOptionsDto;
+    filters: Motherboard;
+}
+
+type FindSomeCached = FindSomeCache<PageDto<Motherboard>, FindSomeArgs>;
 
 @Injectable()
 export class MotherboardService {
     constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         @InjectRepository(Motherboard) private motherboardRepository: Repository<Motherboard>
     ) {}
+
+    get name() {
+        return Motherboard.name.toLowerCase();
+    }
 
     async createOne(
         createMotherboardDto: CreateMotherboardDto,
@@ -58,25 +72,57 @@ export class MotherboardService {
         }
     }
 
+    async findOneById(id: string): Promise<Motherboard> {
+        try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
+                | Motherboard
+                | undefined;
+
+            if (cachedData && cachedData.id === id) {
+                return cachedData;
+            }
+
+            const motherboard = await this.motherboardRepository.findOne({ where: { id } });
+
+            if (!motherboard) {
+                throw new NotFoundException('Motherboard not found!');
+            }
+
+            await this.cacheManager.set(`${this.name}.findOneById`, motherboard, 10000);
+
+            return motherboard;
+        } catch (error) {
+            throw new Error(`Motherboard.service | findOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
     async findSome(
         pageOptionsDto: PageOptionsDto,
         filters: Motherboard
     ): Promise<PageDto<Motherboard>> {
         try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
+                | FindSomeCached
+                | undefined;
+
+            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
+                return cachedData.response;
+            }
+
             const includedInSearchFields = [
                 'name',
                 'microarchitecture',
                 'chipset',
                 'technologies',
                 'FormFactor',
-                'interface_m2_slot',
-                'pci_express_workflow',
+                'interfaceM2Slot',
+                'pciExpressWorkflow',
                 'audiocodec',
-                'power_connectors',
-                'backpanel_connectors',
-                'included_buttons',
-                'network_controller',
-                'network_communications',
+                'powerConnectors',
+                'backpanelConnectors',
+                'includedButtons',
+                'networkController',
+                'networkCommunications',
                 'bios',
                 'more'
             ];
@@ -85,23 +131,18 @@ export class MotherboardService {
                 ...(filters && filters)
             };
 
-            const queryBuilder = this.motherboardRepository.createQueryBuilder(
-                Motherboard.name.toLowerCase()
-            );
+            const queryBuilder = this.motherboardRepository.createQueryBuilder(this.name);
 
             if (pageOptionsDto.searchBy) {
-                queryBuilder.where(
-                    getSQLSearch(includedInSearchFields, Motherboard.name.toLowerCase()),
-                    {
-                        s: `%${pageOptionsDto.searchBy}%`
-                    }
-                );
+                queryBuilder.where(getSQLSearch(includedInSearchFields, this.name), {
+                    s: `%${pageOptionsDto.searchBy}%`
+                });
             }
 
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${Motherboard.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
+                .orderBy(`${this.name}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -109,8 +150,15 @@ export class MotherboardService {
             const { entities } = await queryBuilder.getRawAndEntities();
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
+            const response = new PageDto(entities, pageMetaDto);
 
-            return new PageDto(entities, pageMetaDto);
+            await this.cacheManager.set(
+                `${this.name}.findSome`,
+                { response, arguments: pageOptionsDto, filters },
+                10000
+            );
+
+            return response;
         } catch (error) {
             throw new Error(`CPU.service | findSome error: ${getErrorMessage(error)}`);
         }

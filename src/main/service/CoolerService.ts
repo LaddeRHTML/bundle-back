@@ -1,22 +1,39 @@
-import { UpdateCoolerDto } from './../dto/Cooler/UpdateCoolerDto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { Cache } from 'cache-manager';
 
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
 import { CreateCoolerDto } from 'dto/Cooler/CreateCoolerDto';
+import { UpdateCoolerDto } from 'dto/Cooler/UpdateCoolerDto';
 
 import { Cooler } from 'model/accessories/Cooler/Cooler';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
-import { PageDto } from './../common/pagination/dtos/page.dto';
+import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
-import { PageMetaDto } from './../common/pagination/dtos/page-meta.dto';
+import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import checkProvidedFields from 'common/utils/array/checkProvidedFields';
+import { FindSomeCache } from 'common/interfaces';
+import compareObjects from 'common/utils/object/compareObjects';
+
+interface FindSomeArgs {
+    pageOptionsDto: PageOptionsDto;
+    filters: Cooler;
+}
+
+type FindSomeCached = FindSomeCache<PageDto<Cooler>, FindSomeArgs>;
 
 @Injectable()
 export class CoolerService {
-    constructor(@InjectRepository(Cooler) private coolerRepository: Repository<Cooler>) {}
+    constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        @InjectRepository(Cooler) private coolerRepository: Repository<Cooler>
+    ) {}
+
+    get name() {
+        return Cooler.name.toLowerCase();
+    }
 
     async createOne(createCoolerDto: CreateCoolerDto, userId: string): Promise<Cooler> {
         try {
@@ -52,31 +69,58 @@ export class CoolerService {
         }
     }
 
+    async findOneById(id: string) {
+        try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
+                | Cooler
+                | undefined;
+
+            if (cachedData && cachedData.id === id) {
+                return cachedData;
+            }
+
+            const cooler = await this.coolerRepository.findOne({ where: { id } });
+
+            if (!cooler) {
+                throw new NotFoundException('Cooler not found!');
+            }
+
+            await this.cacheManager.set(`${this.name}.findOneById`, cooler, 10000);
+
+            return cooler;
+        } catch (error) {
+            throw new Error(`Cooler.service | findOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
     async findSome(pageOptionsDto: PageOptionsDto, filters: Cooler): Promise<PageDto<Cooler>> {
         try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
+                | FindSomeCached
+                | undefined;
+
+            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
+                return cachedData.response;
+            }
+
             const includedInSearchFields = ['more', 'name'];
 
             const options = {
                 ...(filters && filters)
             };
 
-            const queryBuilder = this.coolerRepository.createQueryBuilder(
-                Cooler.name.toLowerCase()
-            );
+            const queryBuilder = this.coolerRepository.createQueryBuilder(this.name);
 
             if (pageOptionsDto.searchBy) {
-                queryBuilder.where(
-                    getSQLSearch(includedInSearchFields, Cooler.name.toLowerCase()),
-                    {
-                        s: `%${pageOptionsDto.searchBy}%`
-                    }
-                );
+                queryBuilder.where(getSQLSearch(includedInSearchFields, this.name), {
+                    s: `%${pageOptionsDto.searchBy}%`
+                });
             }
 
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${Cooler.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
+                .orderBy(`${this.name}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -84,8 +128,15 @@ export class CoolerService {
             const { entities } = await queryBuilder.getRawAndEntities();
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
+            const response = new PageDto(entities, pageMetaDto);
 
-            return new PageDto(entities, pageMetaDto);
+            await this.cacheManager.set(
+                `${this.name}.findSome`,
+                { response, arguments: pageOptionsDto, filters },
+                10000
+            );
+
+            return response;
         } catch (error) {
             throw new Error(`Cooler.service | findSome error: ${getErrorMessage(error)}`);
         }

@@ -26,7 +26,6 @@ import { Role } from 'model/user/UserEnums';
 import { RequestWithUser } from 'service/AuthService';
 import { RAMService } from 'service/RAMService';
 
-
 @ApiTags('RAM')
 @Controller('/ram')
 export class RAMController {
@@ -45,20 +44,8 @@ export class RAMController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
-    findOne(
-        @Param('id') id: string
-        /* @Query(
-            'relations',
-            new DefaultValuePipe([]),
-            new ParseArrayPipe({
-                items: String,
-                separator: ',',
-                optional: true
-            })
-        )
-        relations: AllowedProductRelations */
-    ): Promise<RAM | null> {
-        return this.ramService.findOne({ where: { id } });
+    findOne(@Param('id') id: string): Promise<RAM | null> {
+        return this.ramService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -67,17 +54,6 @@ export class RAMController {
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
         @Body() filters: RAM
-
-        // @Query(
-        //     'relations',
-        //     new DefaultValuePipe([]),
-        //     new ParseArrayPipe({
-        //         items: String,
-        //         separator: ',',
-        //         optional: true
-        //     })
-        // )
-        // relations: AllowedProductRelations
     ): Promise<PageDto<RAM>> {
         return await this.ramService.findSome(pageOptionsDto, filters);
     }

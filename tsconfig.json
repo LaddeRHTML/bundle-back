@@ -12,6 +12,7 @@
             "model/*": ["./src/main/model/*"],
             "module/*": ["./src/main/module/*"],
             "service/*": ["./src/main/service/*"],
+            "cache/*": ["./src/resources/cache/*"],
             "database/*": ["./src/resources/database/*"],
             "filter/*": ["./src/resources/filter/*"]
         },

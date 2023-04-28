@@ -46,7 +46,7 @@ export class FanController {
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<Fan | null> {
-        return this.fanService.findOne({ where: { id } });
+        return this.fanService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)

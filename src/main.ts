@@ -4,7 +4,7 @@ import { NestFastifyApplication } from '@nestjs/platform-fastify/interfaces';
 import { VersioningType } from '@nestjs/common/enums';
 
 import { AllExceptionsFilter } from 'filter/AllExceptionFilter';
-import { AppModule } from 'app/app.module';
+import { AppModule } from 'app/AppModule';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 declare const module: any;

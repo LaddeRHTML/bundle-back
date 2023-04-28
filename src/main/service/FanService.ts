@@ -1,10 +1,11 @@
-import { UpdateFanDto } from 'dto/Fan/UpdateFanDto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { Cache } from 'cache-manager';
 
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
+import { UpdateFanDto } from 'dto/Fan/UpdateFanDto';
 import { CreateFanDto } from 'dto/Fan/CreateFanDto';
 
 import { Fan } from 'model/accessories/Fan/Fan';
@@ -13,11 +14,26 @@ import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import checkProvidedFields from 'common/utils/array/checkProvidedFields';
-import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import { FindSomeCache, SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import compareObjects from 'common/utils/object/compareObjects';
+
+interface FindSomeArgs {
+    pageOptionsDto: PageOptionsDto;
+    filters: Fan;
+}
+
+type FindSomeCached = FindSomeCache<PageDto<Fan>, FindSomeArgs>;
 
 @Injectable()
 export class FanService {
-    constructor(@InjectRepository(Fan) private fanRepository: Repository<Fan>) {}
+    constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        @InjectRepository(Fan) private fanRepository: Repository<Fan>
+    ) {}
+
+    get name() {
+        return Fan.name.toLowerCase();
+    }
 
     async createOne(createFanDto: CreateFanDto, userId: string): Promise<Fan> {
         try {
@@ -54,22 +70,54 @@ export class FanService {
         }
     }
 
+    async findOneById(id: string): Promise<Fan> {
+        try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
+                | Fan
+                | undefined;
+
+            if (cachedData && cachedData.id === id) {
+                return cachedData;
+            }
+
+            const fan = await this.fanRepository.findOne({ where: { id } });
+
+            if (!fan) {
+                throw new NotFoundException('Fan not found!');
+            }
+
+            await this.cacheManager.set(`${this.name}.findOneById`, fan, 10000);
+
+            return fan;
+        } catch (error) {
+            throw new Error(`Fan.service | findOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
     async findAllBy(options: FindManyOptions<Fan>): Promise<Fan[]> {
         return await this.fanRepository.find(options);
     }
 
     async findSome(pageOptionsDto: PageOptionsDto, filters: Fan): Promise<PageDto<Fan>> {
         try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
+                | FindSomeCached
+                | undefined;
+
+            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
+                return cachedData.response;
+            }
+
             const includedInSearchFields = ['more', 'name'];
 
             const options = {
                 ...(filters && filters)
             };
 
-            const queryBuilder = this.fanRepository.createQueryBuilder(Fan.name.toLowerCase());
+            const queryBuilder = this.fanRepository.createQueryBuilder(this.name);
 
             if (pageOptionsDto.searchBy) {
-                queryBuilder.where(getSQLSearch(includedInSearchFields, Fan.name.toLowerCase()), {
+                queryBuilder.where(getSQLSearch(includedInSearchFields, this.name), {
                     s: `%${pageOptionsDto.searchBy}%`
                 });
             }
@@ -77,7 +125,7 @@ export class FanService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${Fan.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
+                .orderBy(`${this.name}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -85,8 +133,15 @@ export class FanService {
             const { entities } = await queryBuilder.getRawAndEntities();
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
+            const response = new PageDto(entities, pageMetaDto);
 
-            return new PageDto(entities, pageMetaDto);
+            await this.cacheManager.set(
+                `${this.name}.findSome`,
+                { response, arguments: pageOptionsDto, filters },
+                10000
+            );
+
+            return response;
         } catch (error) {
             throw new Error(`Fan.service | findSome error: ${getErrorMessage(error)}`);
         }

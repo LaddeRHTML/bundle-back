@@ -46,20 +46,8 @@ export class CPUController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
-    findOne(
-        @Param('id') id: string
-        /* @Query(
-            'relations',
-            new DefaultValuePipe([]),
-            new ParseArrayPipe({
-                items: String,
-                separator: ',',
-                optional: true
-            })
-        )
-        relations: AllowedProductRelations */
-    ): Promise<CPU | null> {
-        return this.cpuService.findOne({ where: { id } });
+    findOne(@Param('id') id: string): Promise<CPU | null> {
+        return this.cpuService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -68,17 +56,6 @@ export class CPUController {
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
         @Body() filters: CPU
-
-        // @Query(
-        //     'relations',
-        //     new DefaultValuePipe([]),
-        //     new ParseArrayPipe({
-        //         items: String,
-        //         separator: ',',
-        //         optional: true
-        //     })
-        // )
-        // relations: AllowedProductRelations
     ): Promise<PageDto<CPU>> {
         return await this.cpuService.findSome(pageOptionsDto, filters);
     }

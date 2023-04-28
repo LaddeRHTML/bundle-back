@@ -44,20 +44,8 @@ export class CoolerController {
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
-    findOne(
-        @Param('id') id: string
-        /* @Query(
-            'relations',
-            new DefaultValuePipe([]),
-            new ParseArrayPipe({
-                items: String,
-                separator: ',',
-                optional: true
-            })
-        )
-        relations: AllowedProductRelations */
-    ): Promise<Cooler | null> {
-        return this.coolerService.findOne({ where: { id } });
+    findOne(@Param('id') id: string): Promise<Cooler | null> {
+        return this.coolerService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
@@ -66,16 +54,6 @@ export class CoolerController {
     async findSome(
         @Query() pageOptionsDto: PageOptionsDto,
         @Body() filters: Cooler
-        // @Query(
-        //     'relations',
-        //     new DefaultValuePipe([]),
-        //     new ParseArrayPipe({
-        //         items: String,
-        //         separator: ',',
-        //         optional: true
-        //     })
-        // )
-        // relations: AllowedProductRelations
     ): Promise<PageDto<Cooler>> {
         return await this.coolerService.findSome(pageOptionsDto, filters);
     }

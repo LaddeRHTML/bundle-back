@@ -47,7 +47,7 @@ export class PCCaseController {
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<PCCase | null> {
-        return this.pcCaseService.findOne({ where: { id } });
+        return this.pcCaseService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
