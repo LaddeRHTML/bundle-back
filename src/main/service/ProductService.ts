@@ -1,4 +1,4 @@
-import { HDDService } from './HDDService';
+import { FindSomeCache } from './../common/interfaces/index';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import {
     FindManyOptions,
@@ -8,7 +8,8 @@ import {
     Repository,
     UpdateResult
 } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
@@ -24,6 +25,8 @@ import { AllowedProductRelations } from 'controller/ProductController';
 import { SqlSearch } from 'common/utils/array/SqlSearch';
 import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import { FormFactor, HDDType } from 'model/accessories/HDD/HDDEnums';
+import { HDDService } from './HDDService';
+import compareObjects from 'common/utils/object/compareObjects';
 
 interface Price {
     max: number;
@@ -36,12 +39,25 @@ export interface GetPricesResponse {
     supplier_prices?: Price;
 }
 
+interface FindSomeArgs {
+    pageOptionsDto: PageOptionsDto;
+    filters: Product;
+    relations: AllowedProductRelations;
+}
+
+type FindSomeCached = FindSomeCache<PageDto<Product>, FindSomeArgs>;
+
 @Injectable()
 export class ProductsService {
     constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         @InjectRepository(Product) private productRepository: Repository<Product>,
         private readonly hddService: HDDService
     ) {}
+
+    get name() {
+        return Product.name.toLowerCase();
+    }
 
     async createOne(createProductDto: CreateProductDto, userId: string): Promise<Product> {
         try {
@@ -86,6 +102,33 @@ export class ProductsService {
         }
     }
 
+    async findOneById(id: string, relations: AllowedProductRelations) {
+        try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
+                | Product
+                | undefined;
+
+            if (cachedData && cachedData.id === id) {
+                return cachedData;
+            }
+
+            const product = await this.productRepository.findOne({
+                where: { id },
+                relations
+            });
+
+            if (!product) {
+                throw new NotFoundException('Product not found!');
+            }
+
+            await this.cacheManager.set(`${this.name}.findOneById`, product, 10000);
+
+            return product;
+        } catch (error) {
+            throw new Error(`product.service | findOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
     async findAllBy(options: FindManyOptions<Product>): Promise<Product[]> {
         return await this.productRepository.find(options);
     }
@@ -96,19 +139,26 @@ export class ProductsService {
         relations: AllowedProductRelations
     ): Promise<PageDto<Product>> {
         try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
+                | FindSomeCached
+                | undefined;
+
+            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
+                return cachedData.response;
+            }
+
             const includedInSearchFields = ['name'];
-            const entityName = Product.name.toLowerCase();
             const sqlSearch = new SqlSearch();
 
             const options = {
                 ...(filters && filters)
             };
 
-            const queryBuilder = this.productRepository.createQueryBuilder(entityName);
+            const queryBuilder = this.productRepository.createQueryBuilder(this.name);
 
             if (pageOptionsDto.searchBy) {
                 queryBuilder.where(
-                    sqlSearch.getSearchableFieldsSql(includedInSearchFields, entityName),
+                    sqlSearch.getSearchableFieldsSql(includedInSearchFields, this.name),
                     {
                         s: `%${pageOptionsDto.searchBy}%`
                     }
@@ -118,13 +168,13 @@ export class ProductsService {
             queryBuilder.andWhere(options);
 
             queryBuilder
-                .orderBy(`${entityName}.lastChangeDate`, pageOptionsDto.order)
+                .orderBy(`${this.name}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
             if (relations.length > 0) {
                 relations.forEach((relation) => {
-                    queryBuilder.leftJoin(`${entityName}.${relation}`, relation);
+                    queryBuilder.leftJoin(`${this.name}.${relation}`, relation);
 
                     if (relation !== 'orders') {
                         queryBuilder.addSelect([`${relation}.name`, `${relation}.id`]);
@@ -149,7 +199,15 @@ export class ProductsService {
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
 
-            return new PageDto(entities, pageMetaDto);
+            const response = new PageDto(entities, pageMetaDto);
+
+            await this.cacheManager.set(
+                `${this.name}.findSome`,
+                { response, arguments: pageOptionsDto, filters, relations },
+                10000
+            );
+
+            return response;
         } catch (error) {
             throw new Error(`product.service | findSome error: ${getErrorMessage(error)}`);
         }

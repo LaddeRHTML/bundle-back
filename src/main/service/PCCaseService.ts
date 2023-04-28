@@ -1,10 +1,11 @@
-import { UpdatePCCaseDto } from 'dto/PCCase/UpdatePCCaseDto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, FindOptionsWhere, In, Repository } from 'typeorm';
+import { Cache } from 'cache-manager';
 
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
+import { UpdatePCCaseDto } from 'dto/PCCase/UpdatePCCaseDto';
 import { CreatePCCaseDto } from 'dto/PCCase/CreatePCCaseDto';
 
 import { PCCase } from 'model/accessories/PCCase/PCCase';
@@ -13,17 +14,30 @@ import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageDto } from 'common/pagination/dtos/page.dto';
 import checkProvidedFields from 'common/utils/array/checkProvidedFields';
-import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import { FindSomeCache, SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 import { FanService } from './FanService';
 import { AllowedPcCaseRelations } from 'controller/PCCaseController';
 import { SqlSearch } from 'common/utils/array/SqlSearch';
+import compareObjects from 'common/utils/object/compareObjects';
+
+interface FindSomeArgs {
+    pageOptionsDto: PageOptionsDto;
+    filters: PCCase;
+}
+
+type FindSomeCached = FindSomeCache<PageDto<PCCase>, FindSomeArgs>;
 
 @Injectable()
 export class PCCaseService {
     constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         @InjectRepository(PCCase) private PCCaseRepository: Repository<PCCase>,
         private readonly fanService: FanService
     ) {}
+
+    get name() {
+        return PCCase.name.toLowerCase();
+    }
 
     async createOne(createPCCaseDto: CreatePCCaseDto, userId: string): Promise<PCCase> {
         try {
@@ -72,12 +86,44 @@ export class PCCaseService {
         }
     }
 
+    async findOneById(id: string): Promise<PCCase> {
+        try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
+                | PCCase
+                | undefined;
+
+            if (cachedData && cachedData.id === id) {
+                return cachedData;
+            }
+
+            const PCCase = await this.PCCaseRepository.findOne({ where: { id } });
+
+            if (!PCCase) {
+                throw new NotFoundException('PCCase not found!');
+            }
+
+            await this.cacheManager.set(`${this.name}.findOneById`, PCCase, 10000);
+
+            return PCCase;
+        } catch (error) {
+            throw new Error(`PCCase.service | findOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
     async findSome(
         pageOptionsDto: PageOptionsDto,
         filters: PCCase,
         relations: AllowedPcCaseRelations
     ): Promise<PageDto<PCCase>> {
         try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
+                | FindSomeCached
+                | undefined;
+
+            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
+                return cachedData.response;
+            }
+
             const includedInSearchFields = [
                 'more',
                 'installedCooling',
@@ -86,17 +132,16 @@ export class PCCaseService {
                 'peculiarities',
                 'name'
             ];
-            const entityName = PCCase.name.toLowerCase();
             const sqlSearch = new SqlSearch();
 
             const options = {
                 ...(filters && filters)
             };
 
-            const queryBuilder = this.PCCaseRepository.createQueryBuilder(entityName);
+            const queryBuilder = this.PCCaseRepository.createQueryBuilder(this.name);
 
             if (pageOptionsDto.searchBy) {
-                queryBuilder.where(getSQLSearch(includedInSearchFields, entityName), {
+                queryBuilder.where(getSQLSearch(includedInSearchFields, this.name), {
                     s: `%${pageOptionsDto.searchBy}%`
                 });
             }
@@ -104,13 +149,13 @@ export class PCCaseService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${entityName}.lastChangeDate`, pageOptionsDto.order)
+                .orderBy(`${this.name}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
             if (relations.length > 0) {
                 relations.forEach((relation) => {
-                    queryBuilder.leftJoin(`${entityName}.${relation}`, relation);
+                    queryBuilder.leftJoin(`${this.name}.${relation}`, relation);
                     queryBuilder.addSelect([`${relation}.name`, `${relation}.id`]);
                 });
 
@@ -128,8 +173,15 @@ export class PCCaseService {
             const { entities } = await queryBuilder.getRawAndEntities();
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
+            const response = new PageDto(entities, pageMetaDto);
 
-            return new PageDto(entities, pageMetaDto);
+            await this.cacheManager.set(
+                `${this.name}.findSome`,
+                { response, arguments: pageOptionsDto, filters, relations },
+                10000
+            );
+
+            return response;
         } catch (error) {
             throw new Error(`PCCase.service | findSome error: ${getErrorMessage(error)}`);
         }

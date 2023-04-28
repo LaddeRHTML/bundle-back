@@ -46,8 +46,6 @@ export class FilesService {
                 data: file.buffer
             });
 
-            console.log({ newFile });
-
             const savedFile = await this.fileRepository.save({
                 ...newFile,
                 createdBy: userId,

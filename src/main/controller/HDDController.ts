@@ -46,7 +46,7 @@ export class HDDController {
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<HDD | null> {
-        return this.hddService.findOne({ where: { id } });
+        return this.hddService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)

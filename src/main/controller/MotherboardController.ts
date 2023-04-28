@@ -10,7 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiProperty,ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -32,7 +32,7 @@ import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 @Controller('/motherboard')
 export class MotherboardController {
     constructor(private readonly motherboardService: MotherboardService) {}
-    
+
     @ApiProperty()
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
@@ -48,7 +48,7 @@ export class MotherboardController {
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<Motherboard | null> {
-        return this.motherboardService.findOne({ where: { id } });
+        return this.motherboardService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)

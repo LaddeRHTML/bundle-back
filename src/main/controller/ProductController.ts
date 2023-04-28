@@ -118,7 +118,7 @@ export class ProductsController {
         )
         relations: AllowedProductRelations
     ): Promise<Product | null> {
-        return this.productsService.findOne({ where: { id }, relations });
+        return this.productsService.findOneById(id, relations);
     }
 
     @HasRoles(Role.Manager, Role.Admin)

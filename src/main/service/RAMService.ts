@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { Cache } from 'cache-manager';
 
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
@@ -13,10 +14,26 @@ import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import checkProvidedFields from 'common/utils/array/checkProvidedFields';
+import { FindSomeCache } from 'common/interfaces';
+import compareObjects from 'common/utils/object/compareObjects';
+
+interface FindSomeArgs {
+    pageOptionsDto: PageOptionsDto;
+    filters: RAM;
+}
+
+type FindSomeCached = FindSomeCache<PageDto<RAM>, FindSomeArgs>;
 
 @Injectable()
 export class RAMService {
-    constructor(@InjectRepository(RAM) private RAMrepository: Repository<RAM>) {}
+    constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        @InjectRepository(RAM) private RAMrepository: Repository<RAM>
+    ) {}
+
+    get name() {
+        return RAM.name.toLowerCase();
+    }
 
     async createOne(createRAMDto: CreateRAMDto, userId: string): Promise<RAM> {
         try {
@@ -57,18 +74,50 @@ export class RAMService {
         }
     }
 
+    async findOneById(id: string): Promise<RAM> {
+        try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
+                | RAM
+                | undefined;
+
+            if (cachedData && cachedData.id === id) {
+                return cachedData;
+            }
+
+            const ram = await this.RAMrepository.findOne({ where: { id } });
+
+            if (!ram) {
+                throw new NotFoundException('RAM not found!');
+            }
+
+            await this.cacheManager.set(`${this.name}.findOneById`, ram, 10000);
+
+            return ram;
+        } catch (error) {
+            throw new Error(`RAM.service | findOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
     async findSome(pageOptionsDto: PageOptionsDto, filters: RAM): Promise<PageDto<RAM>> {
         try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
+                | FindSomeCached
+                | undefined;
+
+            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
+                return cachedData.response;
+            }
+
             const includedInSearchFields = ['more', 'name'];
 
             const options = {
                 ...(filters && filters)
             };
 
-            const queryBuilder = this.RAMrepository.createQueryBuilder(RAM.name.toLowerCase());
+            const queryBuilder = this.RAMrepository.createQueryBuilder(this.name);
 
             if (pageOptionsDto.searchBy) {
-                queryBuilder.where(getSQLSearch(includedInSearchFields, RAM.name.toLowerCase()), {
+                queryBuilder.where(getSQLSearch(includedInSearchFields, this.name), {
                     s: `%${pageOptionsDto.searchBy}%`
                 });
             }
@@ -76,7 +125,7 @@ export class RAMService {
             queryBuilder.where(options);
 
             queryBuilder
-                .orderBy(`${RAM.name.toLowerCase()}.lastChangeDate`, pageOptionsDto.order)
+                .orderBy(`${this.name}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
@@ -84,8 +133,15 @@ export class RAMService {
             const { entities } = await queryBuilder.getRawAndEntities();
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
+            const response = new PageDto(entities, pageMetaDto);
 
-            return new PageDto(entities, pageMetaDto);
+            await this.cacheManager.set(
+                `${this.name}.findSome`,
+                { response, arguments: pageOptionsDto, filters },
+                10000
+            );
+
+            return response;
         } catch (error) {
             throw new Error(`RAM.service | findSome error: ${getErrorMessage(error)}`);
         }

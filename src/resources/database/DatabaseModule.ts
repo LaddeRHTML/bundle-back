@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DatabaseCredentials } from './database.credentials';
-import { AppDataSource } from './database.datasource';
+import { DatabaseCredentials } from './DatabaseCredentials';
+import { AppDataSource } from './DatabaseDatasource';
 
 @Module({
     imports: [

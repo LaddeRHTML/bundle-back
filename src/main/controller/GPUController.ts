@@ -46,7 +46,7 @@ export class GPUController {
     @UseGuards(RoleGuard)
     @Get('/:id')
     findOne(@Param('id') id: string): Promise<GPU | null> {
-        return this.gpuService.findOne({ where: { id } });
+        return this.gpuService.findOneById(id);
     }
 
     @HasRoles(Role.User, Role.Manager, Role.Admin)
