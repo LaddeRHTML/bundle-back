@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, FindOptionsWhere, In, Repository } from 'typeorm';
+import { Cache } from 'cache-manager';
 
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
@@ -9,6 +10,7 @@ import { PageDto } from 'common/pagination/dtos/page.dto';
 import getSQLSearch from 'common/utils/array/getSQLSearch';
 import getErrorMessage from 'common/utils/errors/getErrorMessage';
 
+import { AllowedOrderRelations } from 'controller/OrderController';
 import { CreateOrderDto } from 'dto/Order/CreateOrderDto';
 import { UpdateOrderDto } from 'dto/Order/UpdateOrderDto';
 
@@ -16,20 +18,35 @@ import { Order } from 'model/order/Order';
 import { Status } from 'model/order/OrderEnums';
 import { ProductsService } from './ProductService';
 import { UsersService } from './UserService';
-import { AllowedOrderRelations } from 'controller/OrderController';
+import { FindSomeCache } from 'common/interfaces';
+import compareObjects from 'common/utils/object/compareObjects';
 
 export interface SearchByChild {
     client?: string;
     product?: string;
 }
 
+interface FindSomeArgs {
+    pageOptionsDto: PageOptionsDto;
+    filters: Order;
+    relations: AllowedOrderRelations;
+    searchByChild: SearchByChild;
+}
+
+type FindSomeCached = FindSomeCache<PageDto<Order>, FindSomeArgs>;
+
 @Injectable()
 export class OrdersService {
     constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         @InjectRepository(Order) private orderRepository: Repository<Order>,
         private readonly productService: ProductsService,
         private readonly userService: UsersService
     ) {}
+
+    get name() {
+        return Order.name.toLowerCase();
+    }
 
     async createOne(createOrderDto: CreateOrderDto, userId: string): Promise<Order> {
         try {
@@ -58,13 +75,59 @@ export class OrdersService {
         }
     }
 
+    async findOne(parameter: FindOneOptions<Order>): Promise<Order | null> {
+        try {
+            const order = await this.orderRepository.findOne(parameter);
+
+            if (!order) {
+                throw new NotFoundException('Order not found!');
+            }
+
+            return order;
+        } catch (error) {
+            throw new Error(`orders.service | findOne error: ${getErrorMessage(error)}`);
+        }
+    }
+
+    async findOneById(id: string): Promise<Order | null> {
+        try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
+                | Order
+                | undefined;
+
+            if (cachedData && cachedData.id === id) {
+                return cachedData;
+            }
+
+            const order = await this.orderRepository.findOne({ where: { id } });
+
+            if (!order) {
+                throw new NotFoundException('Order not found!');
+            }
+
+            await this.cacheManager.set(`${this.name}.findOneById`, order, 10000);
+
+            return order;
+        } catch (error) {
+            throw new Error(`orders.service | findOneById error: ${getErrorMessage(error)}`);
+        }
+    }
+
     async findSome(
         pageOptionsDto: PageOptionsDto,
         relations: AllowedOrderRelations,
         searchByChild: SearchByChild,
-        filter?: Partial<Order>
+        filters?: Partial<Order>
     ): Promise<PageDto<Order>> {
         try {
+            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
+                | FindSomeCached
+                | undefined;
+
+            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
+                return cachedData.response;
+            }
+
             const includedInClientSearchFields = [
                 'address',
                 'name',
@@ -75,12 +138,11 @@ export class OrdersService {
                 'email'
             ];
             const includedInProductSearchFields = ['name'];
-            const entityName = Order.name.toLowerCase();
 
-            const queryBuilder = this.orderRepository.createQueryBuilder(entityName);
+            const queryBuilder = this.orderRepository.createQueryBuilder(this.name);
 
-            if (filter) {
-                queryBuilder.where(filter);
+            if (filters) {
+                queryBuilder.where(filters);
             }
 
             if (searchByChild.client) {
@@ -96,13 +158,13 @@ export class OrdersService {
             }
 
             queryBuilder
-                .orderBy(`${entityName}.lastChangeDate`, pageOptionsDto.order)
+                .orderBy(`${this.name}.lastChangeDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
             if (relations.length > 0) {
                 relations.forEach((relation) => {
-                    queryBuilder.leftJoinAndSelect(`${entityName}.${relation}`, relation);
+                    queryBuilder.leftJoinAndSelect(`${this.name}.${relation}`, relation);
                 });
             }
 
@@ -111,17 +173,17 @@ export class OrdersService {
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
 
-            return new PageDto(entities, pageMetaDto);
+            const response = new PageDto(entities, pageMetaDto);
+
+            await this.cacheManager.set(
+                `${this.name}.findSome`,
+                { response, arguments: pageOptionsDto, filters, relations, searchByChild },
+                10000
+            );
+
+            return response;
         } catch (error) {
             throw new Error(`orders.service | findSome error: ${getErrorMessage(error)}`);
-        }
-    }
-
-    async findOne(parameter: FindOneOptions<Order>): Promise<Order | null> {
-        try {
-            return await this.orderRepository.findOne(parameter);
-        } catch (error) {
-            throw new Error(`orders.service | findOne error: ${getErrorMessage(error)}`);
         }
     }
 

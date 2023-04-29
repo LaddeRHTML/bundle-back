@@ -72,9 +72,7 @@ export class OrdersController {
     @UseGuards(RoleGuard)
     @Get(':id')
     async findOne(@Param('id') id: string): Promise<Order | null> {
-        return await this.orderService.findOne({
-            where: { id }
-        });
+        return await this.orderService.findOneById(id);
     }
 
     @HasRoles(Role.Manager, Role.Admin)

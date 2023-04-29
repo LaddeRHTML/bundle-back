@@ -3,3 +3,7 @@ export interface SuccessfullyUpdatedEntityResponse<E> {
     message: string;
     newFields: E;
 }
+export interface FindSomeCache<R, A> {
+    response: R;
+    arguments: A;
+}

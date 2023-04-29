@@ -1,7 +1,15 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    CACHE_MANAGER,
+    HttpException,
+    HttpStatus,
+    Inject,
+    Injectable,
+    NotFoundException
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, FindOptionsWhere, InsertResult, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { Cache } from 'cache-manager';
 
 import { User } from 'model/user/User';
 import { Role } from 'model/user/UserEnums';
@@ -26,9 +34,14 @@ export interface ChangePassword {
 @Injectable()
 export class UsersService {
     constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         @InjectRepository(User)
         private usersRepository: Repository<User>
     ) {}
+
+    get name() {
+        return User.name.toLowerCase();
+    }
 
     async createOne(userDto: CreateUserDto, role: Role): Promise<InsertResult> {
         try {
@@ -66,24 +79,23 @@ export class UsersService {
                 'phoneNumber',
                 'email'
             ];
-            const entityName = User.name.toLowerCase();
 
-            const queryBuilder = this.usersRepository.createQueryBuilder(entityName);
+            const queryBuilder = this.usersRepository.createQueryBuilder(this.name);
 
             if (pageOptionsDto.searchBy) {
-                queryBuilder.where(getSQLSearch(includedInSearchFields, entityName), {
+                queryBuilder.where(getSQLSearch(includedInSearchFields, this.name), {
                     s: `%${pageOptionsDto.searchBy}%`
                 });
             }
 
             queryBuilder
-                .orderBy(`${entityName}.registrationDate`, pageOptionsDto.order)
+                .orderBy(`${this.name}.registrationDate`, pageOptionsDto.order)
                 .skip(pageOptionsDto.skip)
                 .take(pageOptionsDto.limit);
 
             if (relations.length > 0) {
                 relations.forEach((relation) => {
-                    queryBuilder.leftJoinAndSelect(`${entityName}.${relation}`, relation);
+                    queryBuilder.leftJoinAndSelect(`${this.name}.${relation}`, relation);
                 });
             }
 
@@ -114,7 +126,11 @@ export class UsersService {
 
             updateUserDto.updateDate = new Date();
 
-            return await this.usersRepository.save({ id, ...updateUserDto });
+            const response = await this.usersRepository.save({ id, ...updateUserDto });
+
+            await this.cacheManager.reset();
+
+            return response;
         } catch (error) {
             throw new Error(`users.service | updateOne error: ${getErrorMessage(error)}`);
         }
@@ -187,6 +203,14 @@ export class UsersService {
             return await this.usersRepository.exist({ where: userProperty });
         } catch (error) {
             throw new Error(`users.service | isUserExists error: ${getErrorMessage(error)}`);
+        }
+    }
+
+    async resetAllCache() {
+        try {
+            return await this.cacheManager.reset();
+        } catch (error) {
+            throw new Error(`users.service | resetAllCache error: ${getErrorMessage(error)}`);
         }
     }
 }

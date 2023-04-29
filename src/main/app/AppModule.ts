@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 
 import { ConfigurationModule } from 'config/configuration.module';
-import { DatabaseModule } from 'database/database.module';
+import { CacheModule } from 'cache/CacheModule';
+import { DatabaseModule } from 'database/DatabaseModule';
 
 import { AuthModule } from 'module/AuthModule';
 import { CPUModule } from 'module/CPUModule';
@@ -21,6 +22,7 @@ import { UsersModule } from 'module/UserModule';
 @Module({
     imports: [
         ConfigurationModule,
+        CacheModule,
         DatabaseModule,
         UsersModule,
         AuthModule,
