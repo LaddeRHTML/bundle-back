@@ -30,7 +30,8 @@ export class GPU extends BaseAccessory {
         name: 'maker',
         type: 'enum',
         enum: GPUMaker,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({ name: 'maker', type: 'enum', enum: GPUMaker, nullable: false })
     public maker: GPUMaker;
@@ -39,7 +40,8 @@ export class GPU extends BaseAccessory {
         name: 'graphicsCardSeries',
         type: 'enum',
         enum: GraphicsCardSeries,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'graphics_card_series',
@@ -53,7 +55,8 @@ export class GPU extends BaseAccessory {
         name: 'manufacturer',
         type: 'enum',
         enum: Manufacturer,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'manufacturer',
@@ -68,7 +71,8 @@ export class GPU extends BaseAccessory {
         type: 'text',
         maximum: 30,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'chipset_model',
@@ -85,7 +89,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 5000,
         minimum: 1000,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'frequency_OC_Mode_MHz',
@@ -101,7 +106,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 5000,
         minimum: 1000,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'frequency_Gaming_Mode_MHz',
@@ -117,7 +123,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 30000,
         minimum: 100,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'memory_clock_speed',
@@ -132,7 +139,8 @@ export class GPU extends BaseAccessory {
         name: 'graphicsRam',
         type: 'enum',
         enum: GraphicsRam,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'graphics_ram',
@@ -146,7 +154,8 @@ export class GPU extends BaseAccessory {
         name: 'graphicsRamSize',
         type: 'enum',
         enum: GraphicsRamSize,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'graphics_ram_size',
@@ -161,7 +170,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 512,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'memory_bus_width_bit',
@@ -177,7 +187,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 2000,
         minimum: 100,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'memory_bandwidth_Gb',
@@ -194,7 +205,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 25000,
         minimum: 100,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'count_universal_processors',
@@ -212,7 +224,8 @@ export class GPU extends BaseAccessory {
         isArray: true,
         default: [],
         enum: Technologies,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'technologies',
@@ -229,7 +242,8 @@ export class GPU extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 10,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'supported_APIs',
@@ -245,7 +259,8 @@ export class GPU extends BaseAccessory {
         name: 'supportedMultiGPU',
         type: 'enum',
         enum: SupportedMulti_GPU,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'supported_Multi_GPU',
@@ -260,7 +275,8 @@ export class GPU extends BaseAccessory {
         type: 'text',
         maximum: 30,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'connection_interface',
@@ -277,7 +293,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 8,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_supported_monitors',
@@ -295,7 +312,8 @@ export class GPU extends BaseAccessory {
         isArray: true,
         default: [],
         enum: Connectors,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'connectors',
@@ -312,7 +330,8 @@ export class GPU extends BaseAccessory {
         type: 'text',
         maximum: 100,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'maximum_resolution',
@@ -330,7 +349,8 @@ export class GPU extends BaseAccessory {
         isArray: true,
         default: [],
         enum: Cooling,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'cooling',
@@ -346,7 +366,8 @@ export class GPU extends BaseAccessory {
         name: 'powerConnectors',
         type: 'enum',
         enum: PowerConnectors,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'power_connectors',
@@ -359,7 +380,8 @@ export class GPU extends BaseAccessory {
     @ApiProperty({
         name: 'backlight',
         type: 'boolean',
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'backlight',
@@ -374,7 +396,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 2000,
         minimum: 200,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'minimum_power_supply_capacity_wt',
@@ -391,7 +414,8 @@ export class GPU extends BaseAccessory {
         type: 'double precision',
         maximum: 8,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_occupied_expansion_slots',
@@ -408,7 +432,8 @@ export class GPU extends BaseAccessory {
         type: 'text',
         maximum: 455,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -424,7 +449,8 @@ export class GPU extends BaseAccessory {
         type: 'smallint',
         maximum: 500,
         minimum: 0,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'length_mm',
@@ -439,13 +465,16 @@ export class GPU extends BaseAccessory {
         name: 'packege',
         type: 'enum',
         enum: Package,
-        default: Package.RTL
+        default: Package.RTL,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'packege',
         type: 'enum',
         enum: Package,
-        default: Package.RTL
+        default: Package.RTL,
+        nullable: false
     })
     @IsNotEmpty()
     public package: Package;
@@ -455,7 +484,8 @@ export class GPU extends BaseAccessory {
         type: 'numeric',
         maximum: 2000000,
         minimum: 60000,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'price',

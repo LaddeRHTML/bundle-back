@@ -31,7 +31,8 @@ export class PCCase extends BaseAccessory {
         name: 'maker',
         type: 'enum',
         enum: PCCaseMaker,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'maker',
@@ -45,7 +46,8 @@ export class PCCase extends BaseAccessory {
         name: 'formFactor',
         type: 'enum',
         enum: FormFactor,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'form_factor',
@@ -62,7 +64,8 @@ export class PCCase extends BaseAccessory {
         enum: MotherboardCompatibleFormFactor,
         isArray: true,
         default: [],
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'motherboard_compatible_form_factor',
@@ -79,7 +82,8 @@ export class PCCase extends BaseAccessory {
         type: 'text',
         isArray: true,
         default: [],
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'material',
@@ -96,7 +100,8 @@ export class PCCase extends BaseAccessory {
         type: 'text',
         maximum: 300,
         minimum: 10,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'peculiarities',
@@ -112,7 +117,9 @@ export class PCCase extends BaseAccessory {
         name: 'powerUnitLocation',
         type: 'enum',
         enum: PowerUnitLocation,
-        default: PowerUnitLocation.Lower
+        default: PowerUnitLocation.Lower,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'power_unit_location',
@@ -130,7 +137,8 @@ export class PCCase extends BaseAccessory {
         enum: HDDMount,
         isArray: true,
         default: [],
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'hdd_mount',
@@ -148,7 +156,8 @@ export class PCCase extends BaseAccessory {
         type: 'smallint',
         maximum: 20,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_internal_compartments_2_5',
@@ -165,7 +174,8 @@ export class PCCase extends BaseAccessory {
         type: 'smallint',
         maximum: 20,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_internal_compartments_3_5',
@@ -183,7 +193,8 @@ export class PCCase extends BaseAccessory {
         enum: Buttons,
         isArray: true,
         default: [],
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'buttons',
@@ -202,7 +213,8 @@ export class PCCase extends BaseAccessory {
         enum: Indicators,
         isArray: true,
         default: [],
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'indicators',
@@ -220,7 +232,8 @@ export class PCCase extends BaseAccessory {
         type: 'text',
         maximum: 35,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: false
     })
     @Column({
         name: 'count_expansion_slots',
@@ -238,7 +251,8 @@ export class PCCase extends BaseAccessory {
         enum: GPUInstallationType,
         isArray: true,
         default: [],
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'GPU_installation_type',
@@ -256,7 +270,8 @@ export class PCCase extends BaseAccessory {
         type: 'smallint',
         maximum: 600,
         minimum: 100,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_GPU_length_mm',
@@ -273,7 +288,8 @@ export class PCCase extends BaseAccessory {
         type: 'smallint',
         maximum: 300,
         minimum: 50,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_CPU_cooler_height_mm',
@@ -290,7 +306,8 @@ export class PCCase extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: false
     })
     @Column({
         name: 'installed_cooling',
@@ -305,10 +322,11 @@ export class PCCase extends BaseAccessory {
     @ApiProperty({
         name: 'supportedFanDiametersMm',
         type: 'enum',
-        enum: SupportedFanDiameters,
+        enum: FanDiameter,
         isArray: true,
         default: [],
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'supported_fan_diameters_mm',
@@ -326,7 +344,8 @@ export class PCCase extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'fan_installation_support',
@@ -343,7 +362,8 @@ export class PCCase extends BaseAccessory {
         type: 'smallint',
         maximum: 800,
         minimum: 50,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'max_length_WCS_radiator_mm',
@@ -360,7 +380,8 @@ export class PCCase extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'places_mounting_WCS_radiator',
@@ -378,7 +399,8 @@ export class PCCase extends BaseAccessory {
         enum: DustFilter,
         isArray: true,
         default: [],
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'dust_filter',
@@ -396,7 +418,8 @@ export class PCCase extends BaseAccessory {
         enum: AdditionalConnectors,
         isArray: true,
         default: [],
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'additional_connectors',
@@ -414,7 +437,8 @@ export class PCCase extends BaseAccessory {
         type: 'text',
         maximum: 455,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -429,7 +453,8 @@ export class PCCase extends BaseAccessory {
         name: 'color',
         type: 'enum',
         enum: Color,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'color',
@@ -445,7 +470,8 @@ export class PCCase extends BaseAccessory {
         type: 'double precision',
         maximum: 30,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'weight_kg',
@@ -462,7 +488,8 @@ export class PCCase extends BaseAccessory {
         type: 'text',
         maximum: 100,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'size_volume_mm',
@@ -503,7 +530,8 @@ export class PCCase extends BaseAccessory {
         type: 'numeric',
         maximum: 2000000,
         minimum: 5000,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'price',

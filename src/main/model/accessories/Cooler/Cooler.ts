@@ -17,7 +17,8 @@ export class Cooler extends BaseAccessory {
         name: 'maker',
         type: 'enum',
         enum: CoolerMaker,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'maker',
@@ -59,7 +60,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 500,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'max_TDP',
@@ -92,7 +94,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 250,
         minimum: 1,
-        nullable: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'fan_diameter_mm',
@@ -109,7 +112,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 1000,
         minimum: 100,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'min_rotation_speed',
@@ -126,7 +130,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 6000,
         minimum: 100,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_rotation_speed',
@@ -141,7 +146,8 @@ export class Cooler extends BaseAccessory {
     @ApiProperty({
         name: 'possibilitySpeedRegulation',
         type: 'boolean',
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'possibility_speed_regulation',
@@ -156,7 +162,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 250,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'cooler_height_mm',
@@ -172,7 +179,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 100,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'min_noise_leve_dB',
@@ -189,7 +197,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 200,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_noise_leve_dB',
@@ -206,7 +215,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'connector',
@@ -223,7 +233,8 @@ export class Cooler extends BaseAccessory {
         type: 'double precision',
         maximum: 150,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'air_flow_CFM',
@@ -240,7 +251,8 @@ export class Cooler extends BaseAccessory {
         type: 'int',
         maximum: 400000,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'MTBF_hours',
@@ -257,7 +269,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'supply_voltage',
@@ -287,7 +300,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         maximum: 100,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'backlight_color',
@@ -303,7 +317,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 500,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'length_tubes_mm',
@@ -319,7 +334,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 500,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'radiator_size_mm',
@@ -333,13 +349,18 @@ export class Cooler extends BaseAccessory {
     @ApiProperty({
         name: 'bearingType',
         type: 'text',
-        required: false
+        maximum: 30,
+        minimum: 0,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'bearing_type',
         type: 'text',
         nullable: true
     })
+    @MaxLength(30)
+    @MinLength(0)
     @IsNotEmpty()
     public bearingType: string;
 
@@ -348,7 +369,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 12,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'number_heat_pipes',
@@ -381,7 +403,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         maximum: 455,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -397,7 +420,8 @@ export class Cooler extends BaseAccessory {
         type: 'smallint',
         maximum: 300,
         minimum: 0,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pump_size_mm',
@@ -413,7 +437,8 @@ export class Cooler extends BaseAccessory {
         type: 'double precision',
         maximum: 6,
         minimum: 0,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'weight_kg',
@@ -430,7 +455,8 @@ export class Cooler extends BaseAccessory {
         type: 'text',
         maximum: 100,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'size_volume_mm',
@@ -445,7 +471,8 @@ export class Cooler extends BaseAccessory {
         name: 'package',
         type: 'enum',
         enum: Package,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'package',
@@ -462,7 +489,8 @@ export class Cooler extends BaseAccessory {
         type: 'numeric',
         maximum: 500000,
         minimum: 1000,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'price',

@@ -23,11 +23,17 @@ export class RAM extends BaseAccessory {
         this.name = `${memoryType} DIMM ${memoryGb}GB/${memoryClockMHz}MHz/CL${firstTiming} ${model} ${maker}, ${supplyVoltage}V ${rpackage}`;
     }
 
-    @ApiProperty({ name: 'maker', type: 'enum', enum: RAMMaker, required: true })
+    @ApiProperty({ name: 'maker', type: 'enum', enum: RAMMaker, required: true, nullable: false })
     @Column({ name: 'maker', type: 'enum', enum: RAMMaker, nullable: false })
     public maker: RAMMaker;
 
-    @ApiProperty({ name: 'memoryType', type: 'enum', enum: MemoryType, required: true })
+    @ApiProperty({
+        name: 'memoryType',
+        type: 'enum',
+        enum: MemoryType,
+        required: true,
+        nullable: false
+    })
     @Column({ name: 'memory_type', type: 'enum', enum: MemoryType, nullable: false })
     public memoryType: MemoryType;
 
@@ -36,7 +42,8 @@ export class RAM extends BaseAccessory {
         type: 'smallint',
         maximum: 512,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'memory_Gb',
@@ -53,7 +60,8 @@ export class RAM extends BaseAccessory {
         type: 'smallint',
         maximum: 10000,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'memory_clock_MHz',
@@ -70,7 +78,8 @@ export class RAM extends BaseAccessory {
         type: 'double precision',
         maximum: 10,
         minimum: 0.5,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'supply_voltage',
@@ -89,7 +98,8 @@ export class RAM extends BaseAccessory {
         default: [],
         maximum: 100,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'timings',
@@ -106,13 +116,18 @@ export class RAM extends BaseAccessory {
     @ApiProperty({
         name: 'peculiarities',
         type: 'text',
-        required: false
+        maximum: 255,
+        minimum: 6,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'peculiarities',
         type: 'text',
         nullable: true
     })
+    @MaxLength(255)
+    @MinLength(6)
     @IsNotEmpty()
     public peculiarities: string;
 
@@ -121,7 +136,8 @@ export class RAM extends BaseAccessory {
         type: 'text',
         maxLength: 455,
         minLength: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -132,7 +148,13 @@ export class RAM extends BaseAccessory {
     @MinLength(6)
     public more: string;
 
-    @ApiProperty({ type: 'enum', enum: Package, default: Package.BOX, required: true })
+    @ApiProperty({
+        type: 'enum',
+        enum: Package,
+        default: Package.BOX,
+        required: true,
+        nullable: false
+    })
     @Column({ type: 'enum', enum: Package, default: Package.BOX, nullable: false })
     @IsNotEmpty()
     public package: Package;
@@ -142,7 +164,8 @@ export class RAM extends BaseAccessory {
         type: 'smallint',
         maximum: 150,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'ram_height_mm',
@@ -160,7 +183,8 @@ export class RAM extends BaseAccessory {
         maximum: 8,
         minimum: 1,
         default: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'count_included',
@@ -178,7 +202,8 @@ export class RAM extends BaseAccessory {
         maximum: 1000000,
         minimum: 10000,
         default: 6000,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'price',

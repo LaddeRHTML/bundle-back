@@ -21,11 +21,23 @@ export class PowerUnit extends BaseAccessory {
         this.name = `Power Unit ${formFactor} ${power}W ${maker} ${model}`;
     }
 
-    @ApiProperty({ name: 'maker', type: 'enum', enum: PowerUnitMaker, required: true })
+    @ApiProperty({
+        name: 'maker',
+        type: 'enum',
+        enum: PowerUnitMaker,
+        required: true,
+        nullable: false
+    })
     @Column({ name: 'maker', type: 'enum', enum: PowerUnitMaker, nullable: false })
     public maker: PowerUnitMaker;
 
-    @ApiProperty({ name: 'formFactor', type: 'enum', enum: FormFactor, required: true })
+    @ApiProperty({
+        name: 'formFactor',
+        type: 'enum',
+        enum: FormFactor,
+        required: true,
+        nullable: false
+    })
     @Column({ name: 'form_factor', type: 'enum', enum: FormFactor, nullable: false })
     public formFactor: FormFactor;
 
@@ -34,7 +46,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 1600,
         minimum: 100,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'power',
@@ -50,7 +63,8 @@ export class PowerUnit extends BaseAccessory {
         name: 'PFC',
         type: 'enum',
         enum: AvailabilityPFT,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'PFC',
@@ -64,7 +78,8 @@ export class PowerUnit extends BaseAccessory {
         name: 'complianceWithStandard',
         type: 'enum',
         enum: ComplianceMarking,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'compliance_with_standard',
@@ -80,7 +95,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'text',
         maximum: 200,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'KPD',
@@ -97,7 +113,8 @@ export class PowerUnit extends BaseAccessory {
         isArray: true,
         default: [],
         enum: MPC,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'motherboard_power_connectors',
@@ -115,7 +132,8 @@ export class PowerUnit extends BaseAccessory {
         isArray: true,
         default: [],
         enum: SVCCS,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'support_video_card_connection_schemas',
@@ -132,7 +150,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_PCI_E_connectors_2pin',
@@ -149,7 +168,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_PCI_E_connectors_6pin',
@@ -166,7 +186,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 2,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'count_PCI_E_connectors_16pin',
@@ -182,7 +203,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 8,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_Molex_connectors_4pin',
@@ -199,7 +221,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 14,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_SATA_connectors',
@@ -214,7 +237,8 @@ export class PowerUnit extends BaseAccessory {
     @ApiProperty({
         name: 'cables',
         type: 'text',
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'cables',
@@ -230,7 +254,8 @@ export class PowerUnit extends BaseAccessory {
         default: [],
         maximum: 300,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'input_voltage_range_w',
@@ -251,7 +276,8 @@ export class PowerUnit extends BaseAccessory {
         default: [],
         maximum: 100,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'input_frequency_hz',
@@ -270,7 +296,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 100,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'line_output_current_3_3V_A',
@@ -287,7 +314,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 100,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'line_output_current_5V_A',
@@ -304,7 +332,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 100,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'line_output_current_12V_A',
@@ -321,7 +350,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'smallint',
         maximum: 200,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'fan_size_mm',
@@ -338,7 +368,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'fan_bearing_type',
@@ -352,13 +383,18 @@ export class PowerUnit extends BaseAccessory {
     @ApiProperty({
         name: 'complement',
         type: 'text',
-        required: true
+        maximum: 60,
+        minimum: 0,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'complement',
         type: 'text',
         nullable: false
     })
+    @MaxLength(60)
+    @MinLength(0)
     @IsNotEmpty()
     public complement: string;
 
@@ -367,7 +403,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'peculiarities',
@@ -381,13 +418,18 @@ export class PowerUnit extends BaseAccessory {
     @ApiProperty({
         name: 'protectionSystems',
         type: 'text',
-        required: true
+        maximum: 455,
+        minimum: 6,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'protection_systems',
         type: 'text',
         nullable: false
     })
+    @MaxLength(455)
+    @MinLength(6)
     @IsNotEmpty()
     public protectionSystems: string;
 
@@ -396,7 +438,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'text',
         maximum: 455,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -412,7 +455,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'text',
         maximum: 500,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'size_volume_mm',
@@ -428,7 +472,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'double precision',
         maximum: 5,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'weight_Kg',
@@ -445,7 +490,8 @@ export class PowerUnit extends BaseAccessory {
         type: 'enum',
         enum: Package,
         default: Package.RTL,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'packege',
@@ -463,7 +509,8 @@ export class PowerUnit extends BaseAccessory {
         maximum: 500000,
         minimum: 10000,
         default: 10000,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'price',

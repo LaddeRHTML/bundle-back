@@ -31,7 +31,7 @@ export class Product extends BaseEntity {
         this.price = sumArray(prices);
     }
 
-    @ApiProperty({ name: 'discount_price', type: 'integer', default: 0 })
+    @ApiProperty({ name: 'discountPrice', type: 'integer', default: 0 })
     @Column({ name: 'discount_price', type: 'integer', default: 0 })
     public discountPrice: number;
 
@@ -40,7 +40,7 @@ export class Product extends BaseEntity {
     @Column({ name: 'name', type: 'varchar' })
     public name: string;
 
-    @ApiProperty({ name: 'preview_picture_id', type: 'varchar', required: false })
+    @ApiProperty({ name: 'previewPictureId', type: 'varchar', required: false })
     @Column({ name: 'preview_picture_id', type: 'varchar', nullable: true })
     public previewPictureId: string | null;
 
@@ -79,7 +79,7 @@ export class Product extends BaseEntity {
     @JoinColumn({ name: 'motherboard' })
     public motherboard: Motherboard;
 
-    @ApiProperty({ name: 'ram_count', type: 'smallint', maximum: 8, required: true })
+    @ApiProperty({ name: 'ramCount', type: 'smallint', maximum: 8, required: true })
     @Column({ name: 'ram_count', type: 'smallint', nullable: true })
     @Max(8)
     public ramCount: number;
@@ -128,7 +128,7 @@ export class Product extends BaseEntity {
     @JoinColumn({ name: 'pccase' })
     public pccase: PCCase;
 
-    @ApiProperty({ name: 'pictures_id', isArray: true, type: 'string', required: false })
+    @ApiProperty({ name: 'picturesId', isArray: true, type: 'string', required: false })
     @Column({ name: 'pictures_id', type: 'simple-array', nullable: true })
     @IsArray()
     public picturesId: string[];

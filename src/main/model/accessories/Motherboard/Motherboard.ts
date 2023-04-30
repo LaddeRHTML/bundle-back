@@ -20,7 +20,8 @@ export class Motherboard extends BaseAccessory {
         name: 'maker',
         type: 'enum',
         enum: MotherboardMaker,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'maker',
@@ -34,7 +35,8 @@ export class Motherboard extends BaseAccessory {
         name: 'socket',
         enum: CPUSocket,
         type: 'enum',
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'socket',
@@ -48,26 +50,36 @@ export class Motherboard extends BaseAccessory {
     @ApiProperty({
         name: 'microarchitecture',
         type: 'text',
-        required: true
+        maximum: 30,
+        minimum: 0,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'microarchitecture',
         type: 'text',
         nullable: false
     })
+    @MaxLength(30)
+    @MinLength(0)
     @IsNotEmpty()
     public microarchitecture: string;
 
     @ApiProperty({
         name: 'chipset',
         type: 'text',
-        required: true
+        maximum: 30,
+        minimum: 0,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'chipset',
         type: 'text',
         nullable: false
     })
+    @MaxLength(30)
+    @MinLength(0)
     @IsNotEmpty()
     public chipset: string;
 
@@ -76,7 +88,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'technologies',
@@ -92,7 +105,8 @@ export class Motherboard extends BaseAccessory {
         name: 'formFactor',
         enum: FormFactor,
         type: 'enum',
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'form_factor',
@@ -108,7 +122,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         isArray: true,
         default: [],
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'supported_memory_frequencies',
@@ -123,13 +138,18 @@ export class Motherboard extends BaseAccessory {
     @ApiProperty({
         name: 'memorySlotsCount',
         type: 'smallint',
-        required: false
+        maximum: 8,
+        minimum: 2,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'memory_slots_count',
         type: 'smallint',
         nullable: true
     })
+    @MaxLength(8)
+    @MinLength(2)
     public memorySlotsCount: number;
 
     @ApiProperty({
@@ -137,7 +157,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 256,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_ram_gb',
@@ -154,7 +175,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 8,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_sata_count',
@@ -170,7 +192,9 @@ export class Motherboard extends BaseAccessory {
         name: 'connectorsForSSD',
         type: 'smallint',
         maximum: 5,
-        minimum: 0
+        minimum: 0,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'connectors_for_ssd',
@@ -187,7 +211,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'interface_m2_slot',
@@ -203,7 +228,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 4,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pci_express_x16_count',
@@ -219,7 +245,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 4,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pci_express_x1_count',
@@ -235,7 +262,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 6,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pci_express_standard',
@@ -251,7 +279,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pci_express_workflow',
@@ -267,7 +296,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 35,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'audiocodec',
@@ -284,7 +314,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 8,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'channel_count',
@@ -302,7 +333,8 @@ export class Motherboard extends BaseAccessory {
         type: 'enum',
         isArray: true,
         default: [],
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'video_cabel_type',
@@ -319,7 +351,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 550,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'internal_connectors',
@@ -335,7 +368,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 55,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: true
     })
     @Column({
         name: 'power_connectors',
@@ -352,7 +386,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'backpanel_connectors',
@@ -369,7 +404,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_30',
@@ -386,7 +422,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_31_gen1',
@@ -403,7 +440,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_31_gen2',
@@ -420,7 +458,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 2,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_31_gen2_type_c',
@@ -437,7 +476,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 2,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_31_gen2x2_type_c',
@@ -454,7 +494,8 @@ export class Motherboard extends BaseAccessory {
         type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_32_gen1',
@@ -471,7 +512,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'included_buttons',
@@ -487,7 +529,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 50,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'network_controller',
@@ -503,7 +546,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 100,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'network_communications',
@@ -520,7 +564,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 100,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'bios',
@@ -540,7 +585,8 @@ export class Motherboard extends BaseAccessory {
         maxLength: 4,
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'RAID_sata_array',
@@ -558,7 +604,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maxLength: 20,
         minLength: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'size_w_h_mm',
@@ -574,7 +621,8 @@ export class Motherboard extends BaseAccessory {
         type: 'text',
         maximum: 455,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -590,7 +638,8 @@ export class Motherboard extends BaseAccessory {
         type: 'numeric',
         maximum: 2000000,
         minimum: 6000,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'price',

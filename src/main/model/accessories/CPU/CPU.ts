@@ -28,7 +28,8 @@ export class CPU extends BaseAccessory {
         name: 'maker',
         type: 'enum',
         enum: CPUMaker,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({ name: 'maker', type: 'enum', enum: CPUMaker, nullable: false })
     public maker: CPUMaker;
@@ -38,7 +39,8 @@ export class CPU extends BaseAccessory {
         type: 'text',
         maxLength: 10,
         minLength: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'type',
@@ -54,7 +56,8 @@ export class CPU extends BaseAccessory {
         name: 'socket',
         type: 'enum',
         enum: CPUSocket,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'socket',
@@ -70,7 +73,8 @@ export class CPU extends BaseAccessory {
         type: 'smallint',
         maximum: 256,
         minimum: 2,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'core_count',
@@ -87,7 +91,8 @@ export class CPU extends BaseAccessory {
         type: 'smallint',
         maximum: 100000,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'thread_count',
@@ -104,7 +109,8 @@ export class CPU extends BaseAccessory {
         type: 'double precision',
         maximum: 7,
         minimum: 1.8,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'clock_frequency_max_ghz',
@@ -121,7 +127,8 @@ export class CPU extends BaseAccessory {
         type: 'double precision',
         maximum: 7,
         minimum: 1.8,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'clock_frequency_min_ghz',
@@ -136,20 +143,28 @@ export class CPU extends BaseAccessory {
     @ApiProperty({
         name: 'microarchitecture',
         type: 'text',
-        nullable: true
+        maximum: 30,
+        minimum: 0,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'microarchitecture',
         type: 'text',
         nullable: false
     })
+    @MaxLength(30)
+    @MinLength(0)
     @IsNotEmpty()
     public microarchitecture: string;
 
     @ApiProperty({
         name: 'cacheSizeL2',
         type: 'double precision',
-        nullable: true
+        maximum: 30,
+        minimum: 0.5,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'cache_size_l2',
@@ -164,7 +179,10 @@ export class CPU extends BaseAccessory {
     @ApiProperty({
         name: 'cacheSizeL3',
         type: 'double precision',
-        required: true
+        maximum: 30,
+        minimum: 0.5,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'cache_size_l3',
@@ -194,7 +212,8 @@ export class CPU extends BaseAccessory {
         type: 'smallint',
         maximum: 256,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_ram_gb',
@@ -209,7 +228,8 @@ export class CPU extends BaseAccessory {
     @ApiProperty({
         name: 'supportEss',
         type: 'boolean',
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'support_ess',
@@ -224,7 +244,8 @@ export class CPU extends BaseAccessory {
         type: 'text',
         maximum: 40,
         minimum: 4,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'integrated_graphics_system',
@@ -241,7 +262,8 @@ export class CPU extends BaseAccessory {
         type: 'smallint',
         maximum: 256,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'techproc_nm',
@@ -258,7 +280,8 @@ export class CPU extends BaseAccessory {
         type: 'smallint',
         maximum: 1000,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'TDP',
@@ -274,7 +297,8 @@ export class CPU extends BaseAccessory {
         type: 'smallint',
         maximum: 1000,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'max_TDP_wt',
@@ -290,7 +314,8 @@ export class CPU extends BaseAccessory {
         type: 'text',
         isArray: true,
         default: [],
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'instruction_set',
@@ -304,7 +329,8 @@ export class CPU extends BaseAccessory {
     @ApiProperty({
         name: 'supportHyperThreading',
         type: 'boolean',
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'support_hyper_threading',
@@ -317,7 +343,8 @@ export class CPU extends BaseAccessory {
     @ApiProperty({
         name: 'support64B',
         type: 'boolean',
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'support_64_b',
@@ -331,7 +358,8 @@ export class CPU extends BaseAccessory {
         type: 'enum',
         enum: Package,
         default: Package.OEM,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         type: 'enum',
@@ -345,13 +373,18 @@ export class CPU extends BaseAccessory {
     @ApiProperty({
         name: 'criticalTemperatureC',
         type: 'smallint',
-        required: true
+        maximum: 150,
+        minimum: 10,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'critical_temperature_c',
         type: 'smallint',
         nullable: false
     })
+    @Max(150)
+    @Min(10)
     @IsNotEmpty()
     public criticalTemperatureC: number;
 
@@ -360,7 +393,8 @@ export class CPU extends BaseAccessory {
         type: 'text',
         maximum: 455,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -376,7 +410,8 @@ export class CPU extends BaseAccessory {
         type: 'numeric',
         maximum: 1000000,
         minimum: 6000,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'price',
