@@ -17,7 +17,7 @@ import {
     UseGuards,
     UseInterceptors
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Readable } from 'stream';
@@ -35,6 +35,7 @@ import { File } from 'model/file/File';
 
 @ApiTags('Files')
 @Controller('/files')
+@ApiBearerAuth('JWT-auth')
 export class FilesController {
     constructor(private readonly filesService: FilesService) {}
 

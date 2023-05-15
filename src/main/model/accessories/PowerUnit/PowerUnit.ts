@@ -293,7 +293,7 @@ export class PowerUnit extends BaseAccessory {
 
     @ApiProperty({
         name: 'lineOutputCurrent33VA',
-        type: 'smallint',
+        type: 'double precision',
         maximum: 100,
         minimum: 1,
         required: true,
@@ -301,7 +301,7 @@ export class PowerUnit extends BaseAccessory {
     })
     @Column({
         name: 'line_output_current_3_3V_A',
-        type: 'smallint',
+        type: 'double precision',
         nullable: false
     })
     @Max(100)
@@ -311,7 +311,7 @@ export class PowerUnit extends BaseAccessory {
 
     @ApiProperty({
         name: 'lineOutputCurrent5VA',
-        type: 'smallint',
+        type: 'double precision',
         maximum: 100,
         minimum: 1,
         required: true,
@@ -319,7 +319,7 @@ export class PowerUnit extends BaseAccessory {
     })
     @Column({
         name: 'line_output_current_5V_A',
-        type: 'smallint',
+        type: 'double precision',
         nullable: false
     })
     @Max(100)
@@ -329,7 +329,7 @@ export class PowerUnit extends BaseAccessory {
 
     @ApiProperty({
         name: 'lineOutputCurrent12VA',
-        type: 'smallint',
+        type: 'double precision',
         maximum: 100,
         minimum: 1,
         required: true,
@@ -337,7 +337,7 @@ export class PowerUnit extends BaseAccessory {
     })
     @Column({
         name: 'line_output_current_12V_A',
-        type: 'smallint',
+        type: 'double precision',
         nullable: false
     })
     @Max(100)

@@ -10,7 +10,7 @@ import {
     Patch,
     Delete
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -28,9 +28,11 @@ import { RAMService } from 'service/RAMService';
 
 @ApiTags('RAM')
 @Controller('/ram')
+@ApiBearerAuth('JWT-auth')
 export class RAMController {
     constructor(private readonly ramService: RAMService) {}
 
+    @ApiOperation({ description: 'Создание оперативной памяти' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
@@ -41,6 +43,7 @@ export class RAMController {
         return await this.ramService.createOne(createRAMDto, id);
     }
 
+    @ApiOperation({ description: 'Получение одной | kit оперативной памяти по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -48,6 +51,7 @@ export class RAMController {
         return this.ramService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Поиск определенной оперативной памяти' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -58,6 +62,7 @@ export class RAMController {
         return await this.ramService.findSome(pageOptionsDto, filters);
     }
 
+    @ApiOperation({ description: 'Обновление оперативной памяти по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -69,6 +74,7 @@ export class RAMController {
         return await this.ramService.updateOne(id, updateRAMDto, userId);
     }
 
+    @ApiOperation({ description: 'Удаление оперативной памяти по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')

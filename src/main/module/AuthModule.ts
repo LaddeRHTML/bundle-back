@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { SwaggerModule } from '@nestjs/swagger';
 
 import { JWT_ENVIRONMENT_VARS } from 'auth/constants';
 import { JwtStrategy } from 'auth/strategies/jwt-auth.strategy';
@@ -19,6 +20,7 @@ import { UsersModule } from './UserModule';
         ConfigurationModule,
         forwardRef(() => UsersModule),
         PassportModule,
+        SwaggerModule,
         JwtModule.register(JWT_ENVIRONMENT_VARS)
     ],
     providers: [AuthService, LocalStrategy, JwtStrategy],

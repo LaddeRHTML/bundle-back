@@ -39,11 +39,10 @@ services:
         restart: always
         volumes:
             - .:/usr/src/app
-
         env_file:
             - .env
 
-        command: npm run start:prod
+        command: npm run start:local
 
 volumes:
     postgres:

@@ -10,7 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -29,9 +29,11 @@ import { HDDService } from 'service/HDDService';
 
 @ApiTags('HDD')
 @Controller('/hdd')
+@ApiBearerAuth('JWT-auth')
 export class HDDController {
     constructor(private readonly hddService: HDDService) {}
 
+    @ApiOperation({ description: 'Создание HDD | SSD' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
@@ -42,6 +44,7 @@ export class HDDController {
         return await this.hddService.createOne(createHDDDto, id);
     }
 
+    @ApiOperation({ description: 'Получение одного HDD | SSD по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -49,6 +52,7 @@ export class HDDController {
         return this.hddService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Поиск определенного HDD | SSD' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -59,6 +63,7 @@ export class HDDController {
         return await this.hddService.findSome(pageOptionsDto, filters);
     }
 
+    @ApiOperation({ description: 'Обновление HDD | SSD по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -70,6 +75,7 @@ export class HDDController {
         return await this.hddService.updateOne(id, updateHDDDto, userId);
     }
 
+    @ApiOperation({ description: 'Удаление HDD | SSD по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')

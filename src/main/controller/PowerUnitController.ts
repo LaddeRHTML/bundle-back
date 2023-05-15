@@ -10,7 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -29,9 +29,11 @@ import { PowerUnitService } from 'service/PowerUnitService';
 
 @ApiTags('Power-unit')
 @Controller('/power-unit')
+@ApiBearerAuth('JWT-auth')
 export class PowerUnitController {
     constructor(private readonly powerUnitService: PowerUnitService) {}
 
+    @ApiOperation({ description: 'Создание блока питания' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
@@ -42,6 +44,7 @@ export class PowerUnitController {
         return await this.powerUnitService.createOne(createPowerUnitDto, id);
     }
 
+    @ApiOperation({ description: 'Получение одного блока питания по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -49,6 +52,7 @@ export class PowerUnitController {
         return this.powerUnitService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Поиск определенного блока питания' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -59,6 +63,7 @@ export class PowerUnitController {
         return await this.powerUnitService.findSome(pageOptionsDto, filters);
     }
 
+    @ApiOperation({ description: 'Обновление блока питания по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -70,6 +75,7 @@ export class PowerUnitController {
         return await this.powerUnitService.updateOne(id, updatePowerUnitDto, userId);
     }
 
+    @ApiOperation({ description: 'Удаление блока питания по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')

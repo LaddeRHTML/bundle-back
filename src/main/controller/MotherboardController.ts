@@ -10,7 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -30,9 +30,11 @@ import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
 
 @ApiTags('Motherboard')
 @Controller('/motherboard')
+@ApiBearerAuth('JWT-auth')
 export class MotherboardController {
     constructor(private readonly motherboardService: MotherboardService) {}
 
+    @ApiOperation({ description: 'Создание мат.платы' })
     @ApiProperty()
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
@@ -44,6 +46,7 @@ export class MotherboardController {
         return await this.motherboardService.createOne(createMotherboardDto, id);
     }
 
+    @ApiOperation({ description: 'Получение одной мат.платы по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -51,6 +54,7 @@ export class MotherboardController {
         return this.motherboardService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Поиск определенной мат.платы по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -61,6 +65,7 @@ export class MotherboardController {
         return await this.motherboardService.findSome(pageOptionsDto, filters);
     }
 
+    @ApiOperation({ description: 'Обновление мат.платы по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -72,6 +77,7 @@ export class MotherboardController {
         return await this.motherboardService.updateOne(id, updateMotherboardDto, userId);
     }
 
+    @ApiOperation({ description: 'Удаление мат.платы по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')

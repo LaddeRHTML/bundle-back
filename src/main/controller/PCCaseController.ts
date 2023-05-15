@@ -12,7 +12,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -30,9 +30,11 @@ export type AllowedPcCaseRelations = ['fan'];
 
 @ApiTags('PC-Case')
 @Controller('/pc-case')
+@ApiBearerAuth('JWT-auth')
 export class PCCaseController {
     constructor(private readonly pcCaseService: PCCaseService) {}
 
+    @ApiOperation({ description: 'Создание корпуса' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
@@ -43,6 +45,7 @@ export class PCCaseController {
         return await this.pcCaseService.createOne(createPCCaseDto, id);
     }
 
+    @ApiOperation({ description: 'Получение корпуса по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -50,6 +53,7 @@ export class PCCaseController {
         return this.pcCaseService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Поиск определенного корпуса' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -70,6 +74,7 @@ export class PCCaseController {
         return await this.pcCaseService.findSome(pageOptionsDto, filters, relations);
     }
 
+    @ApiOperation({ description: 'Обновление корпуса по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -81,6 +86,7 @@ export class PCCaseController {
         return await this.pcCaseService.updateOne(id, updatePCCaseDto, userId);
     }
 
+    @ApiOperation({ description: 'Удаление корпуса по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')

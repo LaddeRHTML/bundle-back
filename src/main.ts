@@ -14,11 +14,24 @@ async function bootstrap() {
         cors: true
     });
 
+    app.setGlobalPrefix('api/v1');
+
     const config = new DocumentBuilder()
         .setTitle('Bundle API')
         .setDescription('Bundle API for Bundle applications')
         .setVersion('1.1')
         .addTag('PC')
+        .addBearerAuth(
+            {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+                name: 'JWT',
+                description: 'Enter JWT token',
+                in: 'header'
+            },
+            'JWT-auth'
+        )
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
@@ -33,8 +46,6 @@ async function bootstrap() {
         defaultVersion: ['', 'v1'],
         prefix: ''
     });
-
-    app.setGlobalPrefix('api/v1');
 
     app.useGlobalFilters(new AllExceptionsFilter());
 

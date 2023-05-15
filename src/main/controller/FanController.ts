@@ -10,7 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -29,9 +29,11 @@ import { FanService } from 'service/FanService';
 
 @ApiTags('Fan')
 @Controller('/fan')
+@ApiBearerAuth('JWT-auth')
 export class FanController {
     constructor(private readonly fanService: FanService) {}
 
+    @ApiOperation({ description: 'Создание вентилятора' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
@@ -42,6 +44,7 @@ export class FanController {
         return await this.fanService.createOne(createFanDto, id);
     }
 
+    @ApiOperation({ description: 'Получение одного вентилятора по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -49,6 +52,7 @@ export class FanController {
         return this.fanService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Поиск определенного вентилятора' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -59,6 +63,7 @@ export class FanController {
         return await this.fanService.findSome(pageOptionsDto, filters);
     }
 
+    @ApiOperation({ description: 'Обновление вентилятора по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -70,6 +75,7 @@ export class FanController {
         return await this.fanService.updateOne(id, updateFanDto, userId);
     }
 
+    @ApiOperation({ description: 'Удаления ветнилятора по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')
