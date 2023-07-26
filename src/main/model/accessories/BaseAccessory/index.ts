@@ -4,7 +4,9 @@ import { BaseEntity } from 'model/base';
 import { Column } from 'typeorm';
 
 export abstract class BaseAccessory extends BaseEntity {
-    @ApiProperty()
+    @ApiProperty({
+        type: 'text'
+    })
     @Column({
         name: 'name',
         type: 'text',
@@ -16,7 +18,8 @@ export abstract class BaseAccessory extends BaseEntity {
 
     @ApiProperty({
         maximum: 15,
-        minimum: 2
+        minimum: 2,
+        type: 'text'
     })
     @Column({
         name: 'maker',
@@ -30,7 +33,8 @@ export abstract class BaseAccessory extends BaseEntity {
 
     @ApiProperty({
         maximum: 35,
-        minimum: 2
+        minimum: 2,
+        type: 'text'
     })
     @Column({
         name: 'model',
