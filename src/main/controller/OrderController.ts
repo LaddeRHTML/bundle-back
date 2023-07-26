@@ -12,7 +12,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -34,9 +34,11 @@ export type AllowedOrderRelations = ['client', 'delivered_by', 'current_manager'
 
 @ApiTags('Orders')
 @Controller('/orders')
+@ApiBearerAuth('JWT-auth')
 export class OrdersController {
     constructor(private readonly orderService: OrdersService) {}
 
+    @ApiOperation({ description: 'Создание заказа' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/create')
@@ -47,6 +49,7 @@ export class OrdersController {
         return await this.orderService.createOne(createOrderDto, id);
     }
 
+    @ApiOperation({ description: 'Поиск определенного заказа' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -68,6 +71,7 @@ export class OrdersController {
         return await this.orderService.findSome(pageOptionsDto, relations, searchByChild, filter);
     }
 
+    @ApiOperation({ description: 'Получение заказ по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get(':id')
@@ -75,6 +79,7 @@ export class OrdersController {
         return await this.orderService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Назначить создателя заказа по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/assign/:id')
@@ -86,6 +91,7 @@ export class OrdersController {
         return await this.orderService.updateOne(id, { ...updateOrderDto }, userId);
     }
 
+    @ApiOperation({ description: 'Обновление заказа по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch(':id')
@@ -97,6 +103,7 @@ export class OrdersController {
         return await this.orderService.updateOne(id, updateOrderDto, userId);
     }
 
+    @ApiOperation({ description: 'Обновление статуса заказа по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/close/:id')
@@ -108,6 +115,7 @@ export class OrdersController {
         return await this.orderService.updateStatus(id, status, userId);
     }
 
+    @ApiOperation({ description: 'Удаление заказа по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete(':id')

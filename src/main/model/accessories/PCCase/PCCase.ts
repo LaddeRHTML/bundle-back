@@ -27,15 +27,28 @@ export class PCCase extends BaseAccessory {
         this.name = `Case ${maker} ${model}, ${color}, ${formFactor}`;
     }
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'maker',
+        type: 'enum',
+        enum: PCCaseMaker,
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'maker',
         type: 'enum',
-        enum: PCCaseMaker
+        enum: PCCaseMaker,
+        nullable: false
     })
     public maker: PCCaseMaker;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'formFactor',
+        type: 'enum',
+        enum: FormFactor,
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'form_factor',
         type: 'enum',
@@ -45,7 +58,15 @@ export class PCCase extends BaseAccessory {
     @IsNotEmpty()
     public formFactor: FormFactor;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'motherboardCompatibleFormFactor',
+        type: 'enum',
+        enum: MotherboardCompatibleFormFactor,
+        isArray: true,
+        default: [],
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'motherboard_compatible_form_factor',
         type: 'enum',
@@ -56,7 +77,14 @@ export class PCCase extends BaseAccessory {
     })
     public motherboardCompatibleFormFactor: MotherboardCompatibleFormFactor[];
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'material',
+        type: 'text',
+        isArray: true,
+        default: [],
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'material',
         type: 'text',
@@ -68,9 +96,12 @@ export class PCCase extends BaseAccessory {
     public material: string[];
 
     @ApiProperty({
+        name: 'peculiarities',
+        type: 'text',
         maximum: 300,
         minimum: 10,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'peculiarities',
@@ -82,7 +113,14 @@ export class PCCase extends BaseAccessory {
     @IsNotEmpty()
     public peculiarities: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'powerUnitLocation',
+        type: 'enum',
+        enum: PowerUnitLocation,
+        default: PowerUnitLocation.Lower,
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'power_unit_location',
         type: 'enum',
@@ -94,7 +132,13 @@ export class PCCase extends BaseAccessory {
     public powerUnitLocation: PowerUnitLocation;
 
     @ApiProperty({
-        required: false
+        name: 'hddMount',
+        type: 'enum',
+        enum: HDDMount,
+        isArray: true,
+        default: [],
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'hdd_mount',
@@ -108,8 +152,12 @@ export class PCCase extends BaseAccessory {
     public hddMount: HDDMount[];
 
     @ApiProperty({
+        name: 'countInternalCompartments25',
+        type: 'smallint',
         maximum: 20,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_internal_compartments_2_5',
@@ -122,8 +170,12 @@ export class PCCase extends BaseAccessory {
     public countInternalCompartments25: number;
 
     @ApiProperty({
+        name: 'countInternalCompartments35',
+        type: 'smallint',
         maximum: 20,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'count_internal_compartments_3_5',
@@ -136,7 +188,13 @@ export class PCCase extends BaseAccessory {
     public countInternalCompartments35: number;
 
     @ApiProperty({
-        required: false
+        name: 'buttons',
+        type: 'enum',
+        enum: Buttons,
+        isArray: true,
+        default: [],
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'buttons',
@@ -150,7 +208,13 @@ export class PCCase extends BaseAccessory {
     public buttons: Buttons[];
 
     @ApiProperty({
-        required: false
+        name: 'indicators',
+        type: 'enum',
+        enum: Indicators,
+        isArray: true,
+        default: [],
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'indicators',
@@ -164,9 +228,12 @@ export class PCCase extends BaseAccessory {
     public indicators: Indicators[];
 
     @ApiProperty({
+        name: 'countExpansionSlots',
+        type: 'text',
         maximum: 35,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: false
     })
     @Column({
         name: 'count_expansion_slots',
@@ -179,7 +246,13 @@ export class PCCase extends BaseAccessory {
     public countExpansionSlots: string;
 
     @ApiProperty({
-        required: false
+        name: 'GPUInstallationType',
+        type: 'enum',
+        enum: GPUInstallationType,
+        isArray: true,
+        default: [],
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'GPU_installation_type',
@@ -193,8 +266,12 @@ export class PCCase extends BaseAccessory {
     public GPUInstallationType: GPUInstallationType[];
 
     @ApiProperty({
+        name: 'maxGPULengthMm',
+        type: 'smallint',
         maximum: 600,
-        minimum: 100
+        minimum: 100,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_GPU_length_mm',
@@ -207,8 +284,12 @@ export class PCCase extends BaseAccessory {
     public maxGPULength: number;
 
     @ApiProperty({
+        name: 'maxCPUCoolerHeightMm',
+        type: 'smallint',
         maximum: 300,
-        minimum: 50
+        minimum: 50,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_CPU_cooler_height_mm',
@@ -221,9 +302,12 @@ export class PCCase extends BaseAccessory {
     public maxCPUCoolerHeight: number;
 
     @ApiProperty({
+        name: 'installedCooling',
+        type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: false
     })
     @Column({
         name: 'installed_cooling',
@@ -235,7 +319,15 @@ export class PCCase extends BaseAccessory {
     @IsNotEmpty()
     public installedCooling: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'supportedFanDiametersMm',
+        type: 'enum',
+        enum: FanDiameter,
+        isArray: true,
+        default: [],
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'supported_fan_diameters_mm',
         type: 'enum',
@@ -248,9 +340,12 @@ export class PCCase extends BaseAccessory {
     public supportedFanDiameters: FanDiameter[];
 
     @ApiProperty({
+        name: 'fanInstallationSupport',
+        type: 'text',
         maximum: 255,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'fan_installation_support',
@@ -263,9 +358,12 @@ export class PCCase extends BaseAccessory {
     public fanInstallationSupport: string;
 
     @ApiProperty({
+        name: 'maxLengthWCSRadiatorMm',
+        type: 'smallint',
         maximum: 800,
         minimum: 50,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'max_length_WCS_radiator_mm',
@@ -278,9 +376,12 @@ export class PCCase extends BaseAccessory {
     public maxLengthWCSRadiator: number;
 
     @ApiProperty({
+        name: 'placesMountingWCSRadiator',
+        type: 'text',
         maximum: 255,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'places_mounting_WCS_radiator',
@@ -293,7 +394,13 @@ export class PCCase extends BaseAccessory {
     public placesMountingWCSRadiator: string;
 
     @ApiProperty({
-        required: false
+        name: 'dustFilter',
+        type: 'enum',
+        enum: DustFilter,
+        isArray: true,
+        default: [],
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'dust_filter',
@@ -306,7 +413,13 @@ export class PCCase extends BaseAccessory {
     public dustFilter: DustFilter[];
 
     @ApiProperty({
-        required: false
+        name: 'additionalConnectors',
+        type: 'enum',
+        enum: AdditionalConnectors,
+        isArray: true,
+        default: [],
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'additional_connectors',
@@ -320,9 +433,12 @@ export class PCCase extends BaseAccessory {
     public additionalConnectors: AdditionalConnectors[];
 
     @ApiProperty({
+        name: 'more',
+        type: 'text',
         maximum: 455,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -333,7 +449,13 @@ export class PCCase extends BaseAccessory {
     @MinLength(6)
     public more: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'color',
+        type: 'enum',
+        enum: Color,
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'color',
         type: 'enum',
@@ -344,8 +466,12 @@ export class PCCase extends BaseAccessory {
     public color: Color;
 
     @ApiProperty({
+        name: 'weightKg',
+        type: 'double precision',
         maximum: 30,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'weight_kg',
@@ -358,9 +484,12 @@ export class PCCase extends BaseAccessory {
     public weight: number;
 
     @ApiProperty({
+        name: 'sizeVolumeMm',
+        type: 'text',
         maximum: 100,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'size_volume_mm',
@@ -397,8 +526,12 @@ export class PCCase extends BaseAccessory {
     public products: Product[];
 
     @ApiProperty({
+        name: 'price',
+        type: 'numeric',
         maximum: 2000000,
-        minimum: 5000
+        minimum: 5000,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'price',

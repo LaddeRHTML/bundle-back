@@ -19,7 +19,7 @@ import {
 import { Req } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InsertResult } from 'typeorm';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
@@ -43,6 +43,7 @@ export type AllowedUserRelations = ['orders'];
 
 @ApiTags('User')
 @Controller('/users')
+@ApiBearerAuth('JWT-auth')
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,

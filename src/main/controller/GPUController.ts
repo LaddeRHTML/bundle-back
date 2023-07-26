@@ -10,7 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -29,9 +29,11 @@ import { GPUService } from 'service/GPUService';
 
 @ApiTags('GPU')
 @Controller('/gpu')
+@ApiBearerAuth('JWT-auth')
 export class GPUController {
     constructor(private readonly gpuService: GPUService) {}
 
+    @ApiOperation({ description: 'Создание видеокарты' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
@@ -42,6 +44,7 @@ export class GPUController {
         return await this.gpuService.createOne(createGPUDto, id);
     }
 
+    @ApiOperation({ description: 'Получение одной видеокарты по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -49,6 +52,7 @@ export class GPUController {
         return this.gpuService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Поиск определенной видеокарты' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -59,6 +63,7 @@ export class GPUController {
         return await this.gpuService.findSome(pageOptionsDto, filters);
     }
 
+    @ApiOperation({ description: 'Обновленние видеокарты по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -70,6 +75,7 @@ export class GPUController {
         return await this.gpuService.updateOne(id, updateGPUDto, userId);
     }
 
+    @ApiOperation({ description: 'Удаление видеокарты по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')

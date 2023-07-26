@@ -1,6 +1,6 @@
-import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
-import { Entity, Column, JoinColumn, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
 import { Product } from 'model/product/Product';
 import { BaseAccessory } from '../BaseAccessory';
@@ -13,12 +13,29 @@ export class Cooler extends BaseAccessory {
         super();
         this.name = `${type} ${maker} ${model}`;
     }
-
-    @ApiProperty()
-    @Column({ type: 'enum', enum: CoolerMaker })
+    @ApiProperty({
+        name: 'maker',
+        type: 'enum',
+        enum: CoolerMaker,
+        required: true,
+        nullable: false
+    })
+    @Column({
+        name: 'maker',
+        type: 'enum',
+        enum: CoolerMaker,
+        nullable: false
+    })
     public maker: CoolerMaker;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'socket',
+        type: 'enum',
+        enum: CPUSocket,
+        isArray: true,
+        default: [],
+        required: true
+    })
     @Column({
         name: 'socket',
         type: 'enum',
@@ -39,9 +56,12 @@ export class Cooler extends BaseAccessory {
     public type: CoolerType;
 
     @ApiProperty({
+        name: 'maxTDP',
+        type: 'smallint',
         maximum: 500,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'max_TDP',
@@ -52,7 +72,13 @@ export class Cooler extends BaseAccessory {
     @Min(1)
     public maxTDP: number;
 
-    @ApiProperty({})
+    @ApiProperty({
+        name: 'material',
+        type: 'text',
+        isArray: true,
+        default: [],
+        required: true
+    })
     @Column({
         name: 'material',
         type: 'text',
@@ -64,8 +90,12 @@ export class Cooler extends BaseAccessory {
     public material: string[];
 
     @ApiProperty({
+        name: 'fanDiameterMm',
+        type: 'smallint',
         maximum: 250,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'fan_diameter_mm',
@@ -78,8 +108,12 @@ export class Cooler extends BaseAccessory {
     public fanDiameterMm: number;
 
     @ApiProperty({
+        name: 'minRotationSpeedRpm',
+        type: 'smallint',
         maximum: 1000,
-        minimum: 100
+        minimum: 100,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'min_rotation_speed',
@@ -92,8 +126,12 @@ export class Cooler extends BaseAccessory {
     public minRotationSpeed: number;
 
     @ApiProperty({
+        name: 'maxRotationSpeedRpm',
+        type: 'smallint',
         maximum: 6000,
-        minimum: 100
+        minimum: 100,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_rotation_speed',
@@ -106,9 +144,10 @@ export class Cooler extends BaseAccessory {
     public maxRotationSpeed: number;
 
     @ApiProperty({
-        name: 'possibility_speed_regulation',
+        name: 'possibilitySpeedRegulation',
         type: 'boolean',
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'possibility_speed_regulation',
@@ -119,9 +158,12 @@ export class Cooler extends BaseAccessory {
     public possibilitySpeedRegulation: boolean;
 
     @ApiProperty({
+        name: 'coolerHeightMm',
+        type: 'smallint',
         maximum: 250,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'cooler_height_mm',
@@ -133,8 +175,12 @@ export class Cooler extends BaseAccessory {
     public coolerHeightMm: number;
 
     @ApiProperty({
+        name: 'minNoiseLeveDb',
+        type: 'smallint',
         maximum: 100,
-        minimum: 1
+        minimum: 1,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'min_noise_leve_dB',
@@ -147,8 +193,12 @@ export class Cooler extends BaseAccessory {
     public minNoiseLeveDb: number;
 
     @ApiProperty({
+        name: 'maxNoiseLeveDb',
+        type: 'smallint',
         maximum: 200,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_noise_leve_dB',
@@ -161,8 +211,12 @@ export class Cooler extends BaseAccessory {
     public maxNoiseLeveDb: number;
 
     @ApiProperty({
+        name: 'connector',
+        type: 'text',
         maximum: 255,
-        minimum: 6
+        minimum: 6,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'connector',
@@ -175,8 +229,12 @@ export class Cooler extends BaseAccessory {
     public connector: string;
 
     @ApiProperty({
+        name: 'airFlowCFM',
+        type: 'double precision',
         maximum: 150,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'air_flow_CFM',
@@ -189,8 +247,12 @@ export class Cooler extends BaseAccessory {
     public airFlowCFM: number;
 
     @ApiProperty({
+        name: 'MTBFHours',
+        type: 'int',
         maximum: 400000,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'MTBF_hours',
@@ -203,8 +265,12 @@ export class Cooler extends BaseAccessory {
     public MTBFHours: number;
 
     @ApiProperty({
+        name: 'supplyVoltage',
+        type: 'text',
         maximum: 255,
-        minimum: 6
+        minimum: 6,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'supply_voltage',
@@ -216,7 +282,11 @@ export class Cooler extends BaseAccessory {
     @IsNotEmpty()
     public supplyVoltage: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'backlight',
+        type: 'boolean',
+        required: true
+    })
     @Column({
         name: 'backlight',
         type: 'boolean',
@@ -226,9 +296,12 @@ export class Cooler extends BaseAccessory {
     public backlight: boolean;
 
     @ApiProperty({
+        name: 'backlightColor',
+        type: 'text',
         maximum: 100,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'backlight_color',
@@ -240,9 +313,12 @@ export class Cooler extends BaseAccessory {
     public backlightColor: string;
 
     @ApiProperty({
+        name: 'lengthTubesMm',
+        type: 'smallint',
         maximum: 500,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'length_tubes_mm',
@@ -254,9 +330,12 @@ export class Cooler extends BaseAccessory {
     public lengthTubesMm: number;
 
     @ApiProperty({
+        name: 'radiatorSizeMm',
+        type: 'smallint',
         maximum: 500,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'radiator_size_mm',
@@ -268,20 +347,30 @@ export class Cooler extends BaseAccessory {
     public radiatorSizeMm: number;
 
     @ApiProperty({
-        required: false
+        name: 'bearingType',
+        type: 'text',
+        maximum: 30,
+        minimum: 0,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'bearing_type',
         type: 'text',
         nullable: true
     })
+    @MaxLength(30)
+    @MinLength(0)
     @IsNotEmpty()
     public bearingType: string;
 
     @ApiProperty({
+        name: 'numberHeatPipes',
+        type: 'smallint',
         maximum: 12,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'number_heat_pipes',
@@ -293,6 +382,8 @@ export class Cooler extends BaseAccessory {
     public numberHeatPipes: number;
 
     @ApiProperty({
+        name: 'powerConsumptionWt',
+        type: 'double precision',
         maximum: 12,
         minimum: 0,
         required: false,
@@ -308,9 +399,12 @@ export class Cooler extends BaseAccessory {
     public powerConsumptionWt: number;
 
     @ApiProperty({
+        name: 'more',
+        type: 'text',
         maximum: 455,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -322,9 +416,12 @@ export class Cooler extends BaseAccessory {
     public more: string;
 
     @ApiProperty({
+        name: 'pumpSizeMm',
+        type: 'smallint',
         maximum: 300,
         minimum: 0,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pump_size_mm',
@@ -336,8 +433,12 @@ export class Cooler extends BaseAccessory {
     public pumpSizeMm: number;
 
     @ApiProperty({
+        name: 'weightKg',
+        type: 'double precision',
         maximum: 6,
-        minimum: 0
+        minimum: 0,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'weight_kg',
@@ -350,9 +451,12 @@ export class Cooler extends BaseAccessory {
     public weightKg: number;
 
     @ApiProperty({
+        name: 'sizeVolumeMm',
+        type: 'text',
         maximum: 100,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'size_volume_mm',
@@ -363,19 +467,30 @@ export class Cooler extends BaseAccessory {
     @MinLength(6)
     public sizeVolumeMm: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'package',
+        type: 'enum',
+        enum: Package,
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'package',
         type: 'enum',
         enum: Package,
-        default: Package.RTL
+        default: Package.RTL,
+        nullable: false
     })
     @IsNotEmpty()
     public package: Package;
 
     @ApiProperty({
+        name: 'price',
+        type: 'numeric',
         maximum: 500000,
-        minimum: 1000
+        minimum: 1000,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'price',

@@ -18,7 +18,7 @@ import {
     MaxFileSizeValidator
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -51,12 +51,14 @@ export type AllowedProductRelations = [
 
 @ApiTags('Products')
 @Controller('/products')
+@ApiBearerAuth('JWT-auth')
 export class ProductsController {
     constructor(
         private readonly productsService: ProductsService,
         private readonly filesService: FilesService
     ) {}
 
+    @ApiOperation({ description: 'Создание продукта' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/create')
@@ -67,6 +69,7 @@ export class ProductsController {
         return await this.productsService.createOne(createProductDto, id);
     }
 
+    @ApiOperation({ description: 'Получение всех продуктов' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get()
@@ -74,6 +77,7 @@ export class ProductsController {
         return await this.productsService.findAll();
     }
 
+    @ApiOperation({ description: 'Поиск определенного продукта' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -101,7 +105,7 @@ export class ProductsController {
     async getPrices(): Promise<GetPricesResponse> {
         return await this.productsService.getPrices();
     }
-
+    @ApiOperation({ description: 'Получение одного продукта по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -121,6 +125,7 @@ export class ProductsController {
         return this.productsService.findOneById(id, relations);
     }
 
+    @ApiOperation({ description: 'Обновление продукта по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -132,6 +137,7 @@ export class ProductsController {
         return await this.productsService.updateOne(id, updateProductDto, userId);
     }
 
+    @ApiOperation({ description: 'Загрузка изображений продукту по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @UseInterceptors(FilesInterceptor('images'))
@@ -161,6 +167,7 @@ export class ProductsController {
         );
     }
 
+    @ApiOperation({ description: 'Удаление изображений продукту по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/pictures/remove/:id')
@@ -196,6 +203,7 @@ export class ProductsController {
         );
     }
 
+    @ApiOperation({ description: 'Удаление продукта по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')

@@ -13,11 +13,17 @@ export class Fan extends BaseAccessory {
         this.name = `Fan ${maker} ${model}, ${diameter}mm, ${color}`;
     }
 
-    @ApiProperty({ name: 'maker', type: 'enum', enum: FanMaker, required: true })
+    @ApiProperty({ name: 'maker', type: 'enum', enum: FanMaker, required: true, nullable: false })
     @Column({ name: 'maker', type: 'enum', enum: FanMaker, nullable: false })
     public maker: FanMaker;
 
-    @ApiProperty({ name: 'diameter', type: 'enum', enum: FanDiameter, required: true })
+    @ApiProperty({
+        name: 'diameter',
+        type: 'enum',
+        enum: FanDiameter,
+        required: true,
+        nullable: false
+    })
     @Column({ name: 'diameter', type: 'enum', enum: FanDiameter, nullable: false })
     public diameter: FanDiameter;
 
@@ -26,7 +32,8 @@ export class Fan extends BaseAccessory {
         type: 'smallint',
         maximum: 1000,
         minimum: 100,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'min_rotation_speed',
@@ -43,7 +50,8 @@ export class Fan extends BaseAccessory {
         type: 'smallint',
         maximum: 6000,
         minimum: 100,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'max_rotation_speed',
@@ -58,7 +66,8 @@ export class Fan extends BaseAccessory {
     @ApiProperty({
         name: 'possibilitySpeedRegulation',
         type: 'boolean',
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'possibility_speed_regulation',
@@ -73,7 +82,8 @@ export class Fan extends BaseAccessory {
         type: 'smallint',
         maximum: 100,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'min_noise_level_db',
@@ -90,7 +100,8 @@ export class Fan extends BaseAccessory {
         type: 'double precision',
         maximum: 200,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_noise_level_db',
@@ -107,7 +118,8 @@ export class Fan extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'connector',
@@ -124,7 +136,8 @@ export class Fan extends BaseAccessory {
         type: 'double precision',
         maximum: 150,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'air_flow_CFM',
@@ -139,13 +152,18 @@ export class Fan extends BaseAccessory {
     @ApiProperty({
         name: 'bearingType',
         type: 'text',
-        required: false
+        maximum: 30,
+        minimum: 0,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'bearing_type',
         type: 'text',
         nullable: true
     })
+    @MaxLength(30)
+    @MinLength(0)
     @IsNotEmpty()
     public bearingType: string;
 
@@ -154,7 +172,8 @@ export class Fan extends BaseAccessory {
         type: 'int',
         maximum: 60000,
         minimum: 1,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'MTBF_hours',
@@ -171,7 +190,8 @@ export class Fan extends BaseAccessory {
         type: 'double precision',
         maximum: 12,
         minimum: 0,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'power_consumption_wt',
@@ -187,7 +207,8 @@ export class Fan extends BaseAccessory {
         type: 'text',
         maximum: 255,
         minimum: 6,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'supply_voltage',
@@ -202,7 +223,8 @@ export class Fan extends BaseAccessory {
     @ApiProperty({
         name: 'backlight',
         type: 'boolean',
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'backlight',
@@ -215,20 +237,26 @@ export class Fan extends BaseAccessory {
     @ApiProperty({
         name: 'backlight_connector',
         type: 'text',
-        required: false
+        maximum: 20,
+        minimum: 0,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'backlight_connector',
         type: 'text',
         nullable: true
     })
+    @MaxLength(20)
+    @MinLength(0)
     @IsNotEmpty()
     public backlightConnector: string;
 
     @ApiProperty({
         name: 'controller',
         type: 'text',
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'controller',
@@ -245,7 +273,8 @@ export class Fan extends BaseAccessory {
         type: 'text',
         maximum: 455,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -261,7 +290,8 @@ export class Fan extends BaseAccessory {
         type: 'text',
         maximum: 100,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'size_volume_mm',
@@ -277,7 +307,8 @@ export class Fan extends BaseAccessory {
         type: 'double precision',
         maximum: 2,
         minimum: 0,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'weight_kg',
@@ -294,7 +325,8 @@ export class Fan extends BaseAccessory {
         type: 'enum',
         enum: Package,
         default: Package.RTL,
-        required: true
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'package',
@@ -309,7 +341,8 @@ export class Fan extends BaseAccessory {
     @ApiProperty({
         name: 'kit',
         type: 'boolean',
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'kit',
@@ -324,7 +357,8 @@ export class Fan extends BaseAccessory {
         type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'count',
@@ -339,13 +373,18 @@ export class Fan extends BaseAccessory {
     @ApiProperty({
         name: 'color',
         type: 'text',
-        required: false
+        maximum: 15,
+        minimum: 0,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'color',
         type: 'text',
         nullable: true
     })
+    @MaxLength(15)
+    @MinLength(0)
     @IsNotEmpty()
     public color: string;
 

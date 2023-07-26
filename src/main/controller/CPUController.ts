@@ -10,7 +10,7 @@ import {
     Req,
     UseGuards
 } from '@nestjs/common';
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
 import RoleGuard from 'auth/guards/role-auth.guard';
@@ -29,10 +29,11 @@ import { CPUService } from 'service/CPUService';
 
 @ApiTags('CPU')
 @Controller('/cpu')
+@ApiBearerAuth('JWT-auth')
 export class CPUController {
     constructor(private readonly cpuService: CPUService) {}
 
-    @ApiProperty()
+    @ApiOperation({ description: 'Создание процессора' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/')
@@ -43,6 +44,7 @@ export class CPUController {
         return await this.cpuService.createOne(createCPUDto, id);
     }
 
+    @ApiOperation({ description: 'Получение одного процессора по id' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Get('/:id')
@@ -50,6 +52,7 @@ export class CPUController {
         return this.cpuService.findOneById(id);
     }
 
+    @ApiOperation({ description: 'Поиск определенного процессора' })
     @HasRoles(Role.User, Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Post('/search?')
@@ -60,6 +63,7 @@ export class CPUController {
         return await this.cpuService.findSome(pageOptionsDto, filters);
     }
 
+    @ApiOperation({ description: 'Обновления процессора по id' })
     @HasRoles(Role.Manager, Role.Admin)
     @UseGuards(RoleGuard)
     @Patch('/:id')
@@ -71,6 +75,7 @@ export class CPUController {
         return await this.cpuService.updateOne(id, updateCPUDto, userId);
     }
 
+    @ApiOperation({ description: 'Удаление процессора по id' })
     @HasRoles(Role.Admin)
     @UseGuards(RoleGuard)
     @Delete('/:id')

@@ -16,11 +16,28 @@ export class Motherboard extends BaseAccessory {
         this.name = `Motherboard ${maker} ${model}, ${socket}`;
     }
 
-    @ApiProperty()
-    @Column({ type: 'enum', enum: MotherboardMaker })
+    @ApiProperty({
+        name: 'maker',
+        type: 'enum',
+        enum: MotherboardMaker,
+        required: true,
+        nullable: false
+    })
+    @Column({
+        name: 'maker',
+        type: 'enum',
+        enum: MotherboardMaker,
+        nullable: false
+    })
     public maker: MotherboardMaker;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'socket',
+        enum: CPUSocket,
+        type: 'enum',
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'socket',
         enum: CPUSocket,
@@ -30,28 +47,49 @@ export class Motherboard extends BaseAccessory {
     @IsNotEmpty()
     public socket: CPUSocket;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'microarchitecture',
+        type: 'text',
+        maximum: 30,
+        minimum: 0,
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'microarchitecture',
         type: 'text',
         nullable: false
     })
+    @MaxLength(30)
+    @MinLength(0)
     @IsNotEmpty()
     public microarchitecture: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'chipset',
+        type: 'text',
+        maximum: 30,
+        minimum: 0,
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'chipset',
         type: 'text',
         nullable: false
     })
+    @MaxLength(30)
+    @MinLength(0)
     @IsNotEmpty()
     public chipset: string;
 
     @ApiProperty({
+        name: 'technologies',
+        type: 'text',
         maximum: 255,
         minimum: 6,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'technologies',
@@ -63,7 +101,13 @@ export class Motherboard extends BaseAccessory {
     @IsNotEmpty()
     public technologies: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'formFactor',
+        enum: FormFactor,
+        type: 'enum',
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'form_factor',
         enum: FormFactor,
@@ -73,7 +117,14 @@ export class Motherboard extends BaseAccessory {
     @IsNotEmpty()
     public formFactor: FormFactor;
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'supportedMemoryFrequencies',
+        type: 'smallint',
+        isArray: true,
+        default: [],
+        required: true,
+        nullable: false
+    })
     @Column({
         name: 'supported_memory_frequencies',
         type: 'smallint',
@@ -84,17 +135,30 @@ export class Motherboard extends BaseAccessory {
     @IsNotEmpty()
     public supportedMemoryFrequencies: number[];
 
-    @ApiProperty()
+    @ApiProperty({
+        name: 'memorySlotsCount',
+        type: 'smallint',
+        maximum: 8,
+        minimum: 2,
+        required: false,
+        nullable: true
+    })
     @Column({
         name: 'memory_slots_count',
         type: 'smallint',
         nullable: true
     })
+    @MaxLength(8)
+    @MinLength(2)
     public memorySlotsCount: number;
 
     @ApiProperty({
+        name: 'maxRamGb',
+        type: 'smallint',
         maximum: 256,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_ram_gb',
@@ -107,8 +171,12 @@ export class Motherboard extends BaseAccessory {
     public maxRamGb: number;
 
     @ApiProperty({
+        name: 'maxSataCount',
+        type: 'smallint',
         maximum: 8,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'max_sata_count',
@@ -121,8 +189,12 @@ export class Motherboard extends BaseAccessory {
     public maxSataCount: number;
 
     @ApiProperty({
+        name: 'connectorsForSSD',
+        type: 'smallint',
         maximum: 5,
-        minimum: 0
+        minimum: 0,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'connectors_for_ssd',
@@ -135,9 +207,12 @@ export class Motherboard extends BaseAccessory {
     public connectorsForSSD: number;
 
     @ApiProperty({
+        name: 'interfaceM2Slot',
+        type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'interface_m2_slot',
@@ -149,9 +224,12 @@ export class Motherboard extends BaseAccessory {
     public interfaceM2Slot: string;
 
     @ApiProperty({
+        name: 'pciExpressx16Count',
+        type: 'smallint',
         maximum: 4,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pci_express_x16_count',
@@ -163,9 +241,12 @@ export class Motherboard extends BaseAccessory {
     public pciExpressx16Count: number;
 
     @ApiProperty({
+        name: 'pciExpressx1Count',
+        type: 'smallint',
         maximum: 4,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pci_express_x1_count',
@@ -177,9 +258,12 @@ export class Motherboard extends BaseAccessory {
     public pciExpressx1Count: number;
 
     @ApiProperty({
+        name: 'pciExpressStandard',
+        type: 'smallint',
         maximum: 6,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pci_express_standard',
@@ -191,9 +275,12 @@ export class Motherboard extends BaseAccessory {
     public pciExpressStandard: number;
 
     @ApiProperty({
+        name: 'pciExpressWorkflow',
+        type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'pci_express_workflow',
@@ -205,8 +292,12 @@ export class Motherboard extends BaseAccessory {
     public pciExpressWorkflow: string;
 
     @ApiProperty({
+        name: 'audiocodec',
+        type: 'text',
         maximum: 35,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'audiocodec',
@@ -219,8 +310,12 @@ export class Motherboard extends BaseAccessory {
     public audiocodec: string;
 
     @ApiProperty({
+        name: 'channelCount',
+        type: 'smallint',
         maximum: 8,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'channel_count',
@@ -233,7 +328,13 @@ export class Motherboard extends BaseAccessory {
     public channelCount: number;
 
     @ApiProperty({
-        required: false
+        name: 'videoCabelType',
+        enum: VideoCabel,
+        type: 'enum',
+        isArray: true,
+        default: [],
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'video_cabel_type',
@@ -246,9 +347,12 @@ export class Motherboard extends BaseAccessory {
     public videoCabelType: VideoCabel[];
 
     @ApiProperty({
+        name: 'internalConnectors',
+        type: 'text',
         maximum: 550,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'internal_connectors',
@@ -260,8 +364,12 @@ export class Motherboard extends BaseAccessory {
     public internalConnectors: string;
 
     @ApiProperty({
+        name: 'powerConnectors',
+        type: 'text',
         maximum: 55,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: true
     })
     @Column({
         name: 'power_connectors',
@@ -274,9 +382,12 @@ export class Motherboard extends BaseAccessory {
     public powerConnectors: string;
 
     @ApiProperty({
+        name: 'backpanelConnectors',
+        type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'backpanel_connectors',
@@ -289,9 +400,12 @@ export class Motherboard extends BaseAccessory {
     public backpanelConnectors: string;
 
     @ApiProperty({
+        name: 'usb30',
+        type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_30',
@@ -304,9 +418,12 @@ export class Motherboard extends BaseAccessory {
     public usb30: number;
 
     @ApiProperty({
+        name: 'usb31Gen1',
+        type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_31_gen1',
@@ -319,9 +436,12 @@ export class Motherboard extends BaseAccessory {
     public usb31Gen1: number;
 
     @ApiProperty({
+        name: 'usb31Gen2',
+        type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_31_gen2',
@@ -334,9 +454,12 @@ export class Motherboard extends BaseAccessory {
     public usb31Gen2: number;
 
     @ApiProperty({
+        name: 'usb31Gen2TypeC',
+        type: 'smallint',
         maximum: 2,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_31_gen2_type_c',
@@ -349,9 +472,12 @@ export class Motherboard extends BaseAccessory {
     public usb31Gen2TypeC: number;
 
     @ApiProperty({
+        name: 'usb32Gen2x2TypeC',
+        type: 'smallint',
         maximum: 2,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_31_gen2x2_type_c',
@@ -364,9 +490,12 @@ export class Motherboard extends BaseAccessory {
     public usb32Gen2x2TypeC: number;
 
     @ApiProperty({
+        name: 'usb32Gen1',
+        type: 'smallint',
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'usb_32_gen1',
@@ -379,9 +508,12 @@ export class Motherboard extends BaseAccessory {
     public usb32Gen1: number;
 
     @ApiProperty({
+        name: 'includedButtons',
+        type: 'text',
         maximum: 255,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'included_buttons',
@@ -393,8 +525,12 @@ export class Motherboard extends BaseAccessory {
     public includedButtons: string;
 
     @ApiProperty({
+        name: 'networkController',
+        type: 'text',
         maximum: 50,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'network_controller',
@@ -406,9 +542,12 @@ export class Motherboard extends BaseAccessory {
     public networkController: string;
 
     @ApiProperty({
+        name: 'networkCommunications',
+        type: 'text',
         maximum: 100,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'network_communications',
@@ -421,8 +560,12 @@ export class Motherboard extends BaseAccessory {
     public networkCommunications: string;
 
     @ApiProperty({
+        name: 'bios',
+        type: 'text',
         maximum: 100,
-        minimum: 1
+        minimum: 1,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'bios',
@@ -435,11 +578,15 @@ export class Motherboard extends BaseAccessory {
     public bios: string;
 
     @ApiProperty({
+        name: 'RAIDSataArray',
+        type: 'double precision',
         isArray: true,
+        default: [],
         maxLength: 4,
         maximum: 10,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'RAID_sata_array',
@@ -453,8 +600,12 @@ export class Motherboard extends BaseAccessory {
     public RAIDSataArray: [];
 
     @ApiProperty({
+        name: 'sizeWHMm',
+        type: 'text',
         maxLength: 20,
-        minLength: 1
+        minLength: 1,
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'size_w_h_mm',
@@ -463,12 +614,15 @@ export class Motherboard extends BaseAccessory {
     })
     @MaxLength(20)
     @MinLength(0)
-    sizeWHMm: string;
+    public sizeWHMm: string;
 
     @ApiProperty({
+        name: 'more',
+        type: 'text',
         maximum: 455,
         minimum: 1,
-        required: false
+        required: false,
+        nullable: true
     })
     @Column({
         name: 'more',
@@ -480,8 +634,12 @@ export class Motherboard extends BaseAccessory {
     public more: string;
 
     @ApiProperty({
+        name: 'price',
+        type: 'numeric',
         maximum: 2000000,
-        minimum: 6000
+        minimum: 6000,
+        required: true,
+        nullable: false
     })
     @Column({
         name: 'price',
