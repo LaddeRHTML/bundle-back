@@ -42,7 +42,7 @@ services:
         env_file:
             - .env
 
-        command: npm run start:local
+        command: npm run start:prod
 
 volumes:
     postgres:
