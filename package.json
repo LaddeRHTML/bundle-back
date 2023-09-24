@@ -28,8 +28,9 @@
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "start:local": "set NODE_ENV=local && nest build --webpack --webpackPath webpack-hmr.config.js --watch",
         "up": "docker-compose up -d",
-        "up:prod": "docker-compose.prod up -d",
+        "up:prod": "docker-compose -f docker-compose.prod.yml up -d",
         "down": "docker-compose down",
+        "down:prod": "docker-compose -f docker-compose.prod.yml down",
         "prepare": "husky install"
     },
     "husky": {
