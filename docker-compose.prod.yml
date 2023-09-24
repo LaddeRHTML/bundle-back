@@ -40,7 +40,7 @@ services:
         restart: always
         env_file:
             - .env
-        command: npm run start:prod
+        command: /bin/sh -c "npm run prebuild && npm run build && npm run start:prod"
 
 volumes:
     postgres:
