@@ -33,7 +33,7 @@ export const DatabaseCredentials: DataSourceOptions = {
         PowerUnit,
         PCCase
     ],
-    synchronize: true,
+    synchronize: false,
     extra: {
         connectionLimit: 5
     }
