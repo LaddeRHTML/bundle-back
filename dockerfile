@@ -32,9 +32,12 @@ COPY --chown=node:node package*.json ./
 # Copy node_modules from development stage
 COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
 
-# Ensure the node user has the proper ownership of the dist directory
+# Install sudo and modify prebuild script
+RUN apk --no-cache add sudo && echo "node ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/node
+
+# Change ownership explicitly and run prebuild
 USER root
-RUN chown -R node:node /usr/src/app
+RUN chown -R node:node /usr/src/app && npm run prebuild
 USER node
 
 COPY --chown=node:node . .

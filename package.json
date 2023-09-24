@@ -16,7 +16,7 @@
     },
     "scripts": {
         "deploy": "sls deploy",
-        "prebuild": "rimraf dist",
+        "prebuild": "sudo rimraf dist",
         "initialize": "node -e \"if(process.platform === 'win32') { require('child_process').execSync('.\\\\initialize.sh', { stdio: 'inherit' }) } else { require('child_process').execSync('chmod +x ./initialize.sh && ./initialize.sh', { stdio: 'inherit' }) }\"",
         "test": "editorconfig-checker",
         "build": "nest build",
