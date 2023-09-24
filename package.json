@@ -16,7 +16,7 @@
     },
     "scripts": {
         "deploy": "sls deploy",
-        "prebuild": "sudo rimraf dist",
+        "prebuild": "rimraf dist",
         "initialize": "node -e \"if(process.platform === 'win32') { require('child_process').execSync('.\\\\initialize.sh', { stdio: 'inherit' }) } else { require('child_process').execSync('chmod +x ./initialize.sh && ./initialize.sh', { stdio: 'inherit' }) }\"",
         "test": "editorconfig-checker",
         "build": "nest build",
@@ -24,7 +24,7 @@
         "start": "nest start",
         "start:dev": " set NODE_ENV=dev && nest start --watch",
         "start:debug": "nest start --debug --watch",
-        "start:prod": "sudo npm cache clear --force && sudo npm run prebuild && sudo npm run build && dist/main",
+        "start:prod": "npm cache clear --force && npm run prebuild && npm run build && dist/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "start:local": "set NODE_ENV=local && nest build --webpack --webpackPath webpack-hmr.config.js --watch",
         "up": "docker-compose up -d",
