@@ -23,7 +23,7 @@ import { PowerUnit } from 'model/accessories/PowerUnit/PowerUnit';
 import { GPU } from 'model/accessories/GPU/GPU';
 import { PCCase } from 'model/accessories/PCCase/PCCase';
 
-@Entity()
+@Entity('product')
 @Unique(['name'])
 export class Product extends BaseEntity {
     constructor(prices: number[]) {

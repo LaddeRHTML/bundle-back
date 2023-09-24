@@ -9,7 +9,7 @@ import { FormFactor, MotherboardMaker } from './MotherboardEnums';
 import { CPUSocket, VideoCabel } from '../CPU/CPUEnums';
 
 @ApiTags('Motherboard')
-@Entity()
+@Entity('motherboard')
 export class Motherboard extends BaseAccessory {
     constructor(maker: string, model: string, socket: CPUSocket) {
         super();

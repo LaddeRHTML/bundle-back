@@ -11,7 +11,7 @@ interface Ram {
     max_mghz: number;
 }
 
-@Entity()
+@Entity('cpu')
 export class CPU extends BaseAccessory {
     constructor(
         maker: string,

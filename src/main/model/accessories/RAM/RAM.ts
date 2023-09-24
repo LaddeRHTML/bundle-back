@@ -7,7 +7,7 @@ import { Product } from 'model/product/Product';
 import { MemoryType, Package, RAMMaker } from './RAMEnums';
 import { BaseAccessory } from '../BaseAccessory';
 
-@Entity()
+@Entity('ram')
 export class RAM extends BaseAccessory {
     constructor(
         memoryType: string,

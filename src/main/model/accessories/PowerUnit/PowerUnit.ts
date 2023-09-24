@@ -14,7 +14,7 @@ import {
     SVCCS
 } from './PowerUnitEnum';
 import { BaseAccessory } from '../BaseAccessory';
-@Entity()
+@Entity('power_unit')
 export class PowerUnit extends BaseAccessory {
     constructor(formFactor: FormFactor, power: number, model: string, maker: string) {
         super();

@@ -119,7 +119,7 @@ export class CPUService {
                 });
             }
 
-            queryBuilder.where(options);
+            queryBuilder.andWhere(options);
 
             queryBuilder
                 .orderBy(`${this.name}.lastChangeDate`, pageOptionsDto.order)

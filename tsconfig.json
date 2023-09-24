@@ -27,6 +27,7 @@
         "strict": true,
         "skipLibCheck": true
     },
+    "watchOptions": { "watchFile": "fixedPollingInterval" },
     "include": ["src"],
     "exclude": ["node_modules", "dist"]
 }

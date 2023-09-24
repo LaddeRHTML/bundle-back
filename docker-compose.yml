@@ -32,7 +32,6 @@ services:
         build:
             dockerfile: dockerfile
             context: .
-
             target: development
         ports:
             - '5000:5000'
@@ -41,8 +40,7 @@ services:
             - .:/usr/src/app
         env_file:
             - .env
-
-        command: npm run start:prod
+        command: npm run start:dev
 
 volumes:
     postgres:

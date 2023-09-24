@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { BaseEntity } from 'model/base';
 
-@Entity()
+@Entity('file')
 @Unique(['sizeInBytes', 'originalName', 'mimeType'])
 export class File extends BaseEntity {
     @ApiProperty({

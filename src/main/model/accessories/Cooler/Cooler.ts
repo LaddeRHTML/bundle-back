@@ -7,7 +7,7 @@ import { BaseAccessory } from '../BaseAccessory';
 import { CoolerMaker, CoolerType, Package } from './CoolerEnums';
 import { CPUSocket } from '../CPU/CPUEnums';
 
-@Entity()
+@Entity('cooler')
 export class Cooler extends BaseAccessory {
     constructor(type: CoolerType, maker: string, model: string) {
         super();
