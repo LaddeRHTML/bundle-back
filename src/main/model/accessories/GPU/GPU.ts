@@ -19,7 +19,7 @@ import {
     Technologies
 } from './GPUEnums';
 
-@Entity()
+@Entity('gpu')
 export class GPU extends BaseAccessory {
     constructor(maker: string, model: string, graphicsRamSizeGb: number, chipset: string) {
         super();

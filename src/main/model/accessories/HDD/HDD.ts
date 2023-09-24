@@ -6,7 +6,7 @@ import { Product } from 'model/product/Product';
 import { BaseAccessory } from '../BaseAccessory';
 import { FormFactor, HDDMaker, HDDType } from './HDDEnums';
 
-@Entity()
+@Entity('hdd')
 export class HDD extends BaseAccessory {
     constructor(
         type: HDDType,

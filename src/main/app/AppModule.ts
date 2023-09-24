@@ -18,6 +18,7 @@ import { PowerUnitModule } from 'module/PowerUnitModule';
 import { ProductsModule } from 'module/ProductModule';
 import { RAMModule } from 'module/RAMModule';
 import { UsersModule } from 'module/UserModule';
+import { AccessoriesModule } from 'module/AccessoriesModule';
 
 @Module({
     imports: [
@@ -37,7 +38,8 @@ import { UsersModule } from 'module/UserModule';
         CoolerModule,
         FanModule,
         PowerUnitModule,
-        PCCaseModule
+        PCCaseModule,
+        AccessoriesModule
     ],
     controllers: [],
     providers: []

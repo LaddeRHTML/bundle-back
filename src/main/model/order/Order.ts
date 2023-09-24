@@ -7,7 +7,7 @@ import { Product } from 'model/product/Product';
 
 import { DeliveryType, PaymentMethod, Source, Status } from './OrderEnums';
 
-@Entity()
+@Entity('order')
 export class Order extends BaseEntity {
     @ApiProperty({
         name: 'closeInterval',

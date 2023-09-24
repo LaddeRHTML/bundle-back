@@ -20,7 +20,7 @@ import { BaseAccessory } from '../BaseAccessory';
 import { Fan } from '../Fan/Fan';
 import { FanDiameter } from '../Fan/FanEnums';
 
-@Entity()
+@Entity('pc_case')
 export class PCCase extends BaseAccessory {
     constructor(maker: string, model: string, color: string, formFactor: string) {
         super();

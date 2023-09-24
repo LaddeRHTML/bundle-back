@@ -6,7 +6,7 @@ import { BaseAccessory } from '../BaseAccessory';
 import { FanDiameter, FanMaker, Package } from './FanEnums';
 import { PCCase } from '../PCCase/PCCase';
 
-@Entity()
+@Entity('fan')
 export class Fan extends BaseAccessory {
     constructor(maker: string, model: string, diameter: number, color: string) {
         super();

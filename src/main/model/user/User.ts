@@ -6,7 +6,7 @@ import { Order } from 'model/order/Order';
 
 import { Gender, Role } from './UserEnums';
 
-@Entity()
+@Entity('user')
 export class User {
     @ApiProperty({ name: 'id', uniqueItems: true })
     @PrimaryGeneratedColumn('uuid')
