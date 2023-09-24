@@ -24,7 +24,7 @@
         "start": "nest start",
         "start:dev": " set NODE_ENV=dev && nest start --watch",
         "start:debug": "nest start --debug --watch",
-        "start:prod": "node dist/main",
+        "start:prod": "sudo npm cache clear --force && sudo npm run prebuild && sudo npm run build && dist/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "start:local": "set NODE_ENV=local && nest build --webpack --webpackPath webpack-hmr.config.js --watch",
         "up": "docker-compose up -d",

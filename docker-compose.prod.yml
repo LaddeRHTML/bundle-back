@@ -40,7 +40,7 @@ services:
         restart: always
         env_file:
             - .env
-        command: /bin/sh -c "sudo npm cache clear --force sudo npm run prebuild && sudo npm run build && npm run start:prod"
+        command: npm run start:prod
 
 volumes:
     postgres:
