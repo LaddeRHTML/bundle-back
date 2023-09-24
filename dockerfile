@@ -32,10 +32,6 @@ COPY --chown=node:node package*.json ./
 # Copy node_modules from development stage
 COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
 
-USER root
-RUN chmod -R 777 /usr/src/app && rm -rf dist && npm run prebuild
-USER node
-
 COPY --chown=node:node . .
 
 # Build the production bundle
