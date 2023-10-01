@@ -1,8 +1,7 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, FindOptionsWhere, In, Repository } from 'typeorm';
-import { Cache } from 'cache-manager';
 
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
@@ -18,27 +17,15 @@ import { Order } from 'model/order/Order';
 import { Status } from 'model/order/OrderEnums';
 import { ProductsService } from './ProductService';
 import { UsersService } from './UserService';
-import { FindSomeCache } from 'common/interfaces';
-import compareObjects from 'common/utils/object/compareObjects';
 
 export interface SearchByChild {
     client?: string;
     product?: string;
 }
 
-interface FindSomeArgs {
-    pageOptionsDto: PageOptionsDto;
-    filters: Order;
-    relations: AllowedOrderRelations;
-    searchByChild: SearchByChild;
-}
-
-type FindSomeCached = FindSomeCache<PageDto<Order>, FindSomeArgs>;
-
 @Injectable()
 export class OrdersService {
     constructor(
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         @InjectRepository(Order) private orderRepository: Repository<Order>,
         private readonly productService: ProductsService,
         private readonly userService: UsersService
@@ -91,23 +78,7 @@ export class OrdersService {
 
     async findOneById(id: string): Promise<Order | null> {
         try {
-            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
-                | Order
-                | undefined;
-
-            if (cachedData && cachedData.id === id) {
-                return cachedData;
-            }
-
-            const order = await this.orderRepository.findOne({ where: { id } });
-
-            if (!order) {
-                throw new NotFoundException('Order not found!');
-            }
-
-            await this.cacheManager.set(`${this.name}.findOneById`, order, 10000);
-
-            return order;
+            return await this.orderRepository.findOne({ where: { id } });
         } catch (error) {
             throw new Error(`orders.service | findOneById error: ${getErrorMessage(error)}`);
         }
@@ -120,14 +91,6 @@ export class OrdersService {
         filters?: Partial<Order>
     ): Promise<PageDto<Order>> {
         try {
-            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
-                | FindSomeCached
-                | undefined;
-
-            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
-                return cachedData.response;
-            }
-
             const includedInClientSearchFields = [
                 'address',
                 'name',
@@ -173,15 +136,7 @@ export class OrdersService {
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
 
-            const response = new PageDto(entities, pageMetaDto);
-
-            await this.cacheManager.set(
-                `${this.name}.findSome`,
-                { response, arguments: pageOptionsDto, filters, relations, searchByChild },
-                10000
-            );
-
-            return response;
+            return new PageDto(entities, pageMetaDto);
         } catch (error) {
             throw new Error(`orders.service | findSome error: ${getErrorMessage(error)}`);
         }

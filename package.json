@@ -27,10 +27,6 @@
         "start:prod": "node dist/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "start:local": "set NODE_ENV=local && nest build --webpack --webpackPath webpack-hmr.config.js --watch",
-        "up": "docker-compose up -d",
-        "up:prod": "docker-compose -f docker-compose.prod.yml up -d",
-        "down": "docker-compose down",
-        "down:prod": "docker-compose -f docker-compose.prod.yml down",
         "prepare": "husky install"
     },
     "husky": {
@@ -40,6 +36,7 @@
         }
     },
     "dependencies": {
+        "@nestjs/cli": "^9.2.0",
         "@nestjs/common": "^9.3.9",
         "@nestjs/config": "^2.3.1",
         "@nestjs/core": "^9.3.9",
@@ -51,11 +48,7 @@
         "@nestjs/platform-fastify": "^9.3.9",
         "@nestjs/swagger": "^6.2.1",
         "@nestjs/typeorm": "^9.0.1",
-        "@nestjs/cli": "^9.2.0",
-        "@types/cache-manager": "^4.0.2",
         "bcryptjs": "^2.4.3",
-        "cache-manager": "^4.1.0",
-        "cache-manager-redis-store": "^2.0.0",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.0",
         "cookie-parser": "^1.4.6",
@@ -66,10 +59,12 @@
         "passport-jwt": "^4.0.1",
         "passport-local": "^1.0.0",
         "pg": "^8.9.0",
+        "pm2": "^5.3.0",
         "rimraf": "^4.4.1",
         "rxjs": "^7.8.0",
         "swagger-ui-express": "^4.6.2",
-        "typeorm": "^0.3.12"
+        "typeorm": "^0.3.12",
+        "xlsx": "^0.18.5"
     },
     "devDependencies": {
         "@babel/plugin-proposal-decorators": "^7.21.0",
@@ -77,7 +72,6 @@
         "@nestjs/testing": "^9.3.9",
         "@types/aws-lambda": "^8.10.111",
         "@types/bcryptjs": "^2.4.2",
-        "@types/cache-manager-redis-store": "^2.0.1",
         "@types/cookie-parser": "^1.4.3",
         "@types/express": "^4.17.17",
         "@types/jest": "29.4.0",

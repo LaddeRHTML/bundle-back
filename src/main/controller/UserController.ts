@@ -178,11 +178,4 @@ export class UsersController {
     deleteOne(@Param('id') id: string) {
         return this.usersService.deleteOneById(id);
     }
-
-    @HasRoles(Role.Admin)
-    @UseGuards(RoleGuard)
-    @Post('/cache/reset')
-    resetAllCache() {
-        return this.usersService.resetAllCache();
-    }
 }
