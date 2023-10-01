@@ -1,16 +1,15 @@
-import { FindSomeCache } from './../common/interfaces/index';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import {
     FindManyOptions,
     FindOneOptions,
     FindOptionsWhere,
-    In,
     Repository,
     UpdateResult
 } from 'typeorm';
-import { Cache } from 'cache-manager';
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as XLSX from 'xlsx';
+import * as moment from 'moment';
 
 import { PageMetaDto } from 'common/pagination/dtos/page-meta.dto';
 import { PageOptionsDto } from 'common/pagination/dtos/page-options.dto';
@@ -23,10 +22,9 @@ import { UpdateProductDto } from 'dto/Product/UpdateProductDto';
 import { Product } from 'model/product/Product';
 import { AllowedProductRelations } from 'controller/ProductController';
 import { SqlSearch } from 'common/utils/array/SqlSearch';
-import { SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
-import { FormFactor, HDDType } from 'model/accessories/HDD/HDDEnums';
-import { HDDService } from './HDDService';
-import compareObjects from 'common/utils/object/compareObjects';
+import { ExcelSheetProduct, SuccessfullyUpdatedEntityResponse } from 'common/interfaces';
+import { MulterFile } from './FileService';
+import { SortExcelSheetData } from 'common/utils/array/sortExcelSheetData';
 
 interface Price {
     max: number;
@@ -38,22 +36,9 @@ export interface GetPricesResponse {
     market_prices?: Price;
     supplier_prices?: Price;
 }
-
-interface FindSomeArgs {
-    pageOptionsDto: PageOptionsDto;
-    filters: Product;
-    relations: AllowedProductRelations;
-}
-
-type FindSomeCached = FindSomeCache<PageDto<Product>, FindSomeArgs>;
-
 @Injectable()
 export class ProductsService {
-    constructor(
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
-        @InjectRepository(Product) private productRepository: Repository<Product>,
-        private readonly hddService: HDDService
-    ) {}
+    constructor(@InjectRepository(Product) private productRepository: Repository<Product>) {}
 
     get name() {
         return Product.name.toLowerCase();
@@ -65,14 +50,6 @@ export class ProductsService {
             createProductDto.createdBy = userId;
             createProductDto.createDate = new Date();
             createProductDto.lastChangeDate = new Date();
-
-            if (createProductDto.hdd && createProductDto.hdd?.length > 0) {
-                createProductDto.hdd = await this.hddService.findAllBy({
-                    where: {
-                        id: In([...createProductDto.hdd])
-                    }
-                });
-            }
 
             return await this.productRepository.save(createProductDto);
         } catch (error) {
@@ -104,26 +81,10 @@ export class ProductsService {
 
     async findOneById(id: string, relations: AllowedProductRelations) {
         try {
-            const cachedData = (await this.cacheManager.get(`${this.name}.findOneById`)) as
-                | Product
-                | undefined;
-
-            if (cachedData && cachedData.id === id) {
-                return cachedData;
-            }
-
-            const product = await this.productRepository.findOne({
+            return await this.productRepository.findOne({
                 where: { id },
                 relations
             });
-
-            if (!product) {
-                throw new NotFoundException('Product not found!');
-            }
-
-            await this.cacheManager.set(`${this.name}.findOneById`, product, 10000);
-
-            return product;
         } catch (error) {
             throw new Error(`product.service | findOneById error: ${getErrorMessage(error)}`);
         }
@@ -139,14 +100,6 @@ export class ProductsService {
         relations: AllowedProductRelations
     ): Promise<PageDto<Product>> {
         try {
-            const cachedData = (await this.cacheManager.get(`${this.name}.findSome`)) as
-                | FindSomeCached
-                | undefined;
-
-            if (cachedData && compareObjects<FindSomeArgs>(cachedData.arguments, pageOptionsDto)) {
-                return cachedData.response;
-            }
-
             const includedInSearchFields = ['name'];
             const sqlSearch = new SqlSearch();
 
@@ -199,15 +152,7 @@ export class ProductsService {
 
             const pageMetaDto = new PageMetaDto({ pageOptionsDto, total });
 
-            const response = new PageDto(entities, pageMetaDto);
-
-            await this.cacheManager.set(
-                `${this.name}.findSome`,
-                { response, arguments: pageOptionsDto, filters, relations },
-                10000
-            );
-
-            return response;
+            return new PageDto(entities, pageMetaDto);
         } catch (error) {
             throw new Error(`product.service | findSome error: ${getErrorMessage(error)}`);
         }
@@ -221,62 +166,7 @@ export class ProductsService {
         try {
             updateProductDto.lastChangeDate = new Date();
             updateProductDto.lastChangedBy = userId;
-
-            const product = await this.findOne({ where: { id } });
-            let message = 'Successfully updated!';
-
-            if (updateProductDto.hdd && updateProductDto.hdd?.length > 0) {
-                const disksMap = new Map();
-                const hddInProduct =
-                    product.hdd && product.hdd.length > 0 ? product.hdd.map((p) => p.id) : [];
-                const newHddsEntityExemplar = await this.hddService.findAllBy({
-                    where: {
-                        id: In([...updateProductDto.hdd, ...hddInProduct])
-                    }
-                });
-
-                newHddsEntityExemplar.forEach((disk) => disksMap.set(disk.id, disk));
-
-                const newHdds = updateProductDto.hdd
-                    .map((diskId) => {
-                        if (disksMap.has(diskId)) {
-                            return disksMap.get(diskId);
-                        }
-
-                        return undefined;
-                    })
-                    .filter((disk) => !!disk);
-
-                const sataGroup = newHdds.filter(
-                    (disk) =>
-                        disk.formFactor.includes(FormFactor.FormFactor_2) ||
-                        disk.formFactor.includes(FormFactor.FormFactor_3)
-                );
-
-                const m2Group = newHdds.filter(
-                    (disk) =>
-                        disk.type === HDDType.SSD &&
-                        disk.formFactor !== FormFactor.FormFactor_2 &&
-                        disk.formFactor !== FormFactor.FormFactor_3
-                );
-
-                if (sataGroup.length <= product.motherboard.maxSataCount) {
-                    updateProductDto.hdd = sataGroup;
-                }
-
-                if (m2Group.length <= product.motherboard.connectorsForSSD) {
-                    m2Group.forEach((disk) => updateProductDto.hdd?.push(disk));
-                }
-
-                updateProductDto.hdd = [...product.hdd, ...updateProductDto.hdd];
-
-                if (updateProductDto.hdd.length === 0) {
-                    message = 'All fields updated except HDDs!';
-                } else {
-                    const fansName = updateProductDto.hdd.map((h) => h.name);
-                    message = `HDDs ${fansName.join(', ')} were successfully added to product!`;
-                }
-            }
+            const message = 'Successfully updated!';
 
             const result = await this.productRepository.save({ id, ...updateProductDto });
 
@@ -347,6 +237,69 @@ export class ProductsService {
             return await this.productRepository.exist({ where: productProperty });
         } catch (error) {
             throw new Error(`products.service | isProductExists error: ${getErrorMessage(error)}`);
+        }
+    }
+
+    async getDataFromExcel(file: MulterFile): Promise<CreateProductDto[]> {
+        const wb: XLSX.WorkBook = XLSX.read(file.buffer);
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as ExcelSheetProduct[];
+
+        const products = SortExcelSheetData(data).map((i) => {
+            const productsFromExcel = i?.products.map((p) => {
+                const productDto = new CreateProductDto();
+                const productName = p?.[1] || '';
+                const productModel = productName.split(',')[0];
+                const marketPrice = p?.[2] || 0;
+                const price = p?.[3] || 0;
+                const supplierPrice = p?.[4] || 0;
+                const warrantyDays = (p?.[5] as unknown as number) || 0;
+                const countedWarranty = moment.duration(warrantyDays, 'months').asDays();
+                const maker = productModel
+                    .replace(/[^a-z ]/gi, '')
+                    .trim()
+                    .split(' ')[0];
+
+                productDto.category = i?.category;
+                productDto.name = productName;
+                productDto.model = productModel;
+                productDto.marketprice = marketPrice;
+                productDto.price = price;
+                productDto.supplierPrice = supplierPrice;
+                productDto.warrantyDays = countedWarranty;
+                productDto.maker = maker;
+                productDto.count = 1;
+
+                return productDto;
+            });
+
+            return productsFromExcel;
+        });
+
+        return products.flat(2);
+    }
+
+    async manipulateMultipleItems(products: CreateProductDto[], userId: string): Promise<void> {
+        for (const p of products) {
+            const existingProduct = await this.productRepository.findOne({
+                where: {
+                    name: p.name
+                }
+            });
+
+            if (existingProduct) {
+                await this.productRepository.save({
+                    ...existingProduct,
+                    ...p,
+                    lastChangedBy: userId
+                });
+            } else {
+                await this.productRepository.save({
+                    ...p,
+                    createdBy: userId,
+                    lastChangedBy: userId
+                });
+            }
         }
     }
 }

@@ -3,7 +3,20 @@ export interface SuccessfullyUpdatedEntityResponse<E> {
     message: string;
     newFields: E;
 }
-export interface FindSomeCache<R, A> {
-    response: R;
-    arguments: A;
-}
+
+export type ExcelSheetProduct = (string | number | null)[];
+
+export type ExcelClearSheetProduct = [
+    number?,
+    string?,
+    number?,
+    number?,
+    number?,
+    string?,
+    string?
+];
+
+export type FilteredItem = {
+    category: string;
+    products: ExcelClearSheetProduct[];
+};

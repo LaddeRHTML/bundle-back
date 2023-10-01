@@ -1,15 +1,7 @@
-import {
-    CACHE_MANAGER,
-    HttpException,
-    HttpStatus,
-    Inject,
-    Injectable,
-    NotFoundException
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, FindOptionsWhere, InsertResult, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { Cache } from 'cache-manager';
 
 import { User } from 'model/user/User';
 import { Role } from 'model/user/UserEnums';
@@ -34,7 +26,6 @@ export interface ChangePassword {
 @Injectable()
 export class UsersService {
     constructor(
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         @InjectRepository(User)
         private usersRepository: Repository<User>
     ) {}
@@ -126,11 +117,7 @@ export class UsersService {
 
             updateUserDto.updateDate = new Date();
 
-            const response = await this.usersRepository.save({ id, ...updateUserDto });
-
-            await this.cacheManager.reset();
-
-            return response;
+            return await this.usersRepository.save({ id, ...updateUserDto });
         } catch (error) {
             throw new Error(`users.service | updateOne error: ${getErrorMessage(error)}`);
         }
@@ -203,14 +190,6 @@ export class UsersService {
             return await this.usersRepository.exist({ where: userProperty });
         } catch (error) {
             throw new Error(`users.service | isUserExists error: ${getErrorMessage(error)}`);
-        }
-    }
-
-    async resetAllCache() {
-        try {
-            return await this.cacheManager.reset();
-        } catch (error) {
-            throw new Error(`users.service | resetAllCache error: ${getErrorMessage(error)}`);
         }
     }
 }

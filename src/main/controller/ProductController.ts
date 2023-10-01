@@ -15,9 +15,12 @@ import {
     UseInterceptors,
     ParseFilePipe,
     FileTypeValidator,
-    MaxFileSizeValidator
+    MaxFileSizeValidator,
+    UploadedFile,
+    HttpException,
+    HttpStatus
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HasRoles } from 'auth/decorators/roles-decorator';
@@ -135,6 +138,22 @@ export class ProductsController {
         @Body() updateProductDto: UpdateProductDto
     ): Promise<SuccessfullyUpdatedEntityResponse<Product>> {
         return await this.productsService.updateOne(id, updateProductDto, userId);
+    }
+
+    @ApiOperation({ description: 'Загрузить продукты из файла' })
+    @HasRoles(Role.Admin, Role.Manager)
+    @UseGuards(RoleGuard)
+    @UseInterceptors(FileInterceptor('excel-dealer-file'))
+    @Post('/excel')
+    async createMultipleItems(
+        @Req() { user: { id: userId } }: RequestWithUser,
+        @UploadedFile() file: MulterFile
+    ) {
+        if (file.originalname !== 'WW_dealers.xlsx') {
+            throw new HttpException('Bad file provided', HttpStatus.CONFLICT);
+        }
+        const products = await this.productsService.getDataFromExcel(file);
+        return await this.productsService.manipulateMultipleItems(products, userId);
     }
 
     @ApiOperation({ description: 'Загрузка изображений продукту по id' })
