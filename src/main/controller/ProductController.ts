@@ -180,7 +180,7 @@ export class ProductsController {
         return this.productsService.updateOne(
             id,
             {
-                picturesId: [...product.picturesId, ...uploadedPictures.map((p) => p.id)]
+                picturesId: [...(product?.picturesId ?? []), ...uploadedPictures.map((p) => p.id)]
             },
             userId
         );

@@ -70,7 +70,6 @@ export class AuthService {
     async login({ id, role }: UserPayload): Promise<AccessToken> {
         try {
             const accessToken = this.signJwt({ id, role });
-            console.log(accessToken);
             return { accessToken };
         } catch (error) {
             throw error;
