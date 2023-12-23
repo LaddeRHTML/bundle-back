@@ -7,11 +7,11 @@ import { User } from 'model/user/User';
 
 export const DatabaseCredentials: DataSourceOptions = {
     type: 'postgres',
-    host: `${process.env.DATABASE_CONNECTION_HOST}`,
-    username: `${process.env.DATABASE_CONNECTION_USERNAME}`,
-    password: `${process.env.DATABASE_CONNECTION_PASSWORD}`,
-    database: `${process.env.DATABASE_CONNECTION_MAINTENANCE}`,
-    url: `postgresql://${process.env.DATABASE_CONNECTION_USERNAME}:${process.env.DATABASE_CONNECTION_PASSWORD}@${process.env.DATABASE_CONNECTION_HOST}:${process.env.DATABASE_CONNECTION_PORT}/${process.env.DATABASE_CONNECTION_MAINTENANCE}`,
+    // host: `${process.env.DATABASE_CONNECTION_HOST}`,
+    // username: `${process.env.DATABASE_CONNECTION_USERNAME}`,
+    // password: `${process.env.DATABASE_CONNECTION_PASSWORD}`,
+    // database: `${process.env.DATABASE_CONNECTION_MAINTENANCE}`,
+    url: `${process.env.DATABASE_CONNECTION_URL_EXTERNAL}`,
     entities: [User, Product, File, Order],
     synchronize: true,
     extra: {
